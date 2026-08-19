@@ -1,7 +1,4 @@
 import type { NextConfig } from "next";
-import path from "node:path";
-const loaderPath = require.resolve('orchids-visual-edits/loader.js');
-
 const nextConfig: NextConfig = {
   images: {
     remotePatterns: [
@@ -15,19 +12,11 @@ const nextConfig: NextConfig = {
       },
     ],
   },
-  outputFileTracingRoot: path.resolve(__dirname, '../../'),
   typescript: {
     ignoreBuildErrors: true,
   },
   eslint: {
     ignoreDuringBuilds: true,
-  },
-  turbopack: {
-    rules: {
-      "*.{jsx,tsx}": {
-        loaders: [loaderPath]
-      }
-    }
   },
   allowedDevOrigins: [
     '.replit.dev',
@@ -36,5 +25,16 @@ const nextConfig: NextConfig = {
     'localhost:5000',
   ],
 };
+
+if (process.env.NODE_ENV !== 'production') {
+  const loaderPath = require.resolve('orchids-visual-edits/loader.js');
+  nextConfig.turbopack = {
+    rules: {
+      "*.{jsx,tsx}": {
+        loaders: [loaderPath],
+      },
+    },
+  };
+}
 
 export default nextConfig;

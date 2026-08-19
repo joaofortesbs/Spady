@@ -11350,3 +11350,1344 @@
 [2026-08-19T17:33:29.073Z] HEAD / 200 in 104ms
 [2026-08-19T17:33:30.074Z] [PomodoroTimer] Initial categoryDurations from settings: { produtividade: 25, estudos: 50, descanso: 15 }
 [2026-08-19T17:33:30.113Z] GET /?from_webdev=1 200 in 115ms
+[2026-08-19T17:34:05.231Z] [API /pomodoro/get-settings] Starting request...
+[2026-08-19T17:34:05.390Z] [API /pomodoro/get-settings] User authenticated: 57fc7b0a-5ba0-42fb-ad0c-f15ee32c6df3
+[2026-08-19T17:34:05.558Z] [API /pomodoro/get-settings] Categories response: {
+[2026-08-19T17:34:05.558Z] count: 3,
+[2026-08-19T17:34:05.558Z] error: undefined,
+[2026-08-19T17:34:05.558Z] data: [
+[2026-08-19T17:34:05.558Z] {
+[2026-08-19T17:34:05.558Z] id: '67040b77-248a-420d-8be2-5c5eca65ca8f',
+[2026-08-19T17:34:05.558Z] user_id: '57fc7b0a-5ba0-42fb-ad0c-f15ee32c6df3',
+[2026-08-19T17:34:05.558Z] name: 'Produzindo',
+[2026-08-19T17:34:05.558Z] color: '#ff6600',
+[2026-08-19T17:34:05.558Z] duration_minutes: 57,
+[2026-08-19T17:34:05.558Z] created_at: '2026-01-19T22:01:03.082007+00:00'
+[2026-08-19T17:34:05.558Z] },
+[2026-08-19T17:34:05.558Z] {
+[2026-08-19T17:34:05.558Z] id: '5e6728b1-cde5-4c8b-a296-116604eadee0',
+[2026-08-19T17:34:05.558Z] user_id: '57fc7b0a-5ba0-42fb-ad0c-f15ee32c6df3',
+[2026-08-19T17:34:05.558Z] name: 'Estudando',
+[2026-08-19T17:34:05.558Z] color: '#002aff',
+[2026-08-19T17:34:05.558Z] duration_minutes: 30,
+[2026-08-19T17:34:05.558Z] created_at: '2026-01-19T22:01:03.284823+00:00'
+[2026-08-19T17:34:05.558Z] },
+[2026-08-19T17:34:05.558Z] {
+[2026-08-19T17:34:05.558Z] id: '4ec39e04-b451-4c7a-845d-571dc624e600',
+[2026-08-19T17:34:05.558Z] user_id: '57fc7b0a-5ba0-42fb-ad0c-f15ee32c6df3',
+[2026-08-19T17:34:05.558Z] name: 'Conteúdos',
+[2026-08-19T17:34:05.558Z] color: '#00d13f',
+[2026-08-19T17:34:05.558Z] duration_minutes: 27,
+[2026-08-19T17:34:05.558Z] created_at: '2026-01-19T22:01:03.486292+00:00'
+[2026-08-19T17:34:05.558Z] }
+[2026-08-19T17:34:05.558Z] ]
+[2026-08-19T17:34:05.558Z] }
+[2026-08-19T17:34:05.558Z] [API /pomodoro/get-settings] Settings response: {
+[2026-08-19T17:34:05.558Z] data: {
+[2026-08-19T17:34:05.558Z] id: '6729871f-4efa-4304-a753-1f7dd1859400',
+[2026-08-19T17:34:05.558Z] user_id: '57fc7b0a-5ba0-42fb-ad0c-f15ee32c6df3',
+[2026-08-19T17:34:05.558Z] short_break_minutes: 5,
+[2026-08-19T17:34:05.558Z] long_break_minutes: 15,
+[2026-08-19T17:34:05.558Z] cycles_until_long_break: 4,
+[2026-08-19T17:34:05.558Z] updated_at: '2026-01-31T22:04:42.725+00:00'
+[2026-08-19T17:34:05.558Z] },
+[2026-08-19T17:34:05.558Z] error: undefined
+[2026-08-19T17:34:05.558Z] }
+[2026-08-19T17:34:05.558Z] [API /pomodoro/get-settings] Sessions response: { count: 19, error: undefined }
+[2026-08-19T17:34:05.558Z] [API /pomodoro/get-settings] Returning settings with 19 sessions
+[2026-08-19T17:34:05.560Z] GET /api/pomodoro/get-settings 200 in 564ms
+[2026-08-19T17:34:07.250Z] [PomodoroTimer] Initial categoryDurations from settings: { produtividade: 25, estudos: 50, descanso: 15 }
+[2026-08-19T17:34:07.295Z] GET / 200 in 124ms
+[2026-08-19T17:34:39.216Z] [PomodoroTimer] Initial categoryDurations from settings: { produtividade: 25, estudos: 50, descanso: 15 }
+[2026-08-19T17:34:39.258Z] GET /?from_webdev=1 200 in 125ms
+[2026-08-19T17:34:44.638Z] [PomodoroTimer] Initial categoryDurations from settings: { produtividade: 25, estudos: 50, descanso: 15 }
+[2026-08-19T17:34:44.665Z] HEAD / 200 in 106ms
+[2026-08-19T17:34:46.078Z] [PomodoroTimer] Initial categoryDurations from settings: { produtividade: 25, estudos: 50, descanso: 15 }
+[2026-08-19T17:34:46.136Z] GET /?from_webdev=1 200 in 141ms
+[2026-08-19T17:34:48.774Z] [PomodoroTimer] Initial categoryDurations from settings: { produtividade: 25, estudos: 50, descanso: 15 }
+[2026-08-19T17:34:48.826Z] GET /?from_webdev=1 200 in 160ms
+[2026-08-19T17:34:54.016Z] [PomodoroTimer] Initial categoryDurations from settings: { produtividade: 25, estudos: 50, descanso: 15 }
+[2026-08-19T17:34:54.041Z] HEAD / 200 in 106ms
+[2026-08-19T17:34:55.134Z] [PomodoroTimer] Initial categoryDurations from settings: { produtividade: 25, estudos: 50, descanso: 15 }
+[2026-08-19T17:34:55.204Z] GET /?from_webdev=1 200 in 205ms
+[2026-08-19T17:35:05.241Z] [API /pomodoro/get-settings] Starting request...
+[2026-08-19T17:35:05.447Z] [API /pomodoro/get-settings] User authenticated: 57fc7b0a-5ba0-42fb-ad0c-f15ee32c6df3
+[2026-08-19T17:35:05.604Z] [API /pomodoro/get-settings] Categories response: {
+[2026-08-19T17:35:05.604Z] count: 3,
+[2026-08-19T17:35:05.604Z] error: undefined,
+[2026-08-19T17:35:05.604Z] data: [
+[2026-08-19T17:35:05.604Z] {
+[2026-08-19T17:35:05.604Z] id: '67040b77-248a-420d-8be2-5c5eca65ca8f',
+[2026-08-19T17:35:05.604Z] user_id: '57fc7b0a-5ba0-42fb-ad0c-f15ee32c6df3',
+[2026-08-19T17:35:05.604Z] name: 'Produzindo',
+[2026-08-19T17:35:05.604Z] color: '#ff6600',
+[2026-08-19T17:35:05.604Z] duration_minutes: 57,
+[2026-08-19T17:35:05.604Z] created_at: '2026-01-19T22:01:03.082007+00:00'
+[2026-08-19T17:35:05.604Z] },
+[2026-08-19T17:35:05.604Z] {
+[2026-08-19T17:35:05.604Z] id: '5e6728b1-cde5-4c8b-a296-116604eadee0',
+[2026-08-19T17:35:05.604Z] user_id: '57fc7b0a-5ba0-42fb-ad0c-f15ee32c6df3',
+[2026-08-19T17:35:05.604Z] name: 'Estudando',
+[2026-08-19T17:35:05.604Z] color: '#002aff',
+[2026-08-19T17:35:05.604Z] duration_minutes: 30,
+[2026-08-19T17:35:05.604Z] created_at: '2026-01-19T22:01:03.284823+00:00'
+[2026-08-19T17:35:05.604Z] },
+[2026-08-19T17:35:05.604Z] {
+[2026-08-19T17:35:05.604Z] id: '4ec39e04-b451-4c7a-845d-571dc624e600',
+[2026-08-19T17:35:05.604Z] user_id: '57fc7b0a-5ba0-42fb-ad0c-f15ee32c6df3',
+[2026-08-19T17:35:05.604Z] name: 'Conteúdos',
+[2026-08-19T17:35:05.604Z] color: '#00d13f',
+[2026-08-19T17:35:05.604Z] duration_minutes: 27,
+[2026-08-19T17:35:05.604Z] created_at: '2026-01-19T22:01:03.486292+00:00'
+[2026-08-19T17:35:05.604Z] }
+[2026-08-19T17:35:05.604Z] ]
+[2026-08-19T17:35:05.604Z] }
+[2026-08-19T17:35:05.604Z] [API /pomodoro/get-settings] Settings response: {
+[2026-08-19T17:35:05.604Z] data: {
+[2026-08-19T17:35:05.604Z] id: '6729871f-4efa-4304-a753-1f7dd1859400',
+[2026-08-19T17:35:05.604Z] user_id: '57fc7b0a-5ba0-42fb-ad0c-f15ee32c6df3',
+[2026-08-19T17:35:05.604Z] short_break_minutes: 5,
+[2026-08-19T17:35:05.604Z] long_break_minutes: 15,
+[2026-08-19T17:35:05.604Z] cycles_until_long_break: 4,
+[2026-08-19T17:35:05.604Z] updated_at: '2026-01-31T22:04:42.725+00:00'
+[2026-08-19T17:35:05.604Z] },
+[2026-08-19T17:35:05.604Z] error: undefined
+[2026-08-19T17:35:05.604Z] }
+[2026-08-19T17:35:05.604Z] [API /pomodoro/get-settings] Sessions response: { count: 19, error: undefined }
+[2026-08-19T17:35:05.604Z] [API /pomodoro/get-settings] Returning settings with 19 sessions
+[2026-08-19T17:35:05.606Z] GET /api/pomodoro/get-settings 200 in 612ms
+[2026-08-19T17:36:05.282Z] [API /pomodoro/get-settings] Starting request...
+[2026-08-19T17:36:05.440Z] [API /pomodoro/get-settings] User authenticated: 57fc7b0a-5ba0-42fb-ad0c-f15ee32c6df3
+[2026-08-19T17:36:05.604Z] [API /pomodoro/get-settings] Categories response: {
+[2026-08-19T17:36:05.604Z] count: 3,
+[2026-08-19T17:36:05.604Z] error: undefined,
+[2026-08-19T17:36:05.604Z] data: [
+[2026-08-19T17:36:05.604Z] {
+[2026-08-19T17:36:05.604Z] id: '67040b77-248a-420d-8be2-5c5eca65ca8f',
+[2026-08-19T17:36:05.604Z] user_id: '57fc7b0a-5ba0-42fb-ad0c-f15ee32c6df3',
+[2026-08-19T17:36:05.604Z] name: 'Produzindo',
+[2026-08-19T17:36:05.604Z] color: '#ff6600',
+[2026-08-19T17:36:05.604Z] duration_minutes: 57,
+[2026-08-19T17:36:05.604Z] created_at: '2026-01-19T22:01:03.082007+00:00'
+[2026-08-19T17:36:05.604Z] },
+[2026-08-19T17:36:05.604Z] {
+[2026-08-19T17:36:05.604Z] id: '5e6728b1-cde5-4c8b-a296-116604eadee0',
+[2026-08-19T17:36:05.604Z] user_id: '57fc7b0a-5ba0-42fb-ad0c-f15ee32c6df3',
+[2026-08-19T17:36:05.604Z] name: 'Estudando',
+[2026-08-19T17:36:05.604Z] color: '#002aff',
+[2026-08-19T17:36:05.604Z] duration_minutes: 30,
+[2026-08-19T17:36:05.604Z] created_at: '2026-01-19T22:01:03.284823+00:00'
+[2026-08-19T17:36:05.604Z] },
+[2026-08-19T17:36:05.604Z] {
+[2026-08-19T17:36:05.604Z] id: '4ec39e04-b451-4c7a-845d-571dc624e600',
+[2026-08-19T17:36:05.604Z] user_id: '57fc7b0a-5ba0-42fb-ad0c-f15ee32c6df3',
+[2026-08-19T17:36:05.604Z] name: 'Conteúdos',
+[2026-08-19T17:36:05.604Z] color: '#00d13f',
+[2026-08-19T17:36:05.604Z] duration_minutes: 27,
+[2026-08-19T17:36:05.604Z] created_at: '2026-01-19T22:01:03.486292+00:00'
+[2026-08-19T17:36:05.604Z] }
+[2026-08-19T17:36:05.604Z] ]
+[2026-08-19T17:36:05.604Z] }
+[2026-08-19T17:36:05.604Z] [API /pomodoro/get-settings] Settings response: {
+[2026-08-19T17:36:05.604Z] data: {
+[2026-08-19T17:36:05.604Z] id: '6729871f-4efa-4304-a753-1f7dd1859400',
+[2026-08-19T17:36:05.604Z] user_id: '57fc7b0a-5ba0-42fb-ad0c-f15ee32c6df3',
+[2026-08-19T17:36:05.604Z] short_break_minutes: 5,
+[2026-08-19T17:36:05.604Z] long_break_minutes: 15,
+[2026-08-19T17:36:05.604Z] cycles_until_long_break: 4,
+[2026-08-19T17:36:05.604Z] updated_at: '2026-01-31T22:04:42.725+00:00'
+[2026-08-19T17:36:05.604Z] },
+[2026-08-19T17:36:05.604Z] error: undefined
+[2026-08-19T17:36:05.604Z] }
+[2026-08-19T17:36:05.604Z] [API /pomodoro/get-settings] Sessions response: { count: 19, error: undefined }
+[2026-08-19T17:36:05.604Z] [API /pomodoro/get-settings] Returning settings with 19 sessions
+[2026-08-19T17:36:05.610Z] GET /api/pomodoro/get-settings 200 in 570ms
+[2026-08-19T17:37:05.288Z] [API /pomodoro/get-settings] Starting request...
+[2026-08-19T17:37:05.467Z] [API /pomodoro/get-settings] User authenticated: 57fc7b0a-5ba0-42fb-ad0c-f15ee32c6df3
+[2026-08-19T17:37:05.624Z] [API /pomodoro/get-settings] Categories response: {
+[2026-08-19T17:37:05.625Z] count: 3,
+[2026-08-19T17:37:05.625Z] error: undefined,
+[2026-08-19T17:37:05.625Z] data: [
+[2026-08-19T17:37:05.625Z] {
+[2026-08-19T17:37:05.625Z] id: '67040b77-248a-420d-8be2-5c5eca65ca8f',
+[2026-08-19T17:37:05.625Z] user_id: '57fc7b0a-5ba0-42fb-ad0c-f15ee32c6df3',
+[2026-08-19T17:37:05.625Z] name: 'Produzindo',
+[2026-08-19T17:37:05.625Z] color: '#ff6600',
+[2026-08-19T17:37:05.625Z] duration_minutes: 57,
+[2026-08-19T17:37:05.625Z] created_at: '2026-01-19T22:01:03.082007+00:00'
+[2026-08-19T17:37:05.625Z] },
+[2026-08-19T17:37:05.625Z] {
+[2026-08-19T17:37:05.625Z] id: '5e6728b1-cde5-4c8b-a296-116604eadee0',
+[2026-08-19T17:37:05.625Z] user_id: '57fc7b0a-5ba0-42fb-ad0c-f15ee32c6df3',
+[2026-08-19T17:37:05.625Z] name: 'Estudando',
+[2026-08-19T17:37:05.625Z] color: '#002aff',
+[2026-08-19T17:37:05.625Z] duration_minutes: 30,
+[2026-08-19T17:37:05.625Z] created_at: '2026-01-19T22:01:03.284823+00:00'
+[2026-08-19T17:37:05.625Z] },
+[2026-08-19T17:37:05.625Z] {
+[2026-08-19T17:37:05.625Z] id: '4ec39e04-b451-4c7a-845d-571dc624e600',
+[2026-08-19T17:37:05.625Z] user_id: '57fc7b0a-5ba0-42fb-ad0c-f15ee32c6df3',
+[2026-08-19T17:37:05.625Z] name: 'Conteúdos',
+[2026-08-19T17:37:05.625Z] color: '#00d13f',
+[2026-08-19T17:37:05.625Z] duration_minutes: 27,
+[2026-08-19T17:37:05.625Z] created_at: '2026-01-19T22:01:03.486292+00:00'
+[2026-08-19T17:37:05.625Z] }
+[2026-08-19T17:37:05.625Z] ]
+[2026-08-19T17:37:05.625Z] }
+[2026-08-19T17:37:05.625Z] [API /pomodoro/get-settings] Settings response: {
+[2026-08-19T17:37:05.625Z] data: {
+[2026-08-19T17:37:05.625Z] id: '6729871f-4efa-4304-a753-1f7dd1859400',
+[2026-08-19T17:37:05.625Z] user_id: '57fc7b0a-5ba0-42fb-ad0c-f15ee32c6df3',
+[2026-08-19T17:37:05.625Z] short_break_minutes: 5,
+[2026-08-19T17:37:05.625Z] long_break_minutes: 15,
+[2026-08-19T17:37:05.625Z] cycles_until_long_break: 4,
+[2026-08-19T17:37:05.625Z] updated_at: '2026-01-31T22:04:42.725+00:00'
+[2026-08-19T17:37:05.625Z] },
+[2026-08-19T17:37:05.625Z] error: undefined
+[2026-08-19T17:37:05.625Z] }
+[2026-08-19T17:37:05.625Z] [API /pomodoro/get-settings] Sessions response: { count: 19, error: undefined }
+[2026-08-19T17:37:05.625Z] [API /pomodoro/get-settings] Returning settings with 19 sessions
+[2026-08-19T17:37:05.626Z] GET /api/pomodoro/get-settings 200 in 579ms
+[2026-08-19T17:37:29.426Z] [API /pomodoro/get-settings] Starting request...
+[2026-08-19T17:37:29.659Z] [API /pomodoro/get-settings] User authenticated: 57fc7b0a-5ba0-42fb-ad0c-f15ee32c6df3
+[2026-08-19T17:37:29.802Z] [API /pomodoro/get-settings] Categories response: {
+[2026-08-19T17:37:29.803Z] count: 3,
+[2026-08-19T17:37:29.803Z] error: undefined,
+[2026-08-19T17:37:29.803Z] data: [
+[2026-08-19T17:37:29.803Z] {
+[2026-08-19T17:37:29.803Z] id: '67040b77-248a-420d-8be2-5c5eca65ca8f',
+[2026-08-19T17:37:29.803Z] user_id: '57fc7b0a-5ba0-42fb-ad0c-f15ee32c6df3',
+[2026-08-19T17:37:29.803Z] name: 'Produzindo',
+[2026-08-19T17:37:29.803Z] color: '#ff6600',
+[2026-08-19T17:37:29.803Z] duration_minutes: 57,
+[2026-08-19T17:37:29.803Z] created_at: '2026-01-19T22:01:03.082007+00:00'
+[2026-08-19T17:37:29.803Z] },
+[2026-08-19T17:37:29.803Z] {
+[2026-08-19T17:37:29.803Z] id: '5e6728b1-cde5-4c8b-a296-116604eadee0',
+[2026-08-19T17:37:29.803Z] user_id: '57fc7b0a-5ba0-42fb-ad0c-f15ee32c6df3',
+[2026-08-19T17:37:29.803Z] name: 'Estudando',
+[2026-08-19T17:37:29.803Z] color: '#002aff',
+[2026-08-19T17:37:29.803Z] duration_minutes: 30,
+[2026-08-19T17:37:29.803Z] created_at: '2026-01-19T22:01:03.284823+00:00'
+[2026-08-19T17:37:29.803Z] },
+[2026-08-19T17:37:29.803Z] {
+[2026-08-19T17:37:29.803Z] id: '4ec39e04-b451-4c7a-845d-571dc624e600',
+[2026-08-19T17:37:29.803Z] user_id: '57fc7b0a-5ba0-42fb-ad0c-f15ee32c6df3',
+[2026-08-19T17:37:29.803Z] name: 'Conteúdos',
+[2026-08-19T17:37:29.803Z] color: '#00d13f',
+[2026-08-19T17:37:29.803Z] duration_minutes: 27,
+[2026-08-19T17:37:29.803Z] created_at: '2026-01-19T22:01:03.486292+00:00'
+[2026-08-19T17:37:29.803Z] }
+[2026-08-19T17:37:29.803Z] ]
+[2026-08-19T17:37:29.803Z] }
+[2026-08-19T17:37:29.803Z] [API /pomodoro/get-settings] Settings response: {
+[2026-08-19T17:37:29.803Z] data: {
+[2026-08-19T17:37:29.803Z] id: '6729871f-4efa-4304-a753-1f7dd1859400',
+[2026-08-19T17:37:29.803Z] user_id: '57fc7b0a-5ba0-42fb-ad0c-f15ee32c6df3',
+[2026-08-19T17:37:29.803Z] short_break_minutes: 5,
+[2026-08-19T17:37:29.803Z] long_break_minutes: 15,
+[2026-08-19T17:37:29.803Z] cycles_until_long_break: 4,
+[2026-08-19T17:37:29.803Z] updated_at: '2026-01-31T22:04:42.725+00:00'
+[2026-08-19T17:37:29.803Z] },
+[2026-08-19T17:37:29.803Z] error: undefined
+[2026-08-19T17:37:29.803Z] }
+[2026-08-19T17:37:29.803Z] [API /pomodoro/get-settings] Sessions response: { count: 19, error: undefined }
+[2026-08-19T17:37:29.803Z] [API /pomodoro/get-settings] Returning settings with 19 sessions
+[2026-08-19T17:37:29.804Z] GET /api/pomodoro/get-settings 200 in 613ms
+[2026-08-19T17:38:30.236Z] [API /pomodoro/get-settings] Starting request...
+[2026-08-19T17:38:30.418Z] [API /pomodoro/get-settings] User authenticated: 57fc7b0a-5ba0-42fb-ad0c-f15ee32c6df3
+[2026-08-19T17:38:30.572Z] [API /pomodoro/get-settings] Categories response: {
+[2026-08-19T17:38:30.572Z] count: 3,
+[2026-08-19T17:38:30.572Z] error: undefined,
+[2026-08-19T17:38:30.572Z] data: [
+[2026-08-19T17:38:30.572Z] {
+[2026-08-19T17:38:30.572Z] id: '67040b77-248a-420d-8be2-5c5eca65ca8f',
+[2026-08-19T17:38:30.572Z] user_id: '57fc7b0a-5ba0-42fb-ad0c-f15ee32c6df3',
+[2026-08-19T17:38:30.572Z] name: 'Produzindo',
+[2026-08-19T17:38:30.572Z] color: '#ff6600',
+[2026-08-19T17:38:30.572Z] duration_minutes: 57,
+[2026-08-19T17:38:30.572Z] created_at: '2026-01-19T22:01:03.082007+00:00'
+[2026-08-19T17:38:30.572Z] },
+[2026-08-19T17:38:30.572Z] {
+[2026-08-19T17:38:30.572Z] id: '5e6728b1-cde5-4c8b-a296-116604eadee0',
+[2026-08-19T17:38:30.572Z] user_id: '57fc7b0a-5ba0-42fb-ad0c-f15ee32c6df3',
+[2026-08-19T17:38:30.572Z] name: 'Estudando',
+[2026-08-19T17:38:30.572Z] color: '#002aff',
+[2026-08-19T17:38:30.572Z] duration_minutes: 30,
+[2026-08-19T17:38:30.572Z] created_at: '2026-01-19T22:01:03.284823+00:00'
+[2026-08-19T17:38:30.572Z] },
+[2026-08-19T17:38:30.572Z] {
+[2026-08-19T17:38:30.572Z] id: '4ec39e04-b451-4c7a-845d-571dc624e600',
+[2026-08-19T17:38:30.573Z] user_id: '57fc7b0a-5ba0-42fb-ad0c-f15ee32c6df3',
+[2026-08-19T17:38:30.573Z] name: 'Conteúdos',
+[2026-08-19T17:38:30.573Z] color: '#00d13f',
+[2026-08-19T17:38:30.573Z] duration_minutes: 27,
+[2026-08-19T17:38:30.573Z] created_at: '2026-01-19T22:01:03.486292+00:00'
+[2026-08-19T17:38:30.573Z] }
+[2026-08-19T17:38:30.573Z] ]
+[2026-08-19T17:38:30.573Z] }
+[2026-08-19T17:38:30.573Z] [API /pomodoro/get-settings] Settings response: {
+[2026-08-19T17:38:30.573Z] data: {
+[2026-08-19T17:38:30.573Z] id: '6729871f-4efa-4304-a753-1f7dd1859400',
+[2026-08-19T17:38:30.573Z] user_id: '57fc7b0a-5ba0-42fb-ad0c-f15ee32c6df3',
+[2026-08-19T17:38:30.573Z] short_break_minutes: 5,
+[2026-08-19T17:38:30.573Z] long_break_minutes: 15,
+[2026-08-19T17:38:30.573Z] cycles_until_long_break: 4,
+[2026-08-19T17:38:30.573Z] updated_at: '2026-01-31T22:04:42.725+00:00'
+[2026-08-19T17:38:30.573Z] },
+[2026-08-19T17:38:30.573Z] error: undefined
+[2026-08-19T17:38:30.573Z] }
+[2026-08-19T17:38:30.573Z] [API /pomodoro/get-settings] Sessions response: { count: 19, error: undefined }
+[2026-08-19T17:38:30.573Z] [API /pomodoro/get-settings] Returning settings with 19 sessions
+[2026-08-19T17:38:30.574Z] GET /api/pomodoro/get-settings 200 in 577ms
+[2026-08-19T17:39:30.240Z] [API /pomodoro/get-settings] Starting request...
+[2026-08-19T17:39:30.434Z] [API /pomodoro/get-settings] User authenticated: 57fc7b0a-5ba0-42fb-ad0c-f15ee32c6df3
+[2026-08-19T17:39:30.610Z] [API /pomodoro/get-settings] Categories response: {
+[2026-08-19T17:39:30.610Z] count: 3,
+[2026-08-19T17:39:30.610Z] error: undefined,
+[2026-08-19T17:39:30.610Z] data: [
+[2026-08-19T17:39:30.610Z] {
+[2026-08-19T17:39:30.610Z] id: '67040b77-248a-420d-8be2-5c5eca65ca8f',
+[2026-08-19T17:39:30.610Z] user_id: '57fc7b0a-5ba0-42fb-ad0c-f15ee32c6df3',
+[2026-08-19T17:39:30.610Z] name: 'Produzindo',
+[2026-08-19T17:39:30.610Z] color: '#ff6600',
+[2026-08-19T17:39:30.610Z] duration_minutes: 57,
+[2026-08-19T17:39:30.610Z] created_at: '2026-01-19T22:01:03.082007+00:00'
+[2026-08-19T17:39:30.610Z] },
+[2026-08-19T17:39:30.610Z] {
+[2026-08-19T17:39:30.610Z] id: '5e6728b1-cde5-4c8b-a296-116604eadee0',
+[2026-08-19T17:39:30.610Z] user_id: '57fc7b0a-5ba0-42fb-ad0c-f15ee32c6df3',
+[2026-08-19T17:39:30.610Z] name: 'Estudando',
+[2026-08-19T17:39:30.610Z] color: '#002aff',
+[2026-08-19T17:39:30.610Z] duration_minutes: 30,
+[2026-08-19T17:39:30.610Z] created_at: '2026-01-19T22:01:03.284823+00:00'
+[2026-08-19T17:39:30.610Z] },
+[2026-08-19T17:39:30.610Z] {
+[2026-08-19T17:39:30.610Z] id: '4ec39e04-b451-4c7a-845d-571dc624e600',
+[2026-08-19T17:39:30.610Z] user_id: '57fc7b0a-5ba0-42fb-ad0c-f15ee32c6df3',
+[2026-08-19T17:39:30.610Z] name: 'Conteúdos',
+[2026-08-19T17:39:30.610Z] color: '#00d13f',
+[2026-08-19T17:39:30.610Z] duration_minutes: 27,
+[2026-08-19T17:39:30.610Z] created_at: '2026-01-19T22:01:03.486292+00:00'
+[2026-08-19T17:39:30.610Z] }
+[2026-08-19T17:39:30.611Z] ]
+[2026-08-19T17:39:30.611Z] }
+[2026-08-19T17:39:30.611Z] [API /pomodoro/get-settings] Settings response: {
+[2026-08-19T17:39:30.611Z] data: {
+[2026-08-19T17:39:30.611Z] id: '6729871f-4efa-4304-a753-1f7dd1859400',
+[2026-08-19T17:39:30.611Z] user_id: '57fc7b0a-5ba0-42fb-ad0c-f15ee32c6df3',
+[2026-08-19T17:39:30.611Z] short_break_minutes: 5,
+[2026-08-19T17:39:30.611Z] long_break_minutes: 15,
+[2026-08-19T17:39:30.611Z] cycles_until_long_break: 4,
+[2026-08-19T17:39:30.611Z] updated_at: '2026-01-31T22:04:42.725+00:00'
+[2026-08-19T17:39:30.611Z] },
+[2026-08-19T17:39:30.611Z] error: undefined
+[2026-08-19T17:39:30.611Z] }
+[2026-08-19T17:39:30.611Z] [API /pomodoro/get-settings] Sessions response: { count: 19, error: undefined }
+[2026-08-19T17:39:30.611Z] [API /pomodoro/get-settings] Returning settings with 19 sessions
+[2026-08-19T17:39:30.612Z] GET /api/pomodoro/get-settings 200 in 616ms
+[2026-08-19T17:40:30.246Z] [API /pomodoro/get-settings] Starting request...
+[2026-08-19T17:40:30.406Z] [API /pomodoro/get-settings] User authenticated: 57fc7b0a-5ba0-42fb-ad0c-f15ee32c6df3
+[2026-08-19T17:40:30.572Z] [API /pomodoro/get-settings] Categories response: {
+[2026-08-19T17:40:30.572Z] count: 3,
+[2026-08-19T17:40:30.572Z] error: undefined,
+[2026-08-19T17:40:30.572Z] data: [
+[2026-08-19T17:40:30.572Z] {
+[2026-08-19T17:40:30.572Z] id: '67040b77-248a-420d-8be2-5c5eca65ca8f',
+[2026-08-19T17:40:30.572Z] user_id: '57fc7b0a-5ba0-42fb-ad0c-f15ee32c6df3',
+[2026-08-19T17:40:30.572Z] name: 'Produzindo',
+[2026-08-19T17:40:30.572Z] color: '#ff6600',
+[2026-08-19T17:40:30.572Z] duration_minutes: 57,
+[2026-08-19T17:40:30.572Z] created_at: '2026-01-19T22:01:03.082007+00:00'
+[2026-08-19T17:40:30.572Z] },
+[2026-08-19T17:40:30.572Z] {
+[2026-08-19T17:40:30.572Z] id: '5e6728b1-cde5-4c8b-a296-116604eadee0',
+[2026-08-19T17:40:30.572Z] user_id: '57fc7b0a-5ba0-42fb-ad0c-f15ee32c6df3',
+[2026-08-19T17:40:30.572Z] name: 'Estudando',
+[2026-08-19T17:40:30.572Z] color: '#002aff',
+[2026-08-19T17:40:30.572Z] duration_minutes: 30,
+[2026-08-19T17:40:30.572Z] created_at: '2026-01-19T22:01:03.284823+00:00'
+[2026-08-19T17:40:30.572Z] },
+[2026-08-19T17:40:30.572Z] {
+[2026-08-19T17:40:30.572Z] id: '4ec39e04-b451-4c7a-845d-571dc624e600',
+[2026-08-19T17:40:30.572Z] user_id: '57fc7b0a-5ba0-42fb-ad0c-f15ee32c6df3',
+[2026-08-19T17:40:30.572Z] name: 'Conteúdos',
+[2026-08-19T17:40:30.572Z] color: '#00d13f',
+[2026-08-19T17:40:30.572Z] duration_minutes: 27,
+[2026-08-19T17:40:30.572Z] created_at: '2026-01-19T22:01:03.486292+00:00'
+[2026-08-19T17:40:30.572Z] }
+[2026-08-19T17:40:30.572Z] ]
+[2026-08-19T17:40:30.572Z] }
+[2026-08-19T17:40:30.572Z] [API /pomodoro/get-settings] Settings response: {
+[2026-08-19T17:40:30.572Z] data: {
+[2026-08-19T17:40:30.572Z] id: '6729871f-4efa-4304-a753-1f7dd1859400',
+[2026-08-19T17:40:30.572Z] user_id: '57fc7b0a-5ba0-42fb-ad0c-f15ee32c6df3',
+[2026-08-19T17:40:30.572Z] short_break_minutes: 5,
+[2026-08-19T17:40:30.572Z] long_break_minutes: 15,
+[2026-08-19T17:40:30.572Z] cycles_until_long_break: 4,
+[2026-08-19T17:40:30.572Z] updated_at: '2026-01-31T22:04:42.725+00:00'
+[2026-08-19T17:40:30.572Z] },
+[2026-08-19T17:40:30.572Z] error: undefined
+[2026-08-19T17:40:30.572Z] }
+[2026-08-19T17:40:30.572Z] [API /pomodoro/get-settings] Sessions response: { count: 19, error: undefined }
+[2026-08-19T17:40:30.572Z] [API /pomodoro/get-settings] Returning settings with 19 sessions
+[2026-08-19T17:40:30.573Z] GET /api/pomodoro/get-settings 200 in 580ms
+[2026-08-19T17:41:30.238Z] [API /pomodoro/get-settings] Starting request...
+[2026-08-19T17:41:30.425Z] [API /pomodoro/get-settings] User authenticated: 57fc7b0a-5ba0-42fb-ad0c-f15ee32c6df3
+[2026-08-19T17:41:30.592Z] [API /pomodoro/get-settings] Categories response: {
+[2026-08-19T17:41:30.592Z] count: 3,
+[2026-08-19T17:41:30.592Z] error: undefined,
+[2026-08-19T17:41:30.592Z] data: [
+[2026-08-19T17:41:30.592Z] {
+[2026-08-19T17:41:30.592Z] id: '67040b77-248a-420d-8be2-5c5eca65ca8f',
+[2026-08-19T17:41:30.592Z] user_id: '57fc7b0a-5ba0-42fb-ad0c-f15ee32c6df3',
+[2026-08-19T17:41:30.592Z] name: 'Produzindo',
+[2026-08-19T17:41:30.592Z] color: '#ff6600',
+[2026-08-19T17:41:30.592Z] duration_minutes: 57,
+[2026-08-19T17:41:30.592Z] created_at: '2026-01-19T22:01:03.082007+00:00'
+[2026-08-19T17:41:30.592Z] },
+[2026-08-19T17:41:30.592Z] {
+[2026-08-19T17:41:30.592Z] id: '5e6728b1-cde5-4c8b-a296-116604eadee0',
+[2026-08-19T17:41:30.592Z] user_id: '57fc7b0a-5ba0-42fb-ad0c-f15ee32c6df3',
+[2026-08-19T17:41:30.592Z] name: 'Estudando',
+[2026-08-19T17:41:30.592Z] color: '#002aff',
+[2026-08-19T17:41:30.592Z] duration_minutes: 30,
+[2026-08-19T17:41:30.592Z] created_at: '2026-01-19T22:01:03.284823+00:00'
+[2026-08-19T17:41:30.592Z] },
+[2026-08-19T17:41:30.592Z] {
+[2026-08-19T17:41:30.592Z] id: '4ec39e04-b451-4c7a-845d-571dc624e600',
+[2026-08-19T17:41:30.592Z] user_id: '57fc7b0a-5ba0-42fb-ad0c-f15ee32c6df3',
+[2026-08-19T17:41:30.592Z] name: 'Conteúdos',
+[2026-08-19T17:41:30.592Z] color: '#00d13f',
+[2026-08-19T17:41:30.592Z] duration_minutes: 27,
+[2026-08-19T17:41:30.592Z] created_at: '2026-01-19T22:01:03.486292+00:00'
+[2026-08-19T17:41:30.592Z] }
+[2026-08-19T17:41:30.592Z] ]
+[2026-08-19T17:41:30.592Z] }
+[2026-08-19T17:41:30.592Z] [API /pomodoro/get-settings] Settings response: {
+[2026-08-19T17:41:30.592Z] data: {
+[2026-08-19T17:41:30.592Z] id: '6729871f-4efa-4304-a753-1f7dd1859400',
+[2026-08-19T17:41:30.592Z] user_id: '57fc7b0a-5ba0-42fb-ad0c-f15ee32c6df3',
+[2026-08-19T17:41:30.592Z] short_break_minutes: 5,
+[2026-08-19T17:41:30.592Z] long_break_minutes: 15,
+[2026-08-19T17:41:30.592Z] cycles_until_long_break: 4,
+[2026-08-19T17:41:30.592Z] updated_at: '2026-01-31T22:04:42.725+00:00'
+[2026-08-19T17:41:30.592Z] },
+[2026-08-19T17:41:30.592Z] error: undefined
+[2026-08-19T17:41:30.592Z] }
+[2026-08-19T17:41:30.592Z] [API /pomodoro/get-settings] Sessions response: { count: 19, error: undefined }
+[2026-08-19T17:41:30.593Z] [API /pomodoro/get-settings] Returning settings with 19 sessions
+[2026-08-19T17:41:30.594Z] GET /api/pomodoro/get-settings 200 in 598ms
+[2026-08-19T17:42:30.281Z] [API /pomodoro/get-settings] Starting request...
+[2026-08-19T17:42:30.438Z] [API /pomodoro/get-settings] User authenticated: 57fc7b0a-5ba0-42fb-ad0c-f15ee32c6df3
+[2026-08-19T17:42:30.612Z] [API /pomodoro/get-settings] Categories response: {
+[2026-08-19T17:42:30.612Z] count: 3,
+[2026-08-19T17:42:30.612Z] error: undefined,
+[2026-08-19T17:42:30.612Z] data: [
+[2026-08-19T17:42:30.612Z] {
+[2026-08-19T17:42:30.612Z] id: '67040b77-248a-420d-8be2-5c5eca65ca8f',
+[2026-08-19T17:42:30.612Z] user_id: '57fc7b0a-5ba0-42fb-ad0c-f15ee32c6df3',
+[2026-08-19T17:42:30.612Z] name: 'Produzindo',
+[2026-08-19T17:42:30.612Z] color: '#ff6600',
+[2026-08-19T17:42:30.612Z] duration_minutes: 57,
+[2026-08-19T17:42:30.612Z] created_at: '2026-01-19T22:01:03.082007+00:00'
+[2026-08-19T17:42:30.612Z] },
+[2026-08-19T17:42:30.612Z] {
+[2026-08-19T17:42:30.612Z] id: '5e6728b1-cde5-4c8b-a296-116604eadee0',
+[2026-08-19T17:42:30.612Z] user_id: '57fc7b0a-5ba0-42fb-ad0c-f15ee32c6df3',
+[2026-08-19T17:42:30.612Z] name: 'Estudando',
+[2026-08-19T17:42:30.612Z] color: '#002aff',
+[2026-08-19T17:42:30.612Z] duration_minutes: 30,
+[2026-08-19T17:42:30.612Z] created_at: '2026-01-19T22:01:03.284823+00:00'
+[2026-08-19T17:42:30.612Z] },
+[2026-08-19T17:42:30.612Z] {
+[2026-08-19T17:42:30.612Z] id: '4ec39e04-b451-4c7a-845d-571dc624e600',
+[2026-08-19T17:42:30.612Z] user_id: '57fc7b0a-5ba0-42fb-ad0c-f15ee32c6df3',
+[2026-08-19T17:42:30.612Z] name: 'Conteúdos',
+[2026-08-19T17:42:30.612Z] color: '#00d13f',
+[2026-08-19T17:42:30.612Z] duration_minutes: 27,
+[2026-08-19T17:42:30.612Z] created_at: '2026-01-19T22:01:03.486292+00:00'
+[2026-08-19T17:42:30.612Z] }
+[2026-08-19T17:42:30.612Z] ]
+[2026-08-19T17:42:30.612Z] }
+[2026-08-19T17:42:30.612Z] [API /pomodoro/get-settings] Settings response: {
+[2026-08-19T17:42:30.612Z] data: {
+[2026-08-19T17:42:30.612Z] id: '6729871f-4efa-4304-a753-1f7dd1859400',
+[2026-08-19T17:42:30.612Z] user_id: '57fc7b0a-5ba0-42fb-ad0c-f15ee32c6df3',
+[2026-08-19T17:42:30.612Z] short_break_minutes: 5,
+[2026-08-19T17:42:30.612Z] long_break_minutes: 15,
+[2026-08-19T17:42:30.612Z] cycles_until_long_break: 4,
+[2026-08-19T17:42:30.612Z] updated_at: '2026-01-31T22:04:42.725+00:00'
+[2026-08-19T17:42:30.612Z] },
+[2026-08-19T17:42:30.612Z] error: undefined
+[2026-08-19T17:42:30.612Z] }
+[2026-08-19T17:42:30.612Z] [API /pomodoro/get-settings] Sessions response: { count: 19, error: undefined }
+[2026-08-19T17:42:30.612Z] [API /pomodoro/get-settings] Returning settings with 19 sessions
+[2026-08-19T17:42:30.613Z] GET /api/pomodoro/get-settings 200 in 574ms
+[2026-08-19T17:43:30.265Z] [API /pomodoro/get-settings] Starting request...
+[2026-08-19T17:43:30.637Z] [API /pomodoro/get-settings] User authenticated: 57fc7b0a-5ba0-42fb-ad0c-f15ee32c6df3
+[2026-08-19T17:43:30.949Z] [API /pomodoro/get-settings] Categories response: {
+[2026-08-19T17:43:30.949Z] count: 3,
+[2026-08-19T17:43:30.949Z] error: undefined,
+[2026-08-19T17:43:30.949Z] data: [
+[2026-08-19T17:43:30.949Z] {
+[2026-08-19T17:43:30.949Z] id: '67040b77-248a-420d-8be2-5c5eca65ca8f',
+[2026-08-19T17:43:30.949Z] user_id: '57fc7b0a-5ba0-42fb-ad0c-f15ee32c6df3',
+[2026-08-19T17:43:30.949Z] name: 'Produzindo',
+[2026-08-19T17:43:30.949Z] color: '#ff6600',
+[2026-08-19T17:43:30.949Z] duration_minutes: 57,
+[2026-08-19T17:43:30.949Z] created_at: '2026-01-19T22:01:03.082007+00:00'
+[2026-08-19T17:43:30.949Z] },
+[2026-08-19T17:43:30.949Z] {
+[2026-08-19T17:43:30.949Z] id: '5e6728b1-cde5-4c8b-a296-116604eadee0',
+[2026-08-19T17:43:30.949Z] user_id: '57fc7b0a-5ba0-42fb-ad0c-f15ee32c6df3',
+[2026-08-19T17:43:30.949Z] name: 'Estudando',
+[2026-08-19T17:43:30.949Z] color: '#002aff',
+[2026-08-19T17:43:30.949Z] duration_minutes: 30,
+[2026-08-19T17:43:30.949Z] created_at: '2026-01-19T22:01:03.284823+00:00'
+[2026-08-19T17:43:30.949Z] },
+[2026-08-19T17:43:30.949Z] {
+[2026-08-19T17:43:30.949Z] id: '4ec39e04-b451-4c7a-845d-571dc624e600',
+[2026-08-19T17:43:30.949Z] user_id: '57fc7b0a-5ba0-42fb-ad0c-f15ee32c6df3',
+[2026-08-19T17:43:30.949Z] name: 'Conteúdos',
+[2026-08-19T17:43:30.949Z] color: '#00d13f',
+[2026-08-19T17:43:30.949Z] duration_minutes: 27,
+[2026-08-19T17:43:30.949Z] created_at: '2026-01-19T22:01:03.486292+00:00'
+[2026-08-19T17:43:30.949Z] }
+[2026-08-19T17:43:30.949Z] ]
+[2026-08-19T17:43:30.949Z] }
+[2026-08-19T17:43:30.949Z] [API /pomodoro/get-settings] Settings response: {
+[2026-08-19T17:43:30.949Z] data: {
+[2026-08-19T17:43:30.949Z] id: '6729871f-4efa-4304-a753-1f7dd1859400',
+[2026-08-19T17:43:30.949Z] user_id: '57fc7b0a-5ba0-42fb-ad0c-f15ee32c6df3',
+[2026-08-19T17:43:30.949Z] short_break_minutes: 5,
+[2026-08-19T17:43:30.949Z] long_break_minutes: 15,
+[2026-08-19T17:43:30.949Z] cycles_until_long_break: 4,
+[2026-08-19T17:43:30.949Z] updated_at: '2026-01-31T22:04:42.725+00:00'
+[2026-08-19T17:43:30.949Z] },
+[2026-08-19T17:43:30.949Z] error: undefined
+[2026-08-19T17:43:30.949Z] }
+[2026-08-19T17:43:30.949Z] [API /pomodoro/get-settings] Sessions response: { count: 19, error: undefined }
+[2026-08-19T17:43:30.949Z] [API /pomodoro/get-settings] Returning settings with 19 sessions
+[2026-08-19T17:43:30.950Z] GET /api/pomodoro/get-settings 200 in 954ms
+[2026-08-19T17:44:45.806Z] [API /pomodoro/get-settings] Starting request...
+[2026-08-19T17:44:45.984Z] [API /pomodoro/get-settings] User authenticated: 57fc7b0a-5ba0-42fb-ad0c-f15ee32c6df3
+[2026-08-19T17:44:46.237Z] [API /pomodoro/get-settings] Categories response: {
+[2026-08-19T17:44:46.237Z] count: 3,
+[2026-08-19T17:44:46.237Z] error: undefined,
+[2026-08-19T17:44:46.237Z] data: [
+[2026-08-19T17:44:46.237Z] {
+[2026-08-19T17:44:46.237Z] id: '67040b77-248a-420d-8be2-5c5eca65ca8f',
+[2026-08-19T17:44:46.237Z] user_id: '57fc7b0a-5ba0-42fb-ad0c-f15ee32c6df3',
+[2026-08-19T17:44:46.237Z] name: 'Produzindo',
+[2026-08-19T17:44:46.237Z] color: '#ff6600',
+[2026-08-19T17:44:46.237Z] duration_minutes: 57,
+[2026-08-19T17:44:46.237Z] created_at: '2026-01-19T22:01:03.082007+00:00'
+[2026-08-19T17:44:46.237Z] },
+[2026-08-19T17:44:46.237Z] {
+[2026-08-19T17:44:46.237Z] id: '5e6728b1-cde5-4c8b-a296-116604eadee0',
+[2026-08-19T17:44:46.237Z] user_id: '57fc7b0a-5ba0-42fb-ad0c-f15ee32c6df3',
+[2026-08-19T17:44:46.237Z] name: 'Estudando',
+[2026-08-19T17:44:46.237Z] color: '#002aff',
+[2026-08-19T17:44:46.237Z] duration_minutes: 30,
+[2026-08-19T17:44:46.237Z] created_at: '2026-01-19T22:01:03.284823+00:00'
+[2026-08-19T17:44:46.237Z] },
+[2026-08-19T17:44:46.237Z] {
+[2026-08-19T17:44:46.237Z] id: '4ec39e04-b451-4c7a-845d-571dc624e600',
+[2026-08-19T17:44:46.237Z] user_id: '57fc7b0a-5ba0-42fb-ad0c-f15ee32c6df3',
+[2026-08-19T17:44:46.237Z] name: 'Conteúdos',
+[2026-08-19T17:44:46.237Z] color: '#00d13f',
+[2026-08-19T17:44:46.237Z] duration_minutes: 27,
+[2026-08-19T17:44:46.237Z] created_at: '2026-01-19T22:01:03.486292+00:00'
+[2026-08-19T17:44:46.237Z] }
+[2026-08-19T17:44:46.237Z] ]
+[2026-08-19T17:44:46.237Z] }
+[2026-08-19T17:44:46.237Z] [API /pomodoro/get-settings] Settings response: {
+[2026-08-19T17:44:46.237Z] data: {
+[2026-08-19T17:44:46.237Z] id: '6729871f-4efa-4304-a753-1f7dd1859400',
+[2026-08-19T17:44:46.237Z] user_id: '57fc7b0a-5ba0-42fb-ad0c-f15ee32c6df3',
+[2026-08-19T17:44:46.238Z] short_break_minutes: 5,
+[2026-08-19T17:44:46.238Z] long_break_minutes: 15,
+[2026-08-19T17:44:46.238Z] cycles_until_long_break: 4,
+[2026-08-19T17:44:46.238Z] updated_at: '2026-01-31T22:04:42.725+00:00'
+[2026-08-19T17:44:46.238Z] },
+[2026-08-19T17:44:46.238Z] error: undefined
+[2026-08-19T17:44:46.238Z] }
+[2026-08-19T17:44:46.238Z] [API /pomodoro/get-settings] Sessions response: { count: 19, error: undefined }
+[2026-08-19T17:44:46.238Z] [API /pomodoro/get-settings] Returning settings with 19 sessions
+[2026-08-19T17:44:46.239Z] GET /api/pomodoro/get-settings 200 in 673ms
+[2026-08-19T17:45:46.246Z] [API /pomodoro/get-settings] Starting request...
+[2026-08-19T17:45:46.437Z] [API /pomodoro/get-settings] User authenticated: 57fc7b0a-5ba0-42fb-ad0c-f15ee32c6df3
+[2026-08-19T17:45:46.693Z] [API /pomodoro/get-settings] Categories response: {
+[2026-08-19T17:45:46.694Z] count: 3,
+[2026-08-19T17:45:46.694Z] error: undefined,
+[2026-08-19T17:45:46.694Z] data: [
+[2026-08-19T17:45:46.694Z] {
+[2026-08-19T17:45:46.694Z] id: '67040b77-248a-420d-8be2-5c5eca65ca8f',
+[2026-08-19T17:45:46.694Z] user_id: '57fc7b0a-5ba0-42fb-ad0c-f15ee32c6df3',
+[2026-08-19T17:45:46.694Z] name: 'Produzindo',
+[2026-08-19T17:45:46.694Z] color: '#ff6600',
+[2026-08-19T17:45:46.694Z] duration_minutes: 57,
+[2026-08-19T17:45:46.694Z] created_at: '2026-01-19T22:01:03.082007+00:00'
+[2026-08-19T17:45:46.694Z] },
+[2026-08-19T17:45:46.694Z] {
+[2026-08-19T17:45:46.694Z] id: '5e6728b1-cde5-4c8b-a296-116604eadee0',
+[2026-08-19T17:45:46.694Z] user_id: '57fc7b0a-5ba0-42fb-ad0c-f15ee32c6df3',
+[2026-08-19T17:45:46.694Z] name: 'Estudando',
+[2026-08-19T17:45:46.694Z] color: '#002aff',
+[2026-08-19T17:45:46.694Z] duration_minutes: 30,
+[2026-08-19T17:45:46.694Z] created_at: '2026-01-19T22:01:03.284823+00:00'
+[2026-08-19T17:45:46.694Z] },
+[2026-08-19T17:45:46.694Z] {
+[2026-08-19T17:45:46.694Z] id: '4ec39e04-b451-4c7a-845d-571dc624e600',
+[2026-08-19T17:45:46.694Z] user_id: '57fc7b0a-5ba0-42fb-ad0c-f15ee32c6df3',
+[2026-08-19T17:45:46.694Z] name: 'Conteúdos',
+[2026-08-19T17:45:46.694Z] color: '#00d13f',
+[2026-08-19T17:45:46.694Z] duration_minutes: 27,
+[2026-08-19T17:45:46.694Z] created_at: '2026-01-19T22:01:03.486292+00:00'
+[2026-08-19T17:45:46.694Z] }
+[2026-08-19T17:45:46.694Z] ]
+[2026-08-19T17:45:46.694Z] }
+[2026-08-19T17:45:46.694Z] [API /pomodoro/get-settings] Settings response: {
+[2026-08-19T17:45:46.694Z] data: {
+[2026-08-19T17:45:46.694Z] id: '6729871f-4efa-4304-a753-1f7dd1859400',
+[2026-08-19T17:45:46.694Z] user_id: '57fc7b0a-5ba0-42fb-ad0c-f15ee32c6df3',
+[2026-08-19T17:45:46.694Z] short_break_minutes: 5,
+[2026-08-19T17:45:46.694Z] long_break_minutes: 15,
+[2026-08-19T17:45:46.694Z] cycles_until_long_break: 4,
+[2026-08-19T17:45:46.694Z] updated_at: '2026-01-31T22:04:42.725+00:00'
+[2026-08-19T17:45:46.694Z] },
+[2026-08-19T17:45:46.694Z] error: undefined
+[2026-08-19T17:45:46.694Z] }
+[2026-08-19T17:45:46.694Z] [API /pomodoro/get-settings] Sessions response: { count: 19, error: undefined }
+[2026-08-19T17:45:46.694Z] [API /pomodoro/get-settings] Returning settings with 19 sessions
+[2026-08-19T17:45:46.695Z] GET /api/pomodoro/get-settings 200 in 689ms
+[2026-08-19T17:46:46.239Z] [API /pomodoro/get-settings] Starting request...
+[2026-08-19T17:46:46.487Z] [API /pomodoro/get-settings] User authenticated: 57fc7b0a-5ba0-42fb-ad0c-f15ee32c6df3
+[2026-08-19T17:46:46.668Z] [API /pomodoro/get-settings] Categories response: {
+[2026-08-19T17:46:46.668Z] count: 3,
+[2026-08-19T17:46:46.668Z] error: undefined,
+[2026-08-19T17:46:46.668Z] data: [
+[2026-08-19T17:46:46.668Z] {
+[2026-08-19T17:46:46.668Z] id: '67040b77-248a-420d-8be2-5c5eca65ca8f',
+[2026-08-19T17:46:46.668Z] user_id: '57fc7b0a-5ba0-42fb-ad0c-f15ee32c6df3',
+[2026-08-19T17:46:46.668Z] name: 'Produzindo',
+[2026-08-19T17:46:46.668Z] color: '#ff6600',
+[2026-08-19T17:46:46.668Z] duration_minutes: 57,
+[2026-08-19T17:46:46.668Z] created_at: '2026-01-19T22:01:03.082007+00:00'
+[2026-08-19T17:46:46.668Z] },
+[2026-08-19T17:46:46.668Z] {
+[2026-08-19T17:46:46.668Z] id: '5e6728b1-cde5-4c8b-a296-116604eadee0',
+[2026-08-19T17:46:46.668Z] user_id: '57fc7b0a-5ba0-42fb-ad0c-f15ee32c6df3',
+[2026-08-19T17:46:46.668Z] name: 'Estudando',
+[2026-08-19T17:46:46.668Z] color: '#002aff',
+[2026-08-19T17:46:46.668Z] duration_minutes: 30,
+[2026-08-19T17:46:46.668Z] created_at: '2026-01-19T22:01:03.284823+00:00'
+[2026-08-19T17:46:46.668Z] },
+[2026-08-19T17:46:46.668Z] {
+[2026-08-19T17:46:46.668Z] id: '4ec39e04-b451-4c7a-845d-571dc624e600',
+[2026-08-19T17:46:46.668Z] user_id: '57fc7b0a-5ba0-42fb-ad0c-f15ee32c6df3',
+[2026-08-19T17:46:46.668Z] name: 'Conteúdos',
+[2026-08-19T17:46:46.668Z] color: '#00d13f',
+[2026-08-19T17:46:46.668Z] duration_minutes: 27,
+[2026-08-19T17:46:46.668Z] created_at: '2026-01-19T22:01:03.486292+00:00'
+[2026-08-19T17:46:46.668Z] }
+[2026-08-19T17:46:46.668Z] ]
+[2026-08-19T17:46:46.668Z] }
+[2026-08-19T17:46:46.668Z] [API /pomodoro/get-settings] Settings response: {
+[2026-08-19T17:46:46.668Z] data: {
+[2026-08-19T17:46:46.668Z] id: '6729871f-4efa-4304-a753-1f7dd1859400',
+[2026-08-19T17:46:46.668Z] user_id: '57fc7b0a-5ba0-42fb-ad0c-f15ee32c6df3',
+[2026-08-19T17:46:46.668Z] short_break_minutes: 5,
+[2026-08-19T17:46:46.668Z] long_break_minutes: 15,
+[2026-08-19T17:46:46.668Z] cycles_until_long_break: 4,
+[2026-08-19T17:46:46.668Z] updated_at: '2026-01-31T22:04:42.725+00:00'
+[2026-08-19T17:46:46.668Z] },
+[2026-08-19T17:46:46.668Z] error: undefined
+[2026-08-19T17:46:46.668Z] }
+[2026-08-19T17:46:46.668Z] [API /pomodoro/get-settings] Sessions response: { count: 19, error: undefined }
+[2026-08-19T17:46:46.668Z] [API /pomodoro/get-settings] Returning settings with 19 sessions
+[2026-08-19T17:46:46.669Z] GET /api/pomodoro/get-settings 200 in 668ms
+[2026-08-19T17:47:46.290Z] [API /pomodoro/get-settings] Starting request...
+[2026-08-19T17:47:46.465Z] [API /pomodoro/get-settings] User authenticated: 57fc7b0a-5ba0-42fb-ad0c-f15ee32c6df3
+[2026-08-19T17:47:46.654Z] [API /pomodoro/get-settings] Categories response: {
+[2026-08-19T17:47:46.654Z] count: 3,
+[2026-08-19T17:47:46.654Z] error: undefined,
+[2026-08-19T17:47:46.654Z] data: [
+[2026-08-19T17:47:46.654Z] {
+[2026-08-19T17:47:46.654Z] id: '67040b77-248a-420d-8be2-5c5eca65ca8f',
+[2026-08-19T17:47:46.654Z] user_id: '57fc7b0a-5ba0-42fb-ad0c-f15ee32c6df3',
+[2026-08-19T17:47:46.654Z] name: 'Produzindo',
+[2026-08-19T17:47:46.654Z] color: '#ff6600',
+[2026-08-19T17:47:46.654Z] duration_minutes: 57,
+[2026-08-19T17:47:46.654Z] created_at: '2026-01-19T22:01:03.082007+00:00'
+[2026-08-19T17:47:46.654Z] },
+[2026-08-19T17:47:46.654Z] {
+[2026-08-19T17:47:46.654Z] id: '5e6728b1-cde5-4c8b-a296-116604eadee0',
+[2026-08-19T17:47:46.654Z] user_id: '57fc7b0a-5ba0-42fb-ad0c-f15ee32c6df3',
+[2026-08-19T17:47:46.654Z] name: 'Estudando',
+[2026-08-19T17:47:46.654Z] color: '#002aff',
+[2026-08-19T17:47:46.654Z] duration_minutes: 30,
+[2026-08-19T17:47:46.654Z] created_at: '2026-01-19T22:01:03.284823+00:00'
+[2026-08-19T17:47:46.654Z] },
+[2026-08-19T17:47:46.654Z] {
+[2026-08-19T17:47:46.654Z] id: '4ec39e04-b451-4c7a-845d-571dc624e600',
+[2026-08-19T17:47:46.654Z] user_id: '57fc7b0a-5ba0-42fb-ad0c-f15ee32c6df3',
+[2026-08-19T17:47:46.654Z] name: 'Conteúdos',
+[2026-08-19T17:47:46.654Z] color: '#00d13f',
+[2026-08-19T17:47:46.654Z] duration_minutes: 27,
+[2026-08-19T17:47:46.654Z] created_at: '2026-01-19T22:01:03.486292+00:00'
+[2026-08-19T17:47:46.654Z] }
+[2026-08-19T17:47:46.654Z] ]
+[2026-08-19T17:47:46.654Z] }
+[2026-08-19T17:47:46.654Z] [API /pomodoro/get-settings] Settings response: {
+[2026-08-19T17:47:46.654Z] data: {
+[2026-08-19T17:47:46.654Z] id: '6729871f-4efa-4304-a753-1f7dd1859400',
+[2026-08-19T17:47:46.654Z] user_id: '57fc7b0a-5ba0-42fb-ad0c-f15ee32c6df3',
+[2026-08-19T17:47:46.654Z] short_break_minutes: 5,
+[2026-08-19T17:47:46.654Z] long_break_minutes: 15,
+[2026-08-19T17:47:46.654Z] cycles_until_long_break: 4,
+[2026-08-19T17:47:46.654Z] updated_at: '2026-01-31T22:04:42.725+00:00'
+[2026-08-19T17:47:46.654Z] },
+[2026-08-19T17:47:46.654Z] error: undefined
+[2026-08-19T17:47:46.654Z] }
+[2026-08-19T17:47:46.654Z] [API /pomodoro/get-settings] Sessions response: { count: 19, error: undefined }
+[2026-08-19T17:47:46.654Z] [API /pomodoro/get-settings] Returning settings with 19 sessions
+[2026-08-19T17:47:46.655Z] GET /api/pomodoro/get-settings 200 in 603ms
+[2026-08-19T17:48:46.246Z] [API /pomodoro/get-settings] Starting request...
+[2026-08-19T17:48:46.393Z] [API /pomodoro/get-settings] User authenticated: 57fc7b0a-5ba0-42fb-ad0c-f15ee32c6df3
+[2026-08-19T17:48:46.560Z] [API /pomodoro/get-settings] Categories response: {
+[2026-08-19T17:48:46.560Z] count: 3,
+[2026-08-19T17:48:46.560Z] error: undefined,
+[2026-08-19T17:48:46.560Z] data: [
+[2026-08-19T17:48:46.560Z] {
+[2026-08-19T17:48:46.560Z] id: '67040b77-248a-420d-8be2-5c5eca65ca8f',
+[2026-08-19T17:48:46.560Z] user_id: '57fc7b0a-5ba0-42fb-ad0c-f15ee32c6df3',
+[2026-08-19T17:48:46.560Z] name: 'Produzindo',
+[2026-08-19T17:48:46.560Z] color: '#ff6600',
+[2026-08-19T17:48:46.560Z] duration_minutes: 57,
+[2026-08-19T17:48:46.560Z] created_at: '2026-01-19T22:01:03.082007+00:00'
+[2026-08-19T17:48:46.560Z] },
+[2026-08-19T17:48:46.560Z] {
+[2026-08-19T17:48:46.560Z] id: '5e6728b1-cde5-4c8b-a296-116604eadee0',
+[2026-08-19T17:48:46.560Z] user_id: '57fc7b0a-5ba0-42fb-ad0c-f15ee32c6df3',
+[2026-08-19T17:48:46.560Z] name: 'Estudando',
+[2026-08-19T17:48:46.560Z] color: '#002aff',
+[2026-08-19T17:48:46.560Z] duration_minutes: 30,
+[2026-08-19T17:48:46.560Z] created_at: '2026-01-19T22:01:03.284823+00:00'
+[2026-08-19T17:48:46.560Z] },
+[2026-08-19T17:48:46.560Z] {
+[2026-08-19T17:48:46.560Z] id: '4ec39e04-b451-4c7a-845d-571dc624e600',
+[2026-08-19T17:48:46.560Z] user_id: '57fc7b0a-5ba0-42fb-ad0c-f15ee32c6df3',
+[2026-08-19T17:48:46.560Z] name: 'Conteúdos',
+[2026-08-19T17:48:46.560Z] color: '#00d13f',
+[2026-08-19T17:48:46.560Z] duration_minutes: 27,
+[2026-08-19T17:48:46.560Z] created_at: '2026-01-19T22:01:03.486292+00:00'
+[2026-08-19T17:48:46.560Z] }
+[2026-08-19T17:48:46.560Z] ]
+[2026-08-19T17:48:46.560Z] }
+[2026-08-19T17:48:46.560Z] [API /pomodoro/get-settings] Settings response: {
+[2026-08-19T17:48:46.560Z] data: {
+[2026-08-19T17:48:46.560Z] id: '6729871f-4efa-4304-a753-1f7dd1859400',
+[2026-08-19T17:48:46.560Z] user_id: '57fc7b0a-5ba0-42fb-ad0c-f15ee32c6df3',
+[2026-08-19T17:48:46.560Z] short_break_minutes: 5,
+[2026-08-19T17:48:46.560Z] long_break_minutes: 15,
+[2026-08-19T17:48:46.560Z] cycles_until_long_break: 4,
+[2026-08-19T17:48:46.560Z] updated_at: '2026-01-31T22:04:42.725+00:00'
+[2026-08-19T17:48:46.560Z] },
+[2026-08-19T17:48:46.560Z] error: undefined
+[2026-08-19T17:48:46.560Z] }
+[2026-08-19T17:48:46.560Z] [API /pomodoro/get-settings] Sessions response: { count: 19, error: undefined }
+[2026-08-19T17:48:46.560Z] [API /pomodoro/get-settings] Returning settings with 19 sessions
+[2026-08-19T17:48:46.561Z] GET /api/pomodoro/get-settings 200 in 560ms
+[2026-08-19T17:49:46.239Z] [API /pomodoro/get-settings] Starting request...
+[2026-08-19T17:49:46.440Z] [API /pomodoro/get-settings] User authenticated: 57fc7b0a-5ba0-42fb-ad0c-f15ee32c6df3
+[2026-08-19T17:49:46.593Z] [API /pomodoro/get-settings] Categories response: {
+[2026-08-19T17:49:46.593Z] count: 3,
+[2026-08-19T17:49:46.593Z] error: undefined,
+[2026-08-19T17:49:46.593Z] data: [
+[2026-08-19T17:49:46.593Z] {
+[2026-08-19T17:49:46.593Z] id: '67040b77-248a-420d-8be2-5c5eca65ca8f',
+[2026-08-19T17:49:46.593Z] user_id: '57fc7b0a-5ba0-42fb-ad0c-f15ee32c6df3',
+[2026-08-19T17:49:46.593Z] name: 'Produzindo',
+[2026-08-19T17:49:46.593Z] color: '#ff6600',
+[2026-08-19T17:49:46.593Z] duration_minutes: 57,
+[2026-08-19T17:49:46.593Z] created_at: '2026-01-19T22:01:03.082007+00:00'
+[2026-08-19T17:49:46.593Z] },
+[2026-08-19T17:49:46.593Z] {
+[2026-08-19T17:49:46.593Z] id: '5e6728b1-cde5-4c8b-a296-116604eadee0',
+[2026-08-19T17:49:46.593Z] user_id: '57fc7b0a-5ba0-42fb-ad0c-f15ee32c6df3',
+[2026-08-19T17:49:46.593Z] name: 'Estudando',
+[2026-08-19T17:49:46.593Z] color: '#002aff',
+[2026-08-19T17:49:46.594Z] duration_minutes: 30,
+[2026-08-19T17:49:46.594Z] created_at: '2026-01-19T22:01:03.284823+00:00'
+[2026-08-19T17:49:46.594Z] },
+[2026-08-19T17:49:46.594Z] {
+[2026-08-19T17:49:46.594Z] id: '4ec39e04-b451-4c7a-845d-571dc624e600',
+[2026-08-19T17:49:46.594Z] user_id: '57fc7b0a-5ba0-42fb-ad0c-f15ee32c6df3',
+[2026-08-19T17:49:46.594Z] name: 'Conteúdos',
+[2026-08-19T17:49:46.594Z] color: '#00d13f',
+[2026-08-19T17:49:46.594Z] duration_minutes: 27,
+[2026-08-19T17:49:46.594Z] created_at: '2026-01-19T22:01:03.486292+00:00'
+[2026-08-19T17:49:46.594Z] }
+[2026-08-19T17:49:46.594Z] ]
+[2026-08-19T17:49:46.594Z] }
+[2026-08-19T17:49:46.594Z] [API /pomodoro/get-settings] Settings response: {
+[2026-08-19T17:49:46.594Z] data: {
+[2026-08-19T17:49:46.594Z] id: '6729871f-4efa-4304-a753-1f7dd1859400',
+[2026-08-19T17:49:46.594Z] user_id: '57fc7b0a-5ba0-42fb-ad0c-f15ee32c6df3',
+[2026-08-19T17:49:46.594Z] short_break_minutes: 5,
+[2026-08-19T17:49:46.594Z] long_break_minutes: 15,
+[2026-08-19T17:49:46.594Z] cycles_until_long_break: 4,
+[2026-08-19T17:49:46.594Z] updated_at: '2026-01-31T22:04:42.725+00:00'
+[2026-08-19T17:49:46.594Z] },
+[2026-08-19T17:49:46.594Z] error: undefined
+[2026-08-19T17:49:46.594Z] }
+[2026-08-19T17:49:46.594Z] [API /pomodoro/get-settings] Sessions response: { count: 19, error: undefined }
+[2026-08-19T17:49:46.594Z] [API /pomodoro/get-settings] Returning settings with 19 sessions
+[2026-08-19T17:49:46.595Z] GET /api/pomodoro/get-settings 200 in 596ms
+[2026-08-19T17:50:46.238Z] [API /pomodoro/get-settings] Starting request...
+[2026-08-19T17:50:46.392Z] [API /pomodoro/get-settings] User authenticated: 57fc7b0a-5ba0-42fb-ad0c-f15ee32c6df3
+[2026-08-19T17:50:46.559Z] [API /pomodoro/get-settings] Categories response: {
+[2026-08-19T17:50:46.559Z] count: 3,
+[2026-08-19T17:50:46.559Z] error: undefined,
+[2026-08-19T17:50:46.559Z] data: [
+[2026-08-19T17:50:46.559Z] {
+[2026-08-19T17:50:46.559Z] id: '67040b77-248a-420d-8be2-5c5eca65ca8f',
+[2026-08-19T17:50:46.559Z] user_id: '57fc7b0a-5ba0-42fb-ad0c-f15ee32c6df3',
+[2026-08-19T17:50:46.559Z] name: 'Produzindo',
+[2026-08-19T17:50:46.559Z] color: '#ff6600',
+[2026-08-19T17:50:46.559Z] duration_minutes: 57,
+[2026-08-19T17:50:46.559Z] created_at: '2026-01-19T22:01:03.082007+00:00'
+[2026-08-19T17:50:46.559Z] },
+[2026-08-19T17:50:46.559Z] {
+[2026-08-19T17:50:46.559Z] id: '5e6728b1-cde5-4c8b-a296-116604eadee0',
+[2026-08-19T17:50:46.559Z] user_id: '57fc7b0a-5ba0-42fb-ad0c-f15ee32c6df3',
+[2026-08-19T17:50:46.559Z] name: 'Estudando',
+[2026-08-19T17:50:46.559Z] color: '#002aff',
+[2026-08-19T17:50:46.559Z] duration_minutes: 30,
+[2026-08-19T17:50:46.559Z] created_at: '2026-01-19T22:01:03.284823+00:00'
+[2026-08-19T17:50:46.559Z] },
+[2026-08-19T17:50:46.559Z] {
+[2026-08-19T17:50:46.559Z] id: '4ec39e04-b451-4c7a-845d-571dc624e600',
+[2026-08-19T17:50:46.559Z] user_id: '57fc7b0a-5ba0-42fb-ad0c-f15ee32c6df3',
+[2026-08-19T17:50:46.559Z] name: 'Conteúdos',
+[2026-08-19T17:50:46.559Z] color: '#00d13f',
+[2026-08-19T17:50:46.559Z] duration_minutes: 27,
+[2026-08-19T17:50:46.559Z] created_at: '2026-01-19T22:01:03.486292+00:00'
+[2026-08-19T17:50:46.559Z] }
+[2026-08-19T17:50:46.559Z] ]
+[2026-08-19T17:50:46.559Z] }
+[2026-08-19T17:50:46.559Z] [API /pomodoro/get-settings] Settings response: {
+[2026-08-19T17:50:46.559Z] data: {
+[2026-08-19T17:50:46.559Z] id: '6729871f-4efa-4304-a753-1f7dd1859400',
+[2026-08-19T17:50:46.559Z] user_id: '57fc7b0a-5ba0-42fb-ad0c-f15ee32c6df3',
+[2026-08-19T17:50:46.559Z] short_break_minutes: 5,
+[2026-08-19T17:50:46.559Z] long_break_minutes: 15,
+[2026-08-19T17:50:46.559Z] cycles_until_long_break: 4,
+[2026-08-19T17:50:46.559Z] updated_at: '2026-01-31T22:04:42.725+00:00'
+[2026-08-19T17:50:46.559Z] },
+[2026-08-19T17:50:46.559Z] error: undefined
+[2026-08-19T17:50:46.559Z] }
+[2026-08-19T17:50:46.559Z] [API /pomodoro/get-settings] Sessions response: { count: 19, error: undefined }
+[2026-08-19T17:50:46.559Z] [API /pomodoro/get-settings] Returning settings with 19 sessions
+[2026-08-19T17:50:46.560Z] GET /api/pomodoro/get-settings 200 in 560ms
+[2026-08-19T17:51:57.252Z] [API /pomodoro/get-settings] Starting request...
+[2026-08-19T17:51:57.713Z] [API /pomodoro/get-settings] User authenticated: 57fc7b0a-5ba0-42fb-ad0c-f15ee32c6df3
+[2026-08-19T17:51:57.978Z] [API /pomodoro/get-settings] Categories response: {
+[2026-08-19T17:51:57.978Z] count: 3,
+[2026-08-19T17:51:57.978Z] error: undefined,
+[2026-08-19T17:51:57.978Z] data: [
+[2026-08-19T17:51:57.978Z] {
+[2026-08-19T17:51:57.978Z] id: '67040b77-248a-420d-8be2-5c5eca65ca8f',
+[2026-08-19T17:51:57.978Z] user_id: '57fc7b0a-5ba0-42fb-ad0c-f15ee32c6df3',
+[2026-08-19T17:51:57.978Z] name: 'Produzindo',
+[2026-08-19T17:51:57.978Z] color: '#ff6600',
+[2026-08-19T17:51:57.978Z] duration_minutes: 57,
+[2026-08-19T17:51:57.978Z] created_at: '2026-01-19T22:01:03.082007+00:00'
+[2026-08-19T17:51:57.978Z] },
+[2026-08-19T17:51:57.978Z] {
+[2026-08-19T17:51:57.978Z] id: '5e6728b1-cde5-4c8b-a296-116604eadee0',
+[2026-08-19T17:51:57.978Z] user_id: '57fc7b0a-5ba0-42fb-ad0c-f15ee32c6df3',
+[2026-08-19T17:51:57.978Z] name: 'Estudando',
+[2026-08-19T17:51:57.978Z] color: '#002aff',
+[2026-08-19T17:51:57.978Z] duration_minutes: 30,
+[2026-08-19T17:51:57.978Z] created_at: '2026-01-19T22:01:03.284823+00:00'
+[2026-08-19T17:51:57.978Z] },
+[2026-08-19T17:51:57.978Z] {
+[2026-08-19T17:51:57.978Z] id: '4ec39e04-b451-4c7a-845d-571dc624e600',
+[2026-08-19T17:51:57.978Z] user_id: '57fc7b0a-5ba0-42fb-ad0c-f15ee32c6df3',
+[2026-08-19T17:51:57.978Z] name: 'Conteúdos',
+[2026-08-19T17:51:57.978Z] color: '#00d13f',
+[2026-08-19T17:51:57.978Z] duration_minutes: 27,
+[2026-08-19T17:51:57.978Z] created_at: '2026-01-19T22:01:03.486292+00:00'
+[2026-08-19T17:51:57.978Z] }
+[2026-08-19T17:51:57.978Z] ]
+[2026-08-19T17:51:57.978Z] }
+[2026-08-19T17:51:57.978Z] [API /pomodoro/get-settings] Settings response: {
+[2026-08-19T17:51:57.978Z] data: {
+[2026-08-19T17:51:57.978Z] id: '6729871f-4efa-4304-a753-1f7dd1859400',
+[2026-08-19T17:51:57.978Z] user_id: '57fc7b0a-5ba0-42fb-ad0c-f15ee32c6df3',
+[2026-08-19T17:51:57.978Z] short_break_minutes: 5,
+[2026-08-19T17:51:57.978Z] long_break_minutes: 15,
+[2026-08-19T17:51:57.978Z] cycles_until_long_break: 4,
+[2026-08-19T17:51:57.978Z] updated_at: '2026-01-31T22:04:42.725+00:00'
+[2026-08-19T17:51:57.978Z] },
+[2026-08-19T17:51:57.978Z] error: undefined
+[2026-08-19T17:51:57.978Z] }
+[2026-08-19T17:51:57.978Z] [API /pomodoro/get-settings] Sessions response: { count: 19, error: undefined }
+[2026-08-19T17:51:57.978Z] [API /pomodoro/get-settings] Returning settings with 19 sessions
+[2026-08-19T17:51:57.979Z] GET /api/pomodoro/get-settings 200 in 966ms
+[2026-08-19T17:52:57.297Z] [API /pomodoro/get-settings] Starting request...
+[2026-08-19T17:52:57.448Z] [API /pomodoro/get-settings] User authenticated: 57fc7b0a-5ba0-42fb-ad0c-f15ee32c6df3
+[2026-08-19T17:52:57.597Z] [API /pomodoro/get-settings] Categories response: {
+[2026-08-19T17:52:57.597Z] count: 3,
+[2026-08-19T17:52:57.597Z] error: undefined,
+[2026-08-19T17:52:57.597Z] data: [
+[2026-08-19T17:52:57.597Z] {
+[2026-08-19T17:52:57.597Z] id: '67040b77-248a-420d-8be2-5c5eca65ca8f',
+[2026-08-19T17:52:57.597Z] user_id: '57fc7b0a-5ba0-42fb-ad0c-f15ee32c6df3',
+[2026-08-19T17:52:57.597Z] name: 'Produzindo',
+[2026-08-19T17:52:57.597Z] color: '#ff6600',
+[2026-08-19T17:52:57.597Z] duration_minutes: 57,
+[2026-08-19T17:52:57.597Z] created_at: '2026-01-19T22:01:03.082007+00:00'
+[2026-08-19T17:52:57.597Z] },
+[2026-08-19T17:52:57.597Z] {
+[2026-08-19T17:52:57.597Z] id: '5e6728b1-cde5-4c8b-a296-116604eadee0',
+[2026-08-19T17:52:57.597Z] user_id: '57fc7b0a-5ba0-42fb-ad0c-f15ee32c6df3',
+[2026-08-19T17:52:57.597Z] name: 'Estudando',
+[2026-08-19T17:52:57.597Z] color: '#002aff',
+[2026-08-19T17:52:57.597Z] duration_minutes: 30,
+[2026-08-19T17:52:57.597Z] created_at: '2026-01-19T22:01:03.284823+00:00'
+[2026-08-19T17:52:57.597Z] },
+[2026-08-19T17:52:57.597Z] {
+[2026-08-19T17:52:57.597Z] id: '4ec39e04-b451-4c7a-845d-571dc624e600',
+[2026-08-19T17:52:57.597Z] user_id: '57fc7b0a-5ba0-42fb-ad0c-f15ee32c6df3',
+[2026-08-19T17:52:57.597Z] name: 'Conteúdos',
+[2026-08-19T17:52:57.597Z] color: '#00d13f',
+[2026-08-19T17:52:57.597Z] duration_minutes: 27,
+[2026-08-19T17:52:57.597Z] created_at: '2026-01-19T22:01:03.486292+00:00'
+[2026-08-19T17:52:57.597Z] }
+[2026-08-19T17:52:57.597Z] ]
+[2026-08-19T17:52:57.597Z] }
+[2026-08-19T17:52:57.597Z] [API /pomodoro/get-settings] Settings response: {
+[2026-08-19T17:52:57.597Z] data: {
+[2026-08-19T17:52:57.597Z] id: '6729871f-4efa-4304-a753-1f7dd1859400',
+[2026-08-19T17:52:57.597Z] user_id: '57fc7b0a-5ba0-42fb-ad0c-f15ee32c6df3',
+[2026-08-19T17:52:57.597Z] short_break_minutes: 5,
+[2026-08-19T17:52:57.597Z] long_break_minutes: 15,
+[2026-08-19T17:52:57.597Z] cycles_until_long_break: 4,
+[2026-08-19T17:52:57.597Z] updated_at: '2026-01-31T22:04:42.725+00:00'
+[2026-08-19T17:52:57.597Z] },
+[2026-08-19T17:52:57.597Z] error: undefined
+[2026-08-19T17:52:57.597Z] }
+[2026-08-19T17:52:57.597Z] [API /pomodoro/get-settings] Sessions response: { count: 19, error: undefined }
+[2026-08-19T17:52:57.597Z] [API /pomodoro/get-settings] Returning settings with 19 sessions
+[2026-08-19T17:52:57.598Z] GET /api/pomodoro/get-settings 200 in 541ms
+[2026-08-19T17:53:57.285Z] [API /pomodoro/get-settings] Starting request...
+[2026-08-19T17:53:57.472Z] [API /pomodoro/get-settings] User authenticated: 57fc7b0a-5ba0-42fb-ad0c-f15ee32c6df3
+[2026-08-19T17:53:57.703Z] [API /pomodoro/get-settings] Categories response: {
+[2026-08-19T17:53:57.703Z] count: 3,
+[2026-08-19T17:53:57.703Z] error: undefined,
+[2026-08-19T17:53:57.703Z] data: [
+[2026-08-19T17:53:57.703Z] {
+[2026-08-19T17:53:57.703Z] id: '67040b77-248a-420d-8be2-5c5eca65ca8f',
+[2026-08-19T17:53:57.703Z] user_id: '57fc7b0a-5ba0-42fb-ad0c-f15ee32c6df3',
+[2026-08-19T17:53:57.703Z] name: 'Produzindo',
+[2026-08-19T17:53:57.703Z] color: '#ff6600',
+[2026-08-19T17:53:57.703Z] duration_minutes: 57,
+[2026-08-19T17:53:57.703Z] created_at: '2026-01-19T22:01:03.082007+00:00'
+[2026-08-19T17:53:57.703Z] },
+[2026-08-19T17:53:57.703Z] {
+[2026-08-19T17:53:57.703Z] id: '5e6728b1-cde5-4c8b-a296-116604eadee0',
+[2026-08-19T17:53:57.703Z] user_id: '57fc7b0a-5ba0-42fb-ad0c-f15ee32c6df3',
+[2026-08-19T17:53:57.703Z] name: 'Estudando',
+[2026-08-19T17:53:57.703Z] color: '#002aff',
+[2026-08-19T17:53:57.703Z] duration_minutes: 30,
+[2026-08-19T17:53:57.703Z] created_at: '2026-01-19T22:01:03.284823+00:00'
+[2026-08-19T17:53:57.703Z] },
+[2026-08-19T17:53:57.703Z] {
+[2026-08-19T17:53:57.703Z] id: '4ec39e04-b451-4c7a-845d-571dc624e600',
+[2026-08-19T17:53:57.703Z] user_id: '57fc7b0a-5ba0-42fb-ad0c-f15ee32c6df3',
+[2026-08-19T17:53:57.703Z] name: 'Conteúdos',
+[2026-08-19T17:53:57.703Z] color: '#00d13f',
+[2026-08-19T17:53:57.703Z] duration_minutes: 27,
+[2026-08-19T17:53:57.703Z] created_at: '2026-01-19T22:01:03.486292+00:00'
+[2026-08-19T17:53:57.703Z] }
+[2026-08-19T17:53:57.703Z] ]
+[2026-08-19T17:53:57.703Z] }
+[2026-08-19T17:53:57.703Z] [API /pomodoro/get-settings] Settings response: {
+[2026-08-19T17:53:57.703Z] data: {
+[2026-08-19T17:53:57.703Z] id: '6729871f-4efa-4304-a753-1f7dd1859400',
+[2026-08-19T17:53:57.703Z] user_id: '57fc7b0a-5ba0-42fb-ad0c-f15ee32c6df3',
+[2026-08-19T17:53:57.703Z] short_break_minutes: 5,
+[2026-08-19T17:53:57.703Z] long_break_minutes: 15,
+[2026-08-19T17:53:57.703Z] cycles_until_long_break: 4,
+[2026-08-19T17:53:57.703Z] updated_at: '2026-01-31T22:04:42.725+00:00'
+[2026-08-19T17:53:57.703Z] },
+[2026-08-19T17:53:57.703Z] error: undefined
+[2026-08-19T17:53:57.703Z] }
+[2026-08-19T17:53:57.704Z] [API /pomodoro/get-settings] Sessions response: { count: 19, error: undefined }
+[2026-08-19T17:53:57.704Z] [API /pomodoro/get-settings] Returning settings with 19 sessions
+[2026-08-19T17:53:57.704Z] GET /api/pomodoro/get-settings 200 in 655ms
+[2026-08-19T17:54:57.254Z] [API /pomodoro/get-settings] Starting request...
+[2026-08-19T17:54:57.421Z] [API /pomodoro/get-settings] User authenticated: 57fc7b0a-5ba0-42fb-ad0c-f15ee32c6df3
+[2026-08-19T17:54:57.585Z] [API /pomodoro/get-settings] Categories response: {
+[2026-08-19T17:54:57.585Z] count: 3,
+[2026-08-19T17:54:57.585Z] error: undefined,
+[2026-08-19T17:54:57.585Z] data: [
+[2026-08-19T17:54:57.585Z] {
+[2026-08-19T17:54:57.585Z] id: '67040b77-248a-420d-8be2-5c5eca65ca8f',
+[2026-08-19T17:54:57.585Z] user_id: '57fc7b0a-5ba0-42fb-ad0c-f15ee32c6df3',
+[2026-08-19T17:54:57.585Z] name: 'Produzindo',
+[2026-08-19T17:54:57.585Z] color: '#ff6600',
+[2026-08-19T17:54:57.585Z] duration_minutes: 57,
+[2026-08-19T17:54:57.585Z] created_at: '2026-01-19T22:01:03.082007+00:00'
+[2026-08-19T17:54:57.585Z] },
+[2026-08-19T17:54:57.585Z] {
+[2026-08-19T17:54:57.585Z] id: '5e6728b1-cde5-4c8b-a296-116604eadee0',
+[2026-08-19T17:54:57.585Z] user_id: '57fc7b0a-5ba0-42fb-ad0c-f15ee32c6df3',
+[2026-08-19T17:54:57.585Z] name: 'Estudando',
+[2026-08-19T17:54:57.585Z] color: '#002aff',
+[2026-08-19T17:54:57.585Z] duration_minutes: 30,
+[2026-08-19T17:54:57.585Z] created_at: '2026-01-19T22:01:03.284823+00:00'
+[2026-08-19T17:54:57.585Z] },
+[2026-08-19T17:54:57.585Z] {
+[2026-08-19T17:54:57.585Z] id: '4ec39e04-b451-4c7a-845d-571dc624e600',
+[2026-08-19T17:54:57.585Z] user_id: '57fc7b0a-5ba0-42fb-ad0c-f15ee32c6df3',
+[2026-08-19T17:54:57.585Z] name: 'Conteúdos',
+[2026-08-19T17:54:57.585Z] color: '#00d13f',
+[2026-08-19T17:54:57.585Z] duration_minutes: 27,
+[2026-08-19T17:54:57.585Z] created_at: '2026-01-19T22:01:03.486292+00:00'
+[2026-08-19T17:54:57.585Z] }
+[2026-08-19T17:54:57.585Z] ]
+[2026-08-19T17:54:57.585Z] }
+[2026-08-19T17:54:57.585Z] [API /pomodoro/get-settings] Settings response: {
+[2026-08-19T17:54:57.585Z] data: {
+[2026-08-19T17:54:57.585Z] id: '6729871f-4efa-4304-a753-1f7dd1859400',
+[2026-08-19T17:54:57.585Z] user_id: '57fc7b0a-5ba0-42fb-ad0c-f15ee32c6df3',
+[2026-08-19T17:54:57.585Z] short_break_minutes: 5,
+[2026-08-19T17:54:57.585Z] long_break_minutes: 15,
+[2026-08-19T17:54:57.585Z] cycles_until_long_break: 4,
+[2026-08-19T17:54:57.585Z] updated_at: '2026-01-31T22:04:42.725+00:00'
+[2026-08-19T17:54:57.586Z] },
+[2026-08-19T17:54:57.586Z] error: undefined
+[2026-08-19T17:54:57.586Z] }
+[2026-08-19T17:54:57.586Z] [API /pomodoro/get-settings] Sessions response: { count: 19, error: undefined }
+[2026-08-19T17:54:57.586Z] [API /pomodoro/get-settings] Returning settings with 19 sessions
+[2026-08-19T17:54:57.586Z] GET /api/pomodoro/get-settings 200 in 574ms
+[2026-08-19T17:55:57.272Z] [API /pomodoro/get-settings] Starting request...
+[2026-08-19T17:55:57.470Z] [API /pomodoro/get-settings] User authenticated: 57fc7b0a-5ba0-42fb-ad0c-f15ee32c6df3
+[2026-08-19T17:55:57.638Z] [API /pomodoro/get-settings] Categories response: {
+[2026-08-19T17:55:57.638Z] count: 3,
+[2026-08-19T17:55:57.638Z] error: undefined,
+[2026-08-19T17:55:57.638Z] data: [
+[2026-08-19T17:55:57.638Z] {
+[2026-08-19T17:55:57.638Z] id: '67040b77-248a-420d-8be2-5c5eca65ca8f',
+[2026-08-19T17:55:57.638Z] user_id: '57fc7b0a-5ba0-42fb-ad0c-f15ee32c6df3',
+[2026-08-19T17:55:57.638Z] name: 'Produzindo',
+[2026-08-19T17:55:57.638Z] color: '#ff6600',
+[2026-08-19T17:55:57.638Z] duration_minutes: 57,
+[2026-08-19T17:55:57.638Z] created_at: '2026-01-19T22:01:03.082007+00:00'
+[2026-08-19T17:55:57.638Z] },
+[2026-08-19T17:55:57.638Z] {
+[2026-08-19T17:55:57.638Z] id: '5e6728b1-cde5-4c8b-a296-116604eadee0',
+[2026-08-19T17:55:57.638Z] user_id: '57fc7b0a-5ba0-42fb-ad0c-f15ee32c6df3',
+[2026-08-19T17:55:57.638Z] name: 'Estudando',
+[2026-08-19T17:55:57.638Z] color: '#002aff',
+[2026-08-19T17:55:57.638Z] duration_minutes: 30,
+[2026-08-19T17:55:57.638Z] created_at: '2026-01-19T22:01:03.284823+00:00'
+[2026-08-19T17:55:57.638Z] },
+[2026-08-19T17:55:57.638Z] {
+[2026-08-19T17:55:57.638Z] id: '4ec39e04-b451-4c7a-845d-571dc624e600',
+[2026-08-19T17:55:57.638Z] user_id: '57fc7b0a-5ba0-42fb-ad0c-f15ee32c6df3',
+[2026-08-19T17:55:57.638Z] name: 'Conteúdos',
+[2026-08-19T17:55:57.638Z] color: '#00d13f',
+[2026-08-19T17:55:57.638Z] duration_minutes: 27,
+[2026-08-19T17:55:57.638Z] created_at: '2026-01-19T22:01:03.486292+00:00'
+[2026-08-19T17:55:57.638Z] }
+[2026-08-19T17:55:57.638Z] ]
+[2026-08-19T17:55:57.638Z] }
+[2026-08-19T17:55:57.638Z] [API /pomodoro/get-settings] Settings response: {
+[2026-08-19T17:55:57.638Z] data: {
+[2026-08-19T17:55:57.638Z] id: '6729871f-4efa-4304-a753-1f7dd1859400',
+[2026-08-19T17:55:57.638Z] user_id: '57fc7b0a-5ba0-42fb-ad0c-f15ee32c6df3',
+[2026-08-19T17:55:57.638Z] short_break_minutes: 5,
+[2026-08-19T17:55:57.638Z] long_break_minutes: 15,
+[2026-08-19T17:55:57.638Z] cycles_until_long_break: 4,
+[2026-08-19T17:55:57.638Z] updated_at: '2026-01-31T22:04:42.725+00:00'
+[2026-08-19T17:55:57.638Z] },
+[2026-08-19T17:55:57.638Z] error: undefined
+[2026-08-19T17:55:57.638Z] }
+[2026-08-19T17:55:57.638Z] [API /pomodoro/get-settings] Sessions response: { count: 19, error: undefined }
+[2026-08-19T17:55:57.638Z] [API /pomodoro/get-settings] Returning settings with 19 sessions
+[2026-08-19T17:55:57.639Z] GET /api/pomodoro/get-settings 200 in 604ms
+[2026-08-19T17:56:57.253Z] [API /pomodoro/get-settings] Starting request...
+[2026-08-19T17:56:57.397Z] [API /pomodoro/get-settings] User authenticated: 57fc7b0a-5ba0-42fb-ad0c-f15ee32c6df3
+[2026-08-19T17:56:57.552Z] [API /pomodoro/get-settings] Categories response: {
+[2026-08-19T17:56:57.552Z] count: 3,
+[2026-08-19T17:56:57.552Z] error: undefined,
+[2026-08-19T17:56:57.552Z] data: [
+[2026-08-19T17:56:57.552Z] {
+[2026-08-19T17:56:57.552Z] id: '67040b77-248a-420d-8be2-5c5eca65ca8f',
+[2026-08-19T17:56:57.552Z] user_id: '57fc7b0a-5ba0-42fb-ad0c-f15ee32c6df3',
+[2026-08-19T17:56:57.552Z] name: 'Produzindo',
+[2026-08-19T17:56:57.552Z] color: '#ff6600',
+[2026-08-19T17:56:57.552Z] duration_minutes: 57,
+[2026-08-19T17:56:57.552Z] created_at: '2026-01-19T22:01:03.082007+00:00'
+[2026-08-19T17:56:57.552Z] },
+[2026-08-19T17:56:57.552Z] {
+[2026-08-19T17:56:57.552Z] id: '5e6728b1-cde5-4c8b-a296-116604eadee0',
+[2026-08-19T17:56:57.552Z] user_id: '57fc7b0a-5ba0-42fb-ad0c-f15ee32c6df3',
+[2026-08-19T17:56:57.552Z] name: 'Estudando',
+[2026-08-19T17:56:57.552Z] color: '#002aff',
+[2026-08-19T17:56:57.552Z] duration_minutes: 30,
+[2026-08-19T17:56:57.552Z] created_at: '2026-01-19T22:01:03.284823+00:00'
+[2026-08-19T17:56:57.552Z] },
+[2026-08-19T17:56:57.553Z] {
+[2026-08-19T17:56:57.553Z] id: '4ec39e04-b451-4c7a-845d-571dc624e600',
+[2026-08-19T17:56:57.553Z] user_id: '57fc7b0a-5ba0-42fb-ad0c-f15ee32c6df3',
+[2026-08-19T17:56:57.553Z] name: 'Conteúdos',
+[2026-08-19T17:56:57.553Z] color: '#00d13f',
+[2026-08-19T17:56:57.553Z] duration_minutes: 27,
+[2026-08-19T17:56:57.553Z] created_at: '2026-01-19T22:01:03.486292+00:00'
+[2026-08-19T17:56:57.553Z] }
+[2026-08-19T17:56:57.553Z] ]
+[2026-08-19T17:56:57.553Z] }
+[2026-08-19T17:56:57.553Z] [API /pomodoro/get-settings] Settings response: {
+[2026-08-19T17:56:57.553Z] data: {
+[2026-08-19T17:56:57.553Z] id: '6729871f-4efa-4304-a753-1f7dd1859400',
+[2026-08-19T17:56:57.553Z] user_id: '57fc7b0a-5ba0-42fb-ad0c-f15ee32c6df3',
+[2026-08-19T17:56:57.553Z] short_break_minutes: 5,
+[2026-08-19T17:56:57.553Z] long_break_minutes: 15,
+[2026-08-19T17:56:57.553Z] cycles_until_long_break: 4,
+[2026-08-19T17:56:57.553Z] updated_at: '2026-01-31T22:04:42.725+00:00'
+[2026-08-19T17:56:57.553Z] },
+[2026-08-19T17:56:57.553Z] error: undefined
+[2026-08-19T17:56:57.553Z] }
+[2026-08-19T17:56:57.553Z] [API /pomodoro/get-settings] Sessions response: { count: 19, error: undefined }
+[2026-08-19T17:56:57.553Z] [API /pomodoro/get-settings] Returning settings with 19 sessions
+[2026-08-19T17:56:57.554Z] GET /api/pomodoro/get-settings 200 in 550ms
+[2026-08-19T17:57:57.263Z] [API /pomodoro/get-settings] Starting request...
+[2026-08-19T17:57:57.444Z] [API /pomodoro/get-settings] User authenticated: 57fc7b0a-5ba0-42fb-ad0c-f15ee32c6df3
+[2026-08-19T17:57:57.606Z] [API /pomodoro/get-settings] Categories response: {
+[2026-08-19T17:57:57.606Z] count: 3,
+[2026-08-19T17:57:57.606Z] error: undefined,
+[2026-08-19T17:57:57.606Z] data: [
+[2026-08-19T17:57:57.606Z] {
+[2026-08-19T17:57:57.606Z] id: '67040b77-248a-420d-8be2-5c5eca65ca8f',
+[2026-08-19T17:57:57.606Z] user_id: '57fc7b0a-5ba0-42fb-ad0c-f15ee32c6df3',
+[2026-08-19T17:57:57.606Z] name: 'Produzindo',
+[2026-08-19T17:57:57.606Z] color: '#ff6600',
+[2026-08-19T17:57:57.606Z] duration_minutes: 57,
+[2026-08-19T17:57:57.606Z] created_at: '2026-01-19T22:01:03.082007+00:00'
+[2026-08-19T17:57:57.606Z] },
+[2026-08-19T17:57:57.606Z] {
+[2026-08-19T17:57:57.606Z] id: '5e6728b1-cde5-4c8b-a296-116604eadee0',
+[2026-08-19T17:57:57.606Z] user_id: '57fc7b0a-5ba0-42fb-ad0c-f15ee32c6df3',
+[2026-08-19T17:57:57.606Z] name: 'Estudando',
+[2026-08-19T17:57:57.606Z] color: '#002aff',
+[2026-08-19T17:57:57.606Z] duration_minutes: 30,
+[2026-08-19T17:57:57.606Z] created_at: '2026-01-19T22:01:03.284823+00:00'
+[2026-08-19T17:57:57.606Z] },
+[2026-08-19T17:57:57.606Z] {
+[2026-08-19T17:57:57.606Z] id: '4ec39e04-b451-4c7a-845d-571dc624e600',
+[2026-08-19T17:57:57.606Z] user_id: '57fc7b0a-5ba0-42fb-ad0c-f15ee32c6df3',
+[2026-08-19T17:57:57.606Z] name: 'Conteúdos',
+[2026-08-19T17:57:57.606Z] color: '#00d13f',
+[2026-08-19T17:57:57.606Z] duration_minutes: 27,
+[2026-08-19T17:57:57.606Z] created_at: '2026-01-19T22:01:03.486292+00:00'
+[2026-08-19T17:57:57.606Z] }
+[2026-08-19T17:57:57.606Z] ]
+[2026-08-19T17:57:57.607Z] }
+[2026-08-19T17:57:57.607Z] [API /pomodoro/get-settings] Settings response: {
+[2026-08-19T17:57:57.607Z] data: {
+[2026-08-19T17:57:57.607Z] id: '6729871f-4efa-4304-a753-1f7dd1859400',
+[2026-08-19T17:57:57.607Z] user_id: '57fc7b0a-5ba0-42fb-ad0c-f15ee32c6df3',
+[2026-08-19T17:57:57.607Z] short_break_minutes: 5,
+[2026-08-19T17:57:57.607Z] long_break_minutes: 15,
+[2026-08-19T17:57:57.607Z] cycles_until_long_break: 4,
+[2026-08-19T17:57:57.607Z] updated_at: '2026-01-31T22:04:42.725+00:00'
+[2026-08-19T17:57:57.607Z] },
+[2026-08-19T17:57:57.607Z] error: undefined
+[2026-08-19T17:57:57.607Z] }
+[2026-08-19T17:57:57.607Z] [API /pomodoro/get-settings] Sessions response: { count: 19, error: undefined }
+[2026-08-19T17:57:57.607Z] [API /pomodoro/get-settings] Returning settings with 19 sessions
+[2026-08-19T17:57:57.607Z] GET /api/pomodoro/get-settings 200 in 602ms
+[2026-08-19T17:58:57.319Z] [API /pomodoro/get-settings] Starting request...
+[2026-08-19T17:58:57.454Z] [API /pomodoro/get-settings] User authenticated: 57fc7b0a-5ba0-42fb-ad0c-f15ee32c6df3
+[2026-08-19T17:58:57.608Z] [API /pomodoro/get-settings] Categories response: {
+[2026-08-19T17:58:57.608Z] count: 3,
+[2026-08-19T17:58:57.608Z] error: undefined,
+[2026-08-19T17:58:57.608Z] data: [
+[2026-08-19T17:58:57.608Z] {
+[2026-08-19T17:58:57.608Z] id: '67040b77-248a-420d-8be2-5c5eca65ca8f',
+[2026-08-19T17:58:57.608Z] user_id: '57fc7b0a-5ba0-42fb-ad0c-f15ee32c6df3',
+[2026-08-19T17:58:57.608Z] name: 'Produzindo',
+[2026-08-19T17:58:57.608Z] color: '#ff6600',
+[2026-08-19T17:58:57.608Z] duration_minutes: 57,
+[2026-08-19T17:58:57.608Z] created_at: '2026-01-19T22:01:03.082007+00:00'
+[2026-08-19T17:58:57.608Z] },
+[2026-08-19T17:58:57.608Z] {
+[2026-08-19T17:58:57.608Z] id: '5e6728b1-cde5-4c8b-a296-116604eadee0',
+[2026-08-19T17:58:57.608Z] user_id: '57fc7b0a-5ba0-42fb-ad0c-f15ee32c6df3',
+[2026-08-19T17:58:57.608Z] name: 'Estudando',
+[2026-08-19T17:58:57.608Z] color: '#002aff',
+[2026-08-19T17:58:57.608Z] duration_minutes: 30,
+[2026-08-19T17:58:57.608Z] created_at: '2026-01-19T22:01:03.284823+00:00'
+[2026-08-19T17:58:57.608Z] },
+[2026-08-19T17:58:57.608Z] {
+[2026-08-19T17:58:57.608Z] id: '4ec39e04-b451-4c7a-845d-571dc624e600',
+[2026-08-19T17:58:57.608Z] user_id: '57fc7b0a-5ba0-42fb-ad0c-f15ee32c6df3',
+[2026-08-19T17:58:57.608Z] name: 'Conteúdos',
+[2026-08-19T17:58:57.608Z] color: '#00d13f',
+[2026-08-19T17:58:57.608Z] duration_minutes: 27,
+[2026-08-19T17:58:57.608Z] created_at: '2026-01-19T22:01:03.486292+00:00'
+[2026-08-19T17:58:57.608Z] }
+[2026-08-19T17:58:57.608Z] ]
+[2026-08-19T17:58:57.608Z] }
+[2026-08-19T17:58:57.608Z] [API /pomodoro/get-settings] Settings response: {
+[2026-08-19T17:58:57.608Z] data: {
+[2026-08-19T17:58:57.608Z] id: '6729871f-4efa-4304-a753-1f7dd1859400',
+[2026-08-19T17:58:57.608Z] user_id: '57fc7b0a-5ba0-42fb-ad0c-f15ee32c6df3',
+[2026-08-19T17:58:57.608Z] short_break_minutes: 5,
+[2026-08-19T17:58:57.608Z] long_break_minutes: 15,
+[2026-08-19T17:58:57.608Z] cycles_until_long_break: 4,
+[2026-08-19T17:58:57.608Z] updated_at: '2026-01-31T22:04:42.725+00:00'
+[2026-08-19T17:58:57.608Z] },
+[2026-08-19T17:58:57.608Z] error: undefined
+[2026-08-19T17:58:57.608Z] }
+[2026-08-19T17:58:57.608Z] [API /pomodoro/get-settings] Sessions response: { count: 19, error: undefined }
+[2026-08-19T17:58:57.608Z] [API /pomodoro/get-settings] Returning settings with 19 sessions
+[2026-08-19T17:58:57.609Z] GET /api/pomodoro/get-settings 200 in 529ms
+[2026-08-19T17:59:33.554Z] [API /pomodoro/get-settings] Starting request...
+[2026-08-19T17:59:33.700Z] [API /pomodoro/get-settings] User authenticated: 57fc7b0a-5ba0-42fb-ad0c-f15ee32c6df3
+[2026-08-19T17:59:33.876Z] [API /pomodoro/get-settings] Categories response: {
+[2026-08-19T17:59:33.876Z] count: 3,
+[2026-08-19T17:59:33.876Z] error: undefined,
+[2026-08-19T17:59:33.876Z] data: [
+[2026-08-19T17:59:33.876Z] {
+[2026-08-19T17:59:33.876Z] id: '67040b77-248a-420d-8be2-5c5eca65ca8f',
+[2026-08-19T17:59:33.876Z] user_id: '57fc7b0a-5ba0-42fb-ad0c-f15ee32c6df3',
+[2026-08-19T17:59:33.876Z] name: 'Produzindo',
+[2026-08-19T17:59:33.876Z] color: '#ff6600',
+[2026-08-19T17:59:33.876Z] duration_minutes: 57,
+[2026-08-19T17:59:33.876Z] created_at: '2026-01-19T22:01:03.082007+00:00'
+[2026-08-19T17:59:33.876Z] },
+[2026-08-19T17:59:33.876Z] {
+[2026-08-19T17:59:33.876Z] id: '5e6728b1-cde5-4c8b-a296-116604eadee0',
+[2026-08-19T17:59:33.876Z] user_id: '57fc7b0a-5ba0-42fb-ad0c-f15ee32c6df3',
+[2026-08-19T17:59:33.876Z] name: 'Estudando',
+[2026-08-19T17:59:33.876Z] color: '#002aff',
+[2026-08-19T17:59:33.876Z] duration_minutes: 30,
+[2026-08-19T17:59:33.876Z] created_at: '2026-01-19T22:01:03.284823+00:00'
+[2026-08-19T17:59:33.876Z] },
+[2026-08-19T17:59:33.876Z] {
+[2026-08-19T17:59:33.876Z] id: '4ec39e04-b451-4c7a-845d-571dc624e600',
+[2026-08-19T17:59:33.876Z] user_id: '57fc7b0a-5ba0-42fb-ad0c-f15ee32c6df3',
+[2026-08-19T17:59:33.877Z] name: 'Conteúdos',
+[2026-08-19T17:59:33.877Z] color: '#00d13f',
+[2026-08-19T17:59:33.877Z] duration_minutes: 27,
+[2026-08-19T17:59:33.877Z] created_at: '2026-01-19T22:01:03.486292+00:00'
+[2026-08-19T17:59:33.877Z] }
+[2026-08-19T17:59:33.877Z] ]
+[2026-08-19T17:59:33.877Z] }
+[2026-08-19T17:59:33.877Z] [API /pomodoro/get-settings] Settings response: {
+[2026-08-19T17:59:33.877Z] data: {
+[2026-08-19T17:59:33.877Z] id: '6729871f-4efa-4304-a753-1f7dd1859400',
+[2026-08-19T17:59:33.877Z] user_id: '57fc7b0a-5ba0-42fb-ad0c-f15ee32c6df3',
+[2026-08-19T17:59:33.877Z] short_break_minutes: 5,
+[2026-08-19T17:59:33.877Z] long_break_minutes: 15,
+[2026-08-19T17:59:33.877Z] cycles_until_long_break: 4,
+[2026-08-19T17:59:33.877Z] updated_at: '2026-01-31T22:04:42.725+00:00'
+[2026-08-19T17:59:33.877Z] },
+[2026-08-19T17:59:33.877Z] error: undefined
+[2026-08-19T17:59:33.877Z] }
+[2026-08-19T17:59:33.877Z] [API /pomodoro/get-settings] Sessions response: { count: 19, error: undefined }
+[2026-08-19T17:59:33.877Z] [API /pomodoro/get-settings] Returning settings with 19 sessions
+[2026-08-19T17:59:33.877Z] GET /api/pomodoro/get-settings 200 in 562ms
+[2026-08-19T18:02:37.252Z] [PomodoroTimer] Initial categoryDurations from settings: { produtividade: 25, estudos: 50, descanso: 15 }
+[2026-08-19T18:02:37.302Z] GET /?from_webdev=1 200 in 149ms
+[2026-08-19T18:02:39.134Z] [PomodoroTimer] Initial categoryDurations from settings: { produtividade: 25, estudos: 50, descanso: 15 }
+[2026-08-19T18:02:39.169Z] HEAD / 200 in 123ms
+[2026-08-19T18:02:40.089Z] [PomodoroTimer] Initial categoryDurations from settings: { produtividade: 25, estudos: 50, descanso: 15 }
+[2026-08-19T18:02:40.132Z] GET /?from_webdev=1 200 in 124ms
+[2026-08-19T18:04:35.361Z] ⚠ Found a change in next.config.ts. Restarting the server to apply the changes...
+[2026-08-19T18:04:36.440Z] ▲ Next.js 15.5.7 (Turbopack)
+[2026-08-19T18:04:36.440Z] - Local:        http://localhost:3000
+[2026-08-19T18:04:36.441Z] - Network:      http://169.254.0.21:3000
+[2026-08-19T18:04:36.441Z] ✓ Starting...
+[2026-08-19T18:04:37.286Z] ✓ Ready in 1429ms
+[2026-08-19T18:04:47.014Z] ○ Compiling / ...
+[2026-08-19T18:04:53.987Z] ✓ Compiled / in 7.5s
+[2026-08-19T18:04:54.724Z] [PomodoroTimer] Initial categoryDurations from settings: { produtividade: 25, estudos: 50, descanso: 15 }
+[2026-08-19T18:04:54.817Z] GET /?from_webdev=1 200 in 8311ms
+[2026-08-19T18:04:59.323Z] ⚠ Blocked cross-origin request from 3000-ih0lty215c9qdqm3to6te-a91e88fb.us4.manus.computer to /_next/* resource. To allow this, configure "allowedDevOrigins" in next.config
+[2026-08-19T18:04:59.323Z] Read more: https://nextjs.org/docs/app/api-reference/config/next-config-js/allowedDevOrigins
+[2026-08-19T18:04:59.386Z] [PomodoroTimer] Initial categoryDurations from settings: { produtividade: 25, estudos: 50, descanso: 15 }
+[2026-08-19T18:04:59.421Z] HEAD / 200 in 127ms
+[2026-08-19T18:05:01.142Z] [PomodoroTimer] Initial categoryDurations from settings: { produtividade: 25, estudos: 50, descanso: 15 }
+[2026-08-19T18:05:01.182Z] GET /?from_webdev=1 200 in 132ms
+[2026-08-19T18:05:48.451Z] ⨯ [Error: ENOENT: no such file or directory, open '/home/ubuntu/orchids-blindy/.next/server/app/page/app-build-manifest.json'] {
+[2026-08-19T18:05:48.451Z] errno: -2,
+[2026-08-19T18:05:48.451Z] code: 'ENOENT',
+[2026-08-19T18:05:48.451Z] syscall: 'open',
+[2026-08-19T18:05:48.451Z] path: '/home/ubuntu/orchids-blindy/.next/server/app/page/app-build-manifest.json'
+[2026-08-19T18:05:48.451Z] }
+[2026-08-19T18:05:48.954Z] ○ Compiling /_error ...
+[2026-08-19T18:05:49.881Z] ✓ Compiled /_error in 1427ms
+[2026-08-19T18:05:49.911Z] ⨯ [Error: ENOENT: no such file or directory, open '/home/ubuntu/orchids-blindy/.next/static/development/_buildManifest.js.tmp.r2fdgr0axod'] {
+[2026-08-19T18:05:49.911Z] errno: -2,
+[2026-08-19T18:05:49.911Z] code: 'ENOENT',
+[2026-08-19T18:05:49.911Z] syscall: 'open',
+[2026-08-19T18:05:49.911Z] path: '/home/ubuntu/orchids-blindy/.next/static/development/_buildManifest.js.tmp.r2fdgr0axod'
+[2026-08-19T18:05:49.911Z] }
+[2026-08-19T18:05:49.977Z] [Error: ENOENT: no such file or directory, open '/home/ubuntu/orchids-blindy/.next/server/app/page/app-build-manifest.json'] {
+[2026-08-19T18:05:49.977Z] errno: -2,
+[2026-08-19T18:05:49.977Z] code: 'ENOENT',
+[2026-08-19T18:05:49.977Z] syscall: 'open',
+[2026-08-19T18:05:49.977Z] path: '/home/ubuntu/orchids-blindy/.next/server/app/page/app-build-manifest.json'
+[2026-08-19T18:05:49.977Z] }
+[2026-08-19T18:05:50.010Z] ⨯ [Error: ENOENT: no such file or directory, open '/home/ubuntu/orchids-blindy/.next/static/development/_buildManifest.js.tmp.ftqichu8t7s'] {
+[2026-08-19T18:05:50.010Z] errno: -2,
+[2026-08-19T18:05:50.011Z] code: 'ENOENT',
+[2026-08-19T18:05:50.011Z] syscall: 'open',
+[2026-08-19T18:05:50.011Z] path: '/home/ubuntu/orchids-blindy/.next/static/development/_buildManifest.js.tmp.ftqichu8t7s'
+[2026-08-19T18:05:50.011Z] }
+[2026-08-19T18:05:50.044Z] [Error: ENOENT: no such file or directory, open '/home/ubuntu/orchids-blindy/.next/static/development/_buildManifest.js.tmp.wauj61ja6t8'] {
+[2026-08-19T18:05:50.044Z] errno: -2,
+[2026-08-19T18:05:50.044Z] code: 'ENOENT',
+[2026-08-19T18:05:50.044Z] syscall: 'open',
+[2026-08-19T18:05:50.044Z] path: '/home/ubuntu/orchids-blindy/.next/static/development/_buildManifest.js.tmp.wauj61ja6t8'
+[2026-08-19T18:05:50.044Z] }
+[2026-08-19T18:05:50.348Z] ✓ Compiled /favicon.ico in 268ms
+[2026-08-19T18:05:50.381Z] ⨯ [Error: ENOENT: no such file or directory, open '/home/ubuntu/orchids-blindy/.next/static/development/_buildManifest.js.tmp.ktttt3heuc'] {
+[2026-08-19T18:05:50.381Z] errno: -2,
+[2026-08-19T18:05:50.381Z] code: 'ENOENT',
+[2026-08-19T18:05:50.381Z] syscall: 'open',
+[2026-08-19T18:05:50.381Z] path: '/home/ubuntu/orchids-blindy/.next/static/development/_buildManifest.js.tmp.ktttt3heuc'
+[2026-08-19T18:05:50.381Z] }
+[2026-08-19T18:06:02.853Z] [ELIFECYCLE] Command failed.
+[2026-08-19T18:06:02.926Z] [?25h
+[2026-08-19T18:06:02.935Z] Dev server exited with code -1
+[2026-08-19T18:06:04.044Z] Starting dev server with command: pnpm run dev
+[2026-08-19T18:06:04.528Z] $ next dev --turbopack
+[2026-08-19T18:06:05.965Z] ▲ Next.js 15.5.7 (Turbopack)
+[2026-08-19T18:06:05.965Z] - Local:        http://localhost:3000
+[2026-08-19T18:06:05.966Z] - Network:      http://169.254.0.21:3000
+[2026-08-19T18:06:05.966Z] ✓ Starting...
+[2026-08-19T18:06:06.701Z] ✓ Ready in 1186ms
+[2026-08-19T18:06:07.216Z] ○ Compiling / ...
+[2026-08-19T18:06:14.360Z] ✓ Compiled / in 7.6s
+[2026-08-19T18:06:15.123Z] [PomodoroTimer] Initial categoryDurations from settings: { produtividade: 25, estudos: 50, descanso: 15 }
+[2026-08-19T18:06:15.209Z] GET / 200 in 8501ms
+[2026-08-19T18:06:15.789Z] ⚠ Blocked cross-origin request from 127.0.0.1 to /_next/* resource. To allow this, configure "allowedDevOrigins" in next.config
+[2026-08-19T18:06:15.790Z] Read more: https://nextjs.org/docs/app/api-reference/config/next-config-js/allowedDevOrigins
+[2026-08-19T18:10:47.210Z] [PomodoroTimer] Initial categoryDurations from settings: { produtividade: 25, estudos: 50, descanso: 15 }
+[2026-08-19T18:10:47.257Z] GET /?from_webdev=1 200 in 170ms
+[2026-08-19T18:10:51.941Z] [PomodoroTimer] Initial categoryDurations from settings: { produtividade: 25, estudos: 50, descanso: 15 }
+[2026-08-19T18:10:51.973Z] HEAD / 200 in 128ms
+[2026-08-19T18:10:51.988Z] ⚠ Blocked cross-origin request from 3000-ih0lty215c9qdqm3to6te-a91e88fb.us4.manus.computer to /_next/* resource. To allow this, configure "allowedDevOrigins" in next.config
+[2026-08-19T18:10:51.988Z] Read more: https://nextjs.org/docs/app/api-reference/config/next-config-js/allowedDevOrigins
+[2026-08-19T18:10:53.094Z] [PomodoroTimer] Initial categoryDurations from settings: { produtividade: 25, estudos: 50, descanso: 15 }
+[2026-08-19T18:10:53.140Z] GET /?from_webdev=1 200 in 131ms

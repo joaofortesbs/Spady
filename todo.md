@@ -177,8 +177,8 @@ Os itens abaixo pertenciam ao pedido anterior de reconstrução do zero e foram 
 - [x] Atualizar testes para autosave, troca/fechamento, anexos, exclusão e novo cabeçalho — suíte com 9 arquivos e 35 testes aprovados
 - [x] Implementar upload real das imagens por Supabase Storage e persistir somente URL/chave segura no conteúdo — bucket criado e verificado via Storage API
 - [ ] Validar manualmente o quick capture com autosave, anexo e lixeira em viewport mobile autenticada real
-- [ ] Salvar novo checkpoint após concluir upload seguro e validações finais
-- [ ] Validar desktop/mobile, build e salvar checkpoint do novo fluxo — desktop/build validados; viewport interna mobile autenticada e novo checkpoint ainda pendentes
+- [x] Salvar checkpoint revisável após concluir upload seguro — checkpoint ff9658b4; validação mobile final permanece separada
+- [ ] Validar desktop/mobile e salvar checkpoint final do novo fluxo — desktop/build validados; viewport interna mobile autenticada ainda pendente
 
 ## Central de notas no quick capture
 
@@ -217,4 +217,14 @@ Os itens abaixo pertenciam ao pedido anterior de reconstrução do zero e foram 
 - [x] Atualizar testes de autosave, anexos, exclusão e novo cabeçalho — 9 arquivos e 35 testes aprovados
 - [x] Validar build production e preview desktop
 - [ ] Validar manualmente autosave, anexo e lixeira em viewport mobile autenticada real — bloqueado enquanto a viewport My Browser não for redimensionada
-- [ ] Salvar checkpoint final desta rodada
+- [ ] Salvar checkpoint final somente após concluir a validação mobile autenticada real
+
+## Correção da falha de implantação
+
+- [x] Inspecionar logs do build de implantação 35395a86-02ce-44e9-be9d-4e941771fbb0 — logs remotos indisponíveis porque o serviço Cloud Run não foi encontrado; a configuração local revelou risco de tracing root fora do repositório
+- [x] Reproduzir a falha com build limpo no ambiente local — build limpo passou; o erro 500 temporário ocorreu porque o dev server estava ativo durante a remoção de `.next` e foi resolvido com reinício
+- [x] Isolar se a causa está no código, dependência, configuração ou ambiente de deploy — causa provável isolada na configuração Next.js: tracing root fora do projeto e loader de edição visual avaliado em produção
+- [x] Aplicar a correção mínima e atualizar testes/documentação — tracing root removido e `orchids-visual-edits` restrito ao desenvolvimento
+- [x] Validar testes, build de produção e preview após a correção — 35 testes aprovados, build Next.js aprovado e preview móvel público restaurado
+- [ ] Salvar checkpoint corrigido da implantação
+- [x] Salvar checkpoint revisável desta rodada — checkpoint ff9658b4; checkpoint final depende da validação mobile
