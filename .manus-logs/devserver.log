@@ -112,3 +112,61 @@
 [2026-08-19T01:15:08.983Z] ✓ Compiled /favicon.ico in 309ms
 [2026-08-19T01:15:09.264Z] GET /favicon.ico?favicon.0b3bf435.ico 200 in 594ms
 [2026-08-19T01:15:16.089Z] ⚠ Found a change in next.config.ts. Restarting the server to apply the changes...
+[2026-08-19T01:15:16.924Z] ▲ Next.js 15.5.7 (Turbopack)
+[2026-08-19T01:15:16.924Z] - Local:        http://localhost:3000
+[2026-08-19T01:15:16.924Z] - Network:      http://169.254.0.21:3000
+[2026-08-19T01:15:16.924Z] ✓ Starting...
+[2026-08-19T01:15:17.586Z] ✓ Ready in 1135ms
+[2026-08-19T01:15:18.539Z] ○ Compiling / ...
+[2026-08-19T01:15:24.269Z] ✓ Compiled / in 6.2s
+[2026-08-19T01:15:24.903Z] [PomodoroTimer] Initial categoryDurations from settings: { produtividade: 25, estudos: 50, descanso: 15 }
+[2026-08-19T01:15:25.001Z] GET / 200 in 6970ms
+[2026-08-19T01:15:25.438Z] ⚠ Blocked cross-origin request from 127.0.0.1 to /_next/* resource. To allow this, configure "allowedDevOrigins" in next.config
+[2026-08-19T01:15:25.438Z] Read more: https://nextjs.org/docs/app/api-reference/config/next-config-js/allowedDevOrigins
+[2026-08-19T01:15:28.209Z] [PomodoroTimer] Initial categoryDurations from settings: { produtividade: 25, estudos: 50, descanso: 15 }
+[2026-08-19T01:15:28.249Z] GET /?from_webdev=1 200 in 122ms
+[2026-08-19T01:15:29.452Z] [PomodoroTimer] Initial categoryDurations from settings: { produtividade: 25, estudos: 50, descanso: 15 }
+[2026-08-19T01:15:29.485Z] HEAD / 200 in 113ms
+[2026-08-19T01:15:30.036Z] [PomodoroTimer] Initial categoryDurations from settings: { produtividade: 25, estudos: 50, descanso: 15 }
+[2026-08-19T01:15:30.078Z] GET /?from_webdev=1 200 in 112ms
+[2026-08-19T01:15:31.120Z] [PomodoroTimer] Initial categoryDurations from settings: { produtividade: 25, estudos: 50, descanso: 15 }
+[2026-08-19T01:15:31.160Z] GET /?from_webdev=1 200 in 116ms
+[2026-08-19T01:16:10.283Z] [PomodoroTimer] Initial categoryDurations from settings: { produtividade: 25, estudos: 50, descanso: 15 }
+[2026-08-19T01:16:10.327Z] GET / 200 in 143ms
+[2026-08-19T01:16:16.939Z] ✓ Compiled /api/pomodoro/get-settings in 485ms
+[2026-08-19T01:16:17.259Z] [API /pomodoro/get-settings] Starting request...
+[2026-08-19T01:16:17.496Z] [API /pomodoro/get-settings] User authenticated: 57fc7b0a-5ba0-42fb-ad0c-f15ee32c6df3
+[2026-08-19T01:16:17.635Z] [API /pomodoro/get-settings] Exception: Error: supabaseKey is required.
+[2026-08-19T01:16:17.636Z] at GET (src/app/api/pomodoro/get-settings/route.ts:35:34)
+[2026-08-19T01:16:17.636Z] 33 |     console.log('[API /pomodoro/get-settings] User authenticated:', user.id);
+[2026-08-19T01:16:17.636Z] 34 |
+[2026-08-19T01:16:17.636Z] > 35 |     const supabase = createClient(supabaseUrl, supabaseServiceKey);
+[2026-08-19T01:16:17.636Z] |                                  ^
+[2026-08-19T01:16:17.636Z] 36 |
+[2026-08-19T01:16:17.636Z] 37 |     const [catRes, setRes, sesRes] = await Promise.all([
+[2026-08-19T01:16:17.636Z] 38 |       supabase.from('pomodoro_categories').select('*').eq('user_id', user.id).order('created_at'),
+[2026-08-19T01:16:17.638Z] GET /api/pomodoro/get-settings 500 in 1188ms
+[2026-08-19T01:16:18.027Z] [API /pomodoro/get-settings] Starting request...
+[2026-08-19T01:16:18.101Z] [API /pomodoro/get-settings] User authenticated: 57fc7b0a-5ba0-42fb-ad0c-f15ee32c6df3
+[2026-08-19T01:16:18.165Z] [API /pomodoro/get-settings] Exception: Error: supabaseKey is required.
+[2026-08-19T01:16:18.165Z] at GET (src/app/api/pomodoro/get-settings/route.ts:35:34)
+[2026-08-19T01:16:18.165Z] 33 |     console.log('[API /pomodoro/get-settings] User authenticated:', user.id);
+[2026-08-19T01:16:18.165Z] 34 |
+[2026-08-19T01:16:18.165Z] > 35 |     const supabase = createClient(supabaseUrl, supabaseServiceKey);
+[2026-08-19T01:16:18.165Z] |                                  ^
+[2026-08-19T01:16:18.165Z] 36 |
+[2026-08-19T01:16:18.165Z] 37 |     const [catRes, setRes, sesRes] = await Promise.all([
+[2026-08-19T01:16:18.165Z] 38 |       supabase.from('pomodoro_categories').select('*').eq('user_id', user.id).order('created_at'),
+[2026-08-19T01:16:18.166Z] GET /api/pomodoro/get-settings 500 in 372ms
+[2026-08-19T01:16:19.587Z] [PomodoroTimer] Initial categoryDurations from settings: { produtividade: 25, estudos: 50, descanso: 15 }
+[2026-08-19T01:16:19.626Z] GET /?from_webdev=1 200 in 118ms
+[2026-08-19T01:16:23.954Z] [PomodoroTimer] Initial categoryDurations from settings: { produtividade: 25, estudos: 50, descanso: 15 }
+[2026-08-19T01:16:23.984Z] HEAD / 200 in 102ms
+[2026-08-19T01:16:24.699Z] [PomodoroTimer] Initial categoryDurations from settings: { produtividade: 25, estudos: 50, descanso: 15 }
+[2026-08-19T01:16:24.732Z] GET /?from_webdev=1 200 in 105ms
+[2026-08-19T01:16:39.464Z] [PomodoroTimer] Initial categoryDurations from settings: { produtividade: 25, estudos: 50, descanso: 15 }
+[2026-08-19T01:16:39.506Z] GET /?from_webdev=1 200 in 126ms
+[2026-08-19T01:16:43.650Z] [PomodoroTimer] Initial categoryDurations from settings: { produtividade: 25, estudos: 50, descanso: 15 }
+[2026-08-19T01:16:43.693Z] HEAD / 200 in 115ms
+[2026-08-19T01:16:44.711Z] [PomodoroTimer] Initial categoryDurations from settings: { produtividade: 25, estudos: 50, descanso: 15 }
+[2026-08-19T01:16:44.751Z] GET /?from_webdev=1 200 in 117ms
