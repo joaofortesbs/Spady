@@ -243,4 +243,4 @@ Os itens abaixo pertenciam ao pedido anterior de reconstrução do zero e foram 
 - [x] Inspecionar o contrato de start, os scripts e a estrutura do servidor Next.js — o runtime executa `node dist/index.js`, enquanto o projeto gerava apenas `.next`
 - [x] Gerar `dist/index.js` compatível com o runtime do container e a porta configurada — entrypoint Node inicia Next.js em `0.0.0.0` usando `PORT`
 - [x] Validar build, entrypoint, startup HTTP, testes e preview — 35 testes aprovados, build completo, `dist/index.js` presente e resposta HTTP 200 verificada na porta 3101
-- [ ] Salvar checkpoint publicável do runtime
+- [x] Salvar checkpoint publicável do runtime — checkpoint 42bec3e7
