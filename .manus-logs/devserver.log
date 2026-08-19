@@ -170,3 +170,1829 @@
 [2026-08-19T01:16:43.693Z] HEAD / 200 in 115ms
 [2026-08-19T01:16:44.711Z] [PomodoroTimer] Initial categoryDurations from settings: { produtividade: 25, estudos: 50, descanso: 15 }
 [2026-08-19T01:16:44.751Z] GET /?from_webdev=1 200 in 117ms
+[2026-08-19T01:16:50.265Z] [PomodoroTimer] Initial categoryDurations from settings: { produtividade: 25, estudos: 50, descanso: 15 }
+[2026-08-19T01:16:50.301Z] GET / 200 in 105ms
+[2026-08-19T01:17:16.864Z] [API /pomodoro/get-settings] Starting request...
+[2026-08-19T01:17:17.254Z] [API /pomodoro/get-settings] User authenticated: 57fc7b0a-5ba0-42fb-ad0c-f15ee32c6df3
+[2026-08-19T01:17:17.345Z] [API /pomodoro/get-settings] Exception: Error: supabaseKey is required.
+[2026-08-19T01:17:17.345Z] at GET (src/app/api/pomodoro/get-settings/route.ts:35:34)
+[2026-08-19T01:17:17.345Z] 33 |     console.log('[API /pomodoro/get-settings] User authenticated:', user.id);
+[2026-08-19T01:17:17.345Z] 34 |
+[2026-08-19T01:17:17.345Z] > 35 |     const supabase = createClient(supabaseUrl, supabaseServiceKey);
+[2026-08-19T01:17:17.345Z] |                                  ^
+[2026-08-19T01:17:17.345Z] 36 |
+[2026-08-19T01:17:17.346Z] 37 |     const [catRes, setRes, sesRes] = await Promise.all([
+[2026-08-19T01:17:17.346Z] 38 |       supabase.from('pomodoro_categories').select('*').eq('user_id', user.id).order('created_at'),
+[2026-08-19T01:17:17.347Z] GET /api/pomodoro/get-settings 500 in 722ms
+[2026-08-19T01:17:17.743Z] [API /pomodoro/get-settings] Starting request...
+[2026-08-19T01:17:17.827Z] [API /pomodoro/get-settings] User authenticated: 57fc7b0a-5ba0-42fb-ad0c-f15ee32c6df3
+[2026-08-19T01:17:17.890Z] [API /pomodoro/get-settings] Exception: Error: supabaseKey is required.
+[2026-08-19T01:17:17.890Z] at GET (src/app/api/pomodoro/get-settings/route.ts:35:34)
+[2026-08-19T01:17:17.890Z] 33 |     console.log('[API /pomodoro/get-settings] User authenticated:', user.id);
+[2026-08-19T01:17:17.890Z] 34 |
+[2026-08-19T01:17:17.890Z] > 35 |     const supabase = createClient(supabaseUrl, supabaseServiceKey);
+[2026-08-19T01:17:17.890Z] |                                  ^
+[2026-08-19T01:17:17.890Z] 36 |
+[2026-08-19T01:17:17.890Z] 37 |     const [catRes, setRes, sesRes] = await Promise.all([
+[2026-08-19T01:17:17.890Z] 38 |       supabase.from('pomodoro_categories').select('*').eq('user_id', user.id).order('created_at'),
+[2026-08-19T01:17:17.891Z] GET /api/pomodoro/get-settings 500 in 381ms
+[2026-08-19T01:17:43.206Z] ⚠ Blocked cross-origin request from 3000-ih0lty215c9qdqm3to6te-a91e88fb.us4.manus.computer to /_next/* resource. To allow this, configure "allowedDevOrigins" in next.config
+[2026-08-19T01:17:43.206Z] Read more: https://nextjs.org/docs/app/api-reference/config/next-config-js/allowedDevOrigins
+[2026-08-19T01:17:46.968Z] [PomodoroTimer] Initial categoryDurations from settings: { produtividade: 25, estudos: 50, descanso: 15 }
+[2026-08-19T01:17:47.004Z] GET /?from_webdev=1 200 in 148ms
+[2026-08-19T01:17:48.610Z] [PomodoroTimer] Initial categoryDurations from settings: { produtividade: 25, estudos: 50, descanso: 15 }
+[2026-08-19T01:17:48.635Z] HEAD / 200 in 90ms
+[2026-08-19T01:17:49.187Z] [PomodoroTimer] Initial categoryDurations from settings: { produtividade: 25, estudos: 50, descanso: 15 }
+[2026-08-19T01:17:49.222Z] GET /?from_webdev=1 200 in 109ms
+[2026-08-19T01:17:51.704Z] [PomodoroTimer] Initial categoryDurations from settings: { produtividade: 25, estudos: 50, descanso: 15 }
+[2026-08-19T01:17:51.737Z] GET /?from_webdev=1 200 in 104ms
+[2026-08-19T01:18:16.875Z] [API /pomodoro/get-settings] Starting request...
+[2026-08-19T01:18:17.068Z] [API /pomodoro/get-settings] User authenticated: 57fc7b0a-5ba0-42fb-ad0c-f15ee32c6df3
+[2026-08-19T01:18:17.162Z] [API /pomodoro/get-settings] Exception: Error: supabaseKey is required.
+[2026-08-19T01:18:17.162Z] at GET (src/app/api/pomodoro/get-settings/route.ts:35:34)
+[2026-08-19T01:18:17.162Z] 33 |     console.log('[API /pomodoro/get-settings] User authenticated:', user.id);
+[2026-08-19T01:18:17.162Z] 34 |
+[2026-08-19T01:18:17.162Z] > 35 |     const supabase = createClient(supabaseUrl, supabaseServiceKey);
+[2026-08-19T01:18:17.162Z] |                                  ^
+[2026-08-19T01:18:17.162Z] 36 |
+[2026-08-19T01:18:17.162Z] 37 |     const [catRes, setRes, sesRes] = await Promise.all([
+[2026-08-19T01:18:17.162Z] 38 |       supabase.from('pomodoro_categories').select('*').eq('user_id', user.id).order('created_at'),
+[2026-08-19T01:18:17.163Z] GET /api/pomodoro/get-settings 500 in 536ms
+[2026-08-19T01:19:16.928Z] [API /pomodoro/get-settings] Starting request...
+[2026-08-19T01:19:17.094Z] [API /pomodoro/get-settings] User authenticated: 57fc7b0a-5ba0-42fb-ad0c-f15ee32c6df3
+[2026-08-19T01:19:17.173Z] [API /pomodoro/get-settings] Exception: Error: supabaseKey is required.
+[2026-08-19T01:19:17.173Z] at GET (src/app/api/pomodoro/get-settings/route.ts:35:34)
+[2026-08-19T01:19:17.173Z] 33 |     console.log('[API /pomodoro/get-settings] User authenticated:', user.id);
+[2026-08-19T01:19:17.173Z] 34 |
+[2026-08-19T01:19:17.173Z] > 35 |     const supabase = createClient(supabaseUrl, supabaseServiceKey);
+[2026-08-19T01:19:17.173Z] |                                  ^
+[2026-08-19T01:19:17.173Z] 36 |
+[2026-08-19T01:19:17.173Z] 37 |     const [catRes, setRes, sesRes] = await Promise.all([
+[2026-08-19T01:19:17.173Z] 38 |       supabase.from('pomodoro_categories').select('*').eq('user_id', user.id).order('created_at'),
+[2026-08-19T01:19:17.174Z] GET /api/pomodoro/get-settings 500 in 488ms
+[2026-08-19T01:20:12.949Z] [API /pomodoro/get-settings] Starting request...
+[2026-08-19T01:20:12.953Z] [API /pomodoro/get-settings] Auth error: Auth session missing!
+[2026-08-19T01:20:12.953Z] GET /api/pomodoro/get-settings 401 in 276ms
+[2026-08-19T01:20:16.871Z] [API /pomodoro/get-settings] Starting request...
+[2026-08-19T01:20:17.062Z] [API /pomodoro/get-settings] User authenticated: 57fc7b0a-5ba0-42fb-ad0c-f15ee32c6df3
+[2026-08-19T01:20:17.131Z] [API /pomodoro/get-settings] Exception: Error: supabaseKey is required.
+[2026-08-19T01:20:17.131Z] at GET (src/app/api/pomodoro/get-settings/route.ts:35:34)
+[2026-08-19T01:20:17.131Z] 33 |     console.log('[API /pomodoro/get-settings] User authenticated:', user.id);
+[2026-08-19T01:20:17.131Z] 34 |
+[2026-08-19T01:20:17.131Z] > 35 |     const supabase = createClient(supabaseUrl, supabaseServiceKey);
+[2026-08-19T01:20:17.131Z] |                                  ^
+[2026-08-19T01:20:17.131Z] 36 |
+[2026-08-19T01:20:17.131Z] 37 |     const [catRes, setRes, sesRes] = await Promise.all([
+[2026-08-19T01:20:17.132Z] 38 |       supabase.from('pomodoro_categories').select('*').eq('user_id', user.id).order('created_at'),
+[2026-08-19T01:20:17.133Z] GET /api/pomodoro/get-settings 500 in 494ms
+[2026-08-19T01:21:12.810Z] [API /pomodoro/get-settings] Starting request...
+[2026-08-19T01:21:12.813Z] [API /pomodoro/get-settings] Auth error: Auth session missing!
+[2026-08-19T01:21:12.817Z] GET /api/pomodoro/get-settings 401 in 252ms
+[2026-08-19T01:21:16.857Z] [API /pomodoro/get-settings] Starting request...
+[2026-08-19T01:21:17.065Z] [API /pomodoro/get-settings] User authenticated: 57fc7b0a-5ba0-42fb-ad0c-f15ee32c6df3
+[2026-08-19T01:21:17.149Z] [API /pomodoro/get-settings] Exception: Error: supabaseKey is required.
+[2026-08-19T01:21:17.149Z] at GET (src/app/api/pomodoro/get-settings/route.ts:35:34)
+[2026-08-19T01:21:17.149Z] 33 |     console.log('[API /pomodoro/get-settings] User authenticated:', user.id);
+[2026-08-19T01:21:17.149Z] 34 |
+[2026-08-19T01:21:17.149Z] > 35 |     const supabase = createClient(supabaseUrl, supabaseServiceKey);
+[2026-08-19T01:21:17.149Z] |                                  ^
+[2026-08-19T01:21:17.149Z] 36 |
+[2026-08-19T01:21:17.149Z] 37 |     const [catRes, setRes, sesRes] = await Promise.all([
+[2026-08-19T01:21:17.151Z] 38 |       supabase.from('pomodoro_categories').select('*').eq('user_id', user.id).order('created_at'),
+[2026-08-19T01:21:17.151Z] GET /api/pomodoro/get-settings 500 in 524ms
+[2026-08-19T01:22:12.873Z] [API /pomodoro/get-settings] Starting request...
+[2026-08-19T01:22:12.875Z] [API /pomodoro/get-settings] Auth error: Auth session missing!
+[2026-08-19T01:22:12.876Z] GET /api/pomodoro/get-settings 401 in 250ms
+[2026-08-19T01:23:12.803Z] [API /pomodoro/get-settings] Starting request...
+[2026-08-19T01:23:12.805Z] [API /pomodoro/get-settings] Auth error: Auth session missing!
+[2026-08-19T01:23:12.806Z] GET /api/pomodoro/get-settings 401 in 248ms
+[2026-08-19T01:24:12.815Z] [API /pomodoro/get-settings] Starting request...
+[2026-08-19T01:24:12.817Z] [API /pomodoro/get-settings] Auth error: Auth session missing!
+[2026-08-19T01:24:12.818Z] GET /api/pomodoro/get-settings 401 in 260ms
+[2026-08-19T01:25:12.845Z] [API /pomodoro/get-settings] Starting request...
+[2026-08-19T01:25:12.847Z] [API /pomodoro/get-settings] Auth error: Auth session missing!
+[2026-08-19T01:25:12.849Z] GET /api/pomodoro/get-settings 401 in 248ms
+[2026-08-19T01:26:12.802Z] [API /pomodoro/get-settings] Starting request...
+[2026-08-19T01:26:12.805Z] [API /pomodoro/get-settings] Auth error: Auth session missing!
+[2026-08-19T01:26:12.805Z] GET /api/pomodoro/get-settings 401 in 255ms
+[2026-08-19T01:27:12.841Z] [API /pomodoro/get-settings] Starting request...
+[2026-08-19T01:27:12.846Z] [API /pomodoro/get-settings] Auth error: Auth session missing!
+[2026-08-19T01:27:12.846Z] GET /api/pomodoro/get-settings 401 in 265ms
+[2026-08-19T01:28:12.856Z] [API /pomodoro/get-settings] Starting request...
+[2026-08-19T01:28:12.863Z] [API /pomodoro/get-settings] Auth error: Auth session missing!
+[2026-08-19T01:28:12.863Z] GET /api/pomodoro/get-settings 401 in 282ms
+[2026-08-19T01:29:12.856Z] [API /pomodoro/get-settings] Starting request...
+[2026-08-19T01:29:12.859Z] [API /pomodoro/get-settings] Auth error: Auth session missing!
+[2026-08-19T01:29:12.861Z] GET /api/pomodoro/get-settings 401 in 274ms
+[2026-08-19T01:30:12.836Z] [API /pomodoro/get-settings] Starting request...
+[2026-08-19T01:30:12.840Z] [API /pomodoro/get-settings] Auth error: Auth session missing!
+[2026-08-19T01:30:12.840Z] GET /api/pomodoro/get-settings 401 in 264ms
+[2026-08-19T01:31:12.892Z] [API /pomodoro/get-settings] Starting request...
+[2026-08-19T01:31:12.895Z] [API /pomodoro/get-settings] Auth error: Auth session missing!
+[2026-08-19T01:31:12.895Z] GET /api/pomodoro/get-settings 401 in 267ms
+[2026-08-19T01:32:12.846Z] [API /pomodoro/get-settings] Starting request...
+[2026-08-19T01:32:12.848Z] [API /pomodoro/get-settings] Auth error: Auth session missing!
+[2026-08-19T01:32:12.849Z] GET /api/pomodoro/get-settings 401 in 269ms
+[2026-08-19T01:33:12.918Z] [API /pomodoro/get-settings] Starting request...
+[2026-08-19T01:33:12.923Z] [API /pomodoro/get-settings] Auth error: Auth session missing!
+[2026-08-19T01:33:12.923Z] GET /api/pomodoro/get-settings 401 in 276ms
+[2026-08-19T01:34:12.828Z] [API /pomodoro/get-settings] Starting request...
+[2026-08-19T01:34:12.830Z] [API /pomodoro/get-settings] Auth error: Auth session missing!
+[2026-08-19T01:34:12.831Z] GET /api/pomodoro/get-settings 401 in 276ms
+[2026-08-19T01:35:12.888Z] [API /pomodoro/get-settings] Starting request...
+[2026-08-19T01:35:12.890Z] [API /pomodoro/get-settings] Auth error: Auth session missing!
+[2026-08-19T01:35:12.892Z] GET /api/pomodoro/get-settings 401 in 257ms
+[2026-08-19T01:36:12.885Z] [API /pomodoro/get-settings] Starting request...
+[2026-08-19T01:36:12.890Z] [API /pomodoro/get-settings] Auth error: Auth session missing!
+[2026-08-19T01:36:12.890Z] GET /api/pomodoro/get-settings 401 in 288ms
+[2026-08-19T01:36:53.643Z] [PomodoroTimer] Initial categoryDurations from settings: { produtividade: 25, estudos: 50, descanso: 15 }
+[2026-08-19T01:36:53.730Z] GET /?from_webdev=1 200 in 180ms
+[2026-08-19T01:36:59.021Z] [PomodoroTimer] Initial categoryDurations from settings: { produtividade: 25, estudos: 50, descanso: 15 }
+[2026-08-19T01:36:59.057Z] HEAD / 200 in 133ms
+[2026-08-19T01:36:59.705Z] [PomodoroTimer] Initial categoryDurations from settings: { produtividade: 25, estudos: 50, descanso: 15 }
+[2026-08-19T01:36:59.749Z] GET /?from_webdev=1 200 in 119ms
+[2026-08-19T01:52:32.615Z] [PomodoroTimer] Initial categoryDurations from settings: { produtividade: 25, estudos: 50, descanso: 15 }
+[2026-08-19T01:52:32.658Z] GET /?from_webdev=1 200 in 190ms
+[2026-08-19T01:52:34.865Z] [PomodoroTimer] Initial categoryDurations from settings: { produtividade: 25, estudos: 50, descanso: 15 }
+[2026-08-19T01:52:34.906Z] GET / 200 in 123ms
+[2026-08-19T01:52:35.009Z] [PomodoroTimer] Initial categoryDurations from settings: { produtividade: 25, estudos: 50, descanso: 15 }
+[2026-08-19T01:52:35.036Z] HEAD / 200 in 103ms
+[2026-08-19T01:52:35.587Z] [PomodoroTimer] Initial categoryDurations from settings: { produtividade: 25, estudos: 50, descanso: 15 }
+[2026-08-19T01:52:35.621Z] GET /?from_webdev=1 200 in 110ms
+[2026-08-19T01:52:36.883Z] [API /pomodoro/get-settings] Starting request...
+[2026-08-19T01:52:37.386Z] [API /pomodoro/get-settings] User authenticated: 57fc7b0a-5ba0-42fb-ad0c-f15ee32c6df3
+[2026-08-19T01:52:37.489Z] [API /pomodoro/get-settings] Exception: Error: supabaseKey is required.
+[2026-08-19T01:52:37.489Z] at GET (src/app/api/pomodoro/get-settings/route.ts:35:34)
+[2026-08-19T01:52:37.489Z] 33 |     console.log('[API /pomodoro/get-settings] User authenticated:', user.id);
+[2026-08-19T01:52:37.489Z] 34 |
+[2026-08-19T01:52:37.489Z] > 35 |     const supabase = createClient(supabaseUrl, supabaseServiceKey);
+[2026-08-19T01:52:37.489Z] |                                  ^
+[2026-08-19T01:52:37.489Z] 36 |
+[2026-08-19T01:52:37.489Z] 37 |     const [catRes, setRes, sesRes] = await Promise.all([
+[2026-08-19T01:52:37.489Z] 38 |       supabase.from('pomodoro_categories').select('*').eq('user_id', user.id).order('created_at'),
+[2026-08-19T01:52:37.490Z] GET /api/pomodoro/get-settings 500 in 851ms
+[2026-08-19T01:53:36.992Z] [API /pomodoro/get-settings] Starting request...
+[2026-08-19T01:53:37.132Z] [API /pomodoro/get-settings] User authenticated: 57fc7b0a-5ba0-42fb-ad0c-f15ee32c6df3
+[2026-08-19T01:53:37.221Z] [API /pomodoro/get-settings] Exception: Error: supabaseKey is required.
+[2026-08-19T01:53:37.221Z] at GET (src/app/api/pomodoro/get-settings/route.ts:35:34)
+[2026-08-19T01:53:37.221Z] 33 |     console.log('[API /pomodoro/get-settings] User authenticated:', user.id);
+[2026-08-19T01:53:37.221Z] 34 |
+[2026-08-19T01:53:37.221Z] > 35 |     const supabase = createClient(supabaseUrl, supabaseServiceKey);
+[2026-08-19T01:53:37.221Z] |                                  ^
+[2026-08-19T01:53:37.221Z] 36 |
+[2026-08-19T01:53:37.221Z] 37 |     const [catRes, setRes, sesRes] = await Promise.all([
+[2026-08-19T01:53:37.221Z] 38 |       supabase.from('pomodoro_categories').select('*').eq('user_id', user.id).order('created_at'),
+[2026-08-19T01:53:37.223Z] GET /api/pomodoro/get-settings 500 in 493ms
+[2026-08-19T01:53:39.868Z] [API /pomodoro/get-settings] Starting request...
+[2026-08-19T01:53:39.934Z] [API /pomodoro/get-settings] User authenticated: 57fc7b0a-5ba0-42fb-ad0c-f15ee32c6df3
+[2026-08-19T01:53:40.015Z] [API /pomodoro/get-settings] Exception: Error: supabaseKey is required.
+[2026-08-19T01:53:40.016Z] at GET (src/app/api/pomodoro/get-settings/route.ts:35:34)
+[2026-08-19T01:53:40.016Z] 33 |     console.log('[API /pomodoro/get-settings] User authenticated:', user.id);
+[2026-08-19T01:53:40.016Z] 34 |
+[2026-08-19T01:53:40.016Z] > 35 |     const supabase = createClient(supabaseUrl, supabaseServiceKey);
+[2026-08-19T01:53:40.016Z] |                                  ^
+[2026-08-19T01:53:40.016Z] 36 |
+[2026-08-19T01:53:40.016Z] 37 |     const [catRes, setRes, sesRes] = await Promise.all([
+[2026-08-19T01:53:40.016Z] 38 |       supabase.from('pomodoro_categories').select('*').eq('user_id', user.id).order('created_at'),
+[2026-08-19T01:53:40.017Z] GET /api/pomodoro/get-settings 500 in 381ms
+[2026-08-19T01:54:39.935Z] [API /pomodoro/get-settings] Starting request...
+[2026-08-19T01:54:40.143Z] [API /pomodoro/get-settings] User authenticated: 57fc7b0a-5ba0-42fb-ad0c-f15ee32c6df3
+[2026-08-19T01:54:40.216Z] [API /pomodoro/get-settings] Exception: Error: supabaseKey is required.
+[2026-08-19T01:54:40.216Z] at GET (src/app/api/pomodoro/get-settings/route.ts:35:34)
+[2026-08-19T01:54:40.216Z] 33 |     console.log('[API /pomodoro/get-settings] User authenticated:', user.id);
+[2026-08-19T01:54:40.216Z] 34 |
+[2026-08-19T01:54:40.216Z] > 35 |     const supabase = createClient(supabaseUrl, supabaseServiceKey);
+[2026-08-19T01:54:40.216Z] |                                  ^
+[2026-08-19T01:54:40.216Z] 36 |
+[2026-08-19T01:54:40.216Z] 37 |     const [catRes, setRes, sesRes] = await Promise.all([
+[2026-08-19T01:54:40.216Z] 38 |       supabase.from('pomodoro_categories').select('*').eq('user_id', user.id).order('created_at'),
+[2026-08-19T01:54:40.217Z] GET /api/pomodoro/get-settings 500 in 563ms
+[2026-08-19T01:55:39.937Z] [API /pomodoro/get-settings] Starting request...
+[2026-08-19T01:55:40.079Z] [API /pomodoro/get-settings] User authenticated: 57fc7b0a-5ba0-42fb-ad0c-f15ee32c6df3
+[2026-08-19T01:55:40.155Z] [API /pomodoro/get-settings] Exception: Error: supabaseKey is required.
+[2026-08-19T01:55:40.155Z] at GET (src/app/api/pomodoro/get-settings/route.ts:35:34)
+[2026-08-19T01:55:40.155Z] 33 |     console.log('[API /pomodoro/get-settings] User authenticated:', user.id);
+[2026-08-19T01:55:40.155Z] 34 |
+[2026-08-19T01:55:40.155Z] > 35 |     const supabase = createClient(supabaseUrl, supabaseServiceKey);
+[2026-08-19T01:55:40.155Z] |                                  ^
+[2026-08-19T01:55:40.155Z] 36 |
+[2026-08-19T01:55:40.155Z] 37 |     const [catRes, setRes, sesRes] = await Promise.all([
+[2026-08-19T01:55:40.156Z] 38 |       supabase.from('pomodoro_categories').select('*').eq('user_id', user.id).order('created_at'),
+[2026-08-19T01:55:40.156Z] GET /api/pomodoro/get-settings 500 in 502ms
+[2026-08-19T01:56:39.987Z] [API /pomodoro/get-settings] Starting request...
+[2026-08-19T01:56:40.233Z] [API /pomodoro/get-settings] User authenticated: 57fc7b0a-5ba0-42fb-ad0c-f15ee32c6df3
+[2026-08-19T01:56:40.355Z] [API /pomodoro/get-settings] Exception: Error: supabaseKey is required.
+[2026-08-19T01:56:40.356Z] at GET (src/app/api/pomodoro/get-settings/route.ts:35:34)
+[2026-08-19T01:56:40.356Z] 33 |     console.log('[API /pomodoro/get-settings] User authenticated:', user.id);
+[2026-08-19T01:56:40.356Z] 34 |
+[2026-08-19T01:56:40.356Z] > 35 |     const supabase = createClient(supabaseUrl, supabaseServiceKey);
+[2026-08-19T01:56:40.356Z] |                                  ^
+[2026-08-19T01:56:40.356Z] 36 |
+[2026-08-19T01:56:40.356Z] 37 |     const [catRes, setRes, sesRes] = await Promise.all([
+[2026-08-19T01:56:40.356Z] 38 |       supabase.from('pomodoro_categories').select('*').eq('user_id', user.id).order('created_at'),
+[2026-08-19T01:56:40.357Z] GET /api/pomodoro/get-settings 500 in 660ms
+[2026-08-19T01:57:06.813Z] [API /pomodoro/get-settings] Starting request...
+[2026-08-19T01:57:06.984Z] [API /pomodoro/get-settings] User authenticated: 57fc7b0a-5ba0-42fb-ad0c-f15ee32c6df3
+[2026-08-19T01:57:07.081Z] [API /pomodoro/get-settings] Exception: Error: supabaseKey is required.
+[2026-08-19T01:57:07.081Z] at GET (src/app/api/pomodoro/get-settings/route.ts:35:34)
+[2026-08-19T01:57:07.081Z] 33 |     console.log('[API /pomodoro/get-settings] User authenticated:', user.id);
+[2026-08-19T01:57:07.081Z] 34 |
+[2026-08-19T01:57:07.081Z] > 35 |     const supabase = createClient(supabaseUrl, supabaseServiceKey);
+[2026-08-19T01:57:07.081Z] |                                  ^
+[2026-08-19T01:57:07.081Z] 36 |
+[2026-08-19T01:57:07.081Z] 37 |     const [catRes, setRes, sesRes] = await Promise.all([
+[2026-08-19T01:57:07.081Z] 38 |       supabase.from('pomodoro_categories').select('*').eq('user_id', user.id).order('created_at'),
+[2026-08-19T01:57:07.082Z] GET /api/pomodoro/get-settings 500 in 555ms
+[2026-08-19T01:57:22.049Z] [PomodoroTimer] Initial categoryDurations from settings: { produtividade: 25, estudos: 50, descanso: 15 }
+[2026-08-19T01:57:22.097Z] GET /?from_webdev=1 200 in 138ms
+[2026-08-19T01:57:24.061Z] [PomodoroTimer] Initial categoryDurations from settings: { produtividade: 25, estudos: 50, descanso: 15 }
+[2026-08-19T01:57:24.102Z] HEAD / 200 in 126ms
+[2026-08-19T01:57:24.817Z] [PomodoroTimer] Initial categoryDurations from settings: { produtividade: 25, estudos: 50, descanso: 15 }
+[2026-08-19T01:57:24.854Z] GET /?from_webdev=1 200 in 114ms
+[2026-08-19T01:58:06.953Z] [API /pomodoro/get-settings] Starting request...
+[2026-08-19T01:58:07.133Z] [API /pomodoro/get-settings] User authenticated: 57fc7b0a-5ba0-42fb-ad0c-f15ee32c6df3
+[2026-08-19T01:58:07.222Z] [API /pomodoro/get-settings] Exception: Error: supabaseKey is required.
+[2026-08-19T01:58:07.223Z] at GET (src/app/api/pomodoro/get-settings/route.ts:35:34)
+[2026-08-19T01:58:07.223Z] 33 |     console.log('[API /pomodoro/get-settings] User authenticated:', user.id);
+[2026-08-19T01:58:07.223Z] 34 |
+[2026-08-19T01:58:07.223Z] > 35 |     const supabase = createClient(supabaseUrl, supabaseServiceKey);
+[2026-08-19T01:58:07.223Z] |                                  ^
+[2026-08-19T01:58:07.223Z] 36 |
+[2026-08-19T01:58:07.223Z] 37 |     const [catRes, setRes, sesRes] = await Promise.all([
+[2026-08-19T01:58:07.223Z] 38 |       supabase.from('pomodoro_categories').select('*').eq('user_id', user.id).order('created_at'),
+[2026-08-19T01:58:07.224Z] GET /api/pomodoro/get-settings 500 in 534ms
+[2026-08-19T01:58:29.862Z] [PomodoroTimer] Initial categoryDurations from settings: { produtividade: 25, estudos: 50, descanso: 15 }
+[2026-08-19T01:58:29.901Z] GET /?from_webdev=1 200 in 142ms
+[2026-08-19T01:58:31.442Z] [PomodoroTimer] Initial categoryDurations from settings: { produtividade: 25, estudos: 50, descanso: 15 }
+[2026-08-19T01:58:31.465Z] HEAD / 200 in 87ms
+[2026-08-19T01:58:32.001Z] [PomodoroTimer] Initial categoryDurations from settings: { produtividade: 25, estudos: 50, descanso: 15 }
+[2026-08-19T01:58:32.036Z] GET /?from_webdev=1 200 in 106ms
+[2026-08-19T01:59:06.906Z] [API /pomodoro/get-settings] Starting request...
+[2026-08-19T01:59:07.096Z] [API /pomodoro/get-settings] User authenticated: 57fc7b0a-5ba0-42fb-ad0c-f15ee32c6df3
+[2026-08-19T01:59:07.200Z] [API /pomodoro/get-settings] Exception: Error: supabaseKey is required.
+[2026-08-19T01:59:07.200Z] at GET (src/app/api/pomodoro/get-settings/route.ts:35:34)
+[2026-08-19T01:59:07.200Z] 33 |     console.log('[API /pomodoro/get-settings] User authenticated:', user.id);
+[2026-08-19T01:59:07.200Z] 34 |
+[2026-08-19T01:59:07.200Z] > 35 |     const supabase = createClient(supabaseUrl, supabaseServiceKey);
+[2026-08-19T01:59:07.200Z] |                                  ^
+[2026-08-19T01:59:07.200Z] 36 |
+[2026-08-19T01:59:07.200Z] 37 |     const [catRes, setRes, sesRes] = await Promise.all([
+[2026-08-19T01:59:07.200Z] 38 |       supabase.from('pomodoro_categories').select('*').eq('user_id', user.id).order('created_at'),
+[2026-08-19T01:59:07.202Z] GET /api/pomodoro/get-settings 500 in 561ms
+[2026-08-19T02:00:06.897Z] [API /pomodoro/get-settings] Starting request...
+[2026-08-19T02:00:07.039Z] [API /pomodoro/get-settings] User authenticated: 57fc7b0a-5ba0-42fb-ad0c-f15ee32c6df3
+[2026-08-19T02:00:07.145Z] [API /pomodoro/get-settings] Exception: Error: supabaseKey is required.
+[2026-08-19T02:00:07.145Z] at GET (src/app/api/pomodoro/get-settings/route.ts:35:34)
+[2026-08-19T02:00:07.145Z] 33 |     console.log('[API /pomodoro/get-settings] User authenticated:', user.id);
+[2026-08-19T02:00:07.145Z] 34 |
+[2026-08-19T02:00:07.145Z] > 35 |     const supabase = createClient(supabaseUrl, supabaseServiceKey);
+[2026-08-19T02:00:07.145Z] |                                  ^
+[2026-08-19T02:00:07.145Z] 36 |
+[2026-08-19T02:00:07.145Z] 37 |     const [catRes, setRes, sesRes] = await Promise.all([
+[2026-08-19T02:00:07.145Z] 38 |       supabase.from('pomodoro_categories').select('*').eq('user_id', user.id).order('created_at'),
+[2026-08-19T02:00:07.147Z] GET /api/pomodoro/get-settings 500 in 511ms
+[2026-08-19T02:01:06.931Z] [API /pomodoro/get-settings] Starting request...
+[2026-08-19T02:01:07.326Z] [API /pomodoro/get-settings] User authenticated: 57fc7b0a-5ba0-42fb-ad0c-f15ee32c6df3
+[2026-08-19T02:01:07.433Z] [API /pomodoro/get-settings] Exception: Error: supabaseKey is required.
+[2026-08-19T02:01:07.433Z] at GET (src/app/api/pomodoro/get-settings/route.ts:35:34)
+[2026-08-19T02:01:07.434Z] 33 |     console.log('[API /pomodoro/get-settings] User authenticated:', user.id);
+[2026-08-19T02:01:07.434Z] 34 |
+[2026-08-19T02:01:07.434Z] > 35 |     const supabase = createClient(supabaseUrl, supabaseServiceKey);
+[2026-08-19T02:01:07.434Z] |                                  ^
+[2026-08-19T02:01:07.434Z] 36 |
+[2026-08-19T02:01:07.434Z] 37 |     const [catRes, setRes, sesRes] = await Promise.all([
+[2026-08-19T02:01:07.434Z] 38 |       supabase.from('pomodoro_categories').select('*').eq('user_id', user.id).order('created_at'),
+[2026-08-19T02:01:07.435Z] GET /api/pomodoro/get-settings 500 in 777ms
+[2026-08-19T02:01:39.216Z] [API /pomodoro/get-settings] Starting request...
+[2026-08-19T02:01:39.421Z] [API /pomodoro/get-settings] User authenticated: 57fc7b0a-5ba0-42fb-ad0c-f15ee32c6df3
+[2026-08-19T02:01:39.506Z] [API /pomodoro/get-settings] Exception: Error: supabaseKey is required.
+[2026-08-19T02:01:39.506Z] at GET (src/app/api/pomodoro/get-settings/route.ts:35:34)
+[2026-08-19T02:01:39.506Z] 33 |     console.log('[API /pomodoro/get-settings] User authenticated:', user.id);
+[2026-08-19T02:01:39.506Z] 34 |
+[2026-08-19T02:01:39.506Z] > 35 |     const supabase = createClient(supabaseUrl, supabaseServiceKey);
+[2026-08-19T02:01:39.506Z] |                                  ^
+[2026-08-19T02:01:39.506Z] 36 |
+[2026-08-19T02:01:39.506Z] 37 |     const [catRes, setRes, sesRes] = await Promise.all([
+[2026-08-19T02:01:39.506Z] 38 |       supabase.from('pomodoro_categories').select('*').eq('user_id', user.id).order('created_at'),
+[2026-08-19T02:01:39.508Z] GET /api/pomodoro/get-settings 500 in 537ms
+[2026-08-19T02:01:47.225Z] [API /pomodoro/get-settings] Starting request...
+[2026-08-19T02:01:47.393Z] [API /pomodoro/get-settings] User authenticated: 57fc7b0a-5ba0-42fb-ad0c-f15ee32c6df3
+[2026-08-19T02:01:47.463Z] [API /pomodoro/get-settings] Exception: Error: supabaseKey is required.
+[2026-08-19T02:01:47.463Z] at GET (src/app/api/pomodoro/get-settings/route.ts:35:34)
+[2026-08-19T02:01:47.463Z] 33 |     console.log('[API /pomodoro/get-settings] User authenticated:', user.id);
+[2026-08-19T02:01:47.463Z] 34 |
+[2026-08-19T02:01:47.463Z] > 35 |     const supabase = createClient(supabaseUrl, supabaseServiceKey);
+[2026-08-19T02:01:47.463Z] |                                  ^
+[2026-08-19T02:01:47.463Z] 36 |
+[2026-08-19T02:01:47.463Z] 37 |     const [catRes, setRes, sesRes] = await Promise.all([
+[2026-08-19T02:01:47.463Z] 38 |       supabase.from('pomodoro_categories').select('*').eq('user_id', user.id).order('created_at'),
+[2026-08-19T02:01:47.465Z] GET /api/pomodoro/get-settings 500 in 473ms
+[2026-08-19T02:02:37.612Z] [API /pomodoro/get-settings] Starting request...
+[2026-08-19T02:02:37.784Z] [API /pomodoro/get-settings] User authenticated: 57fc7b0a-5ba0-42fb-ad0c-f15ee32c6df3
+[2026-08-19T02:02:37.874Z] [API /pomodoro/get-settings] Exception: Error: supabaseKey is required.
+[2026-08-19T02:02:37.874Z] at GET (src/app/api/pomodoro/get-settings/route.ts:35:34)
+[2026-08-19T02:02:37.874Z] 33 |     console.log('[API /pomodoro/get-settings] User authenticated:', user.id);
+[2026-08-19T02:02:37.874Z] 34 |
+[2026-08-19T02:02:37.874Z] > 35 |     const supabase = createClient(supabaseUrl, supabaseServiceKey);
+[2026-08-19T02:02:37.874Z] |                                  ^
+[2026-08-19T02:02:37.874Z] 36 |
+[2026-08-19T02:02:37.874Z] 37 |     const [catRes, setRes, sesRes] = await Promise.all([
+[2026-08-19T02:02:37.874Z] 38 |       supabase.from('pomodoro_categories').select('*').eq('user_id', user.id).order('created_at'),
+[2026-08-19T02:02:37.876Z] GET /api/pomodoro/get-settings 500 in 554ms
+[2026-08-19T02:02:43.389Z] [API /pomodoro/get-settings] Starting request...
+[2026-08-19T02:02:43.545Z] [API /pomodoro/get-settings] User authenticated: 57fc7b0a-5ba0-42fb-ad0c-f15ee32c6df3
+[2026-08-19T02:02:43.618Z] [API /pomodoro/get-settings] Exception: Error: supabaseKey is required.
+[2026-08-19T02:02:43.618Z] at GET (src/app/api/pomodoro/get-settings/route.ts:35:34)
+[2026-08-19T02:02:43.618Z] 33 |     console.log('[API /pomodoro/get-settings] User authenticated:', user.id);
+[2026-08-19T02:02:43.618Z] 34 |
+[2026-08-19T02:02:43.618Z] > 35 |     const supabase = createClient(supabaseUrl, supabaseServiceKey);
+[2026-08-19T02:02:43.618Z] |                                  ^
+[2026-08-19T02:02:43.618Z] 36 |
+[2026-08-19T02:02:43.618Z] 37 |     const [catRes, setRes, sesRes] = await Promise.all([
+[2026-08-19T02:02:43.618Z] 38 |       supabase.from('pomodoro_categories').select('*').eq('user_id', user.id).order('created_at'),
+[2026-08-19T02:02:43.619Z] GET /api/pomodoro/get-settings 500 in 464ms
+[2026-08-19T02:03:43.992Z] [API /pomodoro/get-settings] Starting request...
+[2026-08-19T02:03:44.190Z] [API /pomodoro/get-settings] User authenticated: 57fc7b0a-5ba0-42fb-ad0c-f15ee32c6df3
+[2026-08-19T02:03:44.265Z] [API /pomodoro/get-settings] Exception: Error: supabaseKey is required.
+[2026-08-19T02:03:44.265Z] at GET (src/app/api/pomodoro/get-settings/route.ts:35:34)
+[2026-08-19T02:03:44.265Z] 33 |     console.log('[API /pomodoro/get-settings] User authenticated:', user.id);
+[2026-08-19T02:03:44.265Z] 34 |
+[2026-08-19T02:03:44.265Z] > 35 |     const supabase = createClient(supabaseUrl, supabaseServiceKey);
+[2026-08-19T02:03:44.265Z] |                                  ^
+[2026-08-19T02:03:44.265Z] 36 |
+[2026-08-19T02:03:44.265Z] 37 |     const [catRes, setRes, sesRes] = await Promise.all([
+[2026-08-19T02:03:44.265Z] 38 |       supabase.from('pomodoro_categories').select('*').eq('user_id', user.id).order('created_at'),
+[2026-08-19T02:03:44.266Z] GET /api/pomodoro/get-settings 500 in 554ms
+[2026-08-19T02:04:43.941Z] [API /pomodoro/get-settings] Starting request...
+[2026-08-19T02:04:44.078Z] [API /pomodoro/get-settings] User authenticated: 57fc7b0a-5ba0-42fb-ad0c-f15ee32c6df3
+[2026-08-19T02:04:44.153Z] [API /pomodoro/get-settings] Exception: Error: supabaseKey is required.
+[2026-08-19T02:04:44.153Z] at GET (src/app/api/pomodoro/get-settings/route.ts:35:34)
+[2026-08-19T02:04:44.153Z] 33 |     console.log('[API /pomodoro/get-settings] User authenticated:', user.id);
+[2026-08-19T02:04:44.153Z] 34 |
+[2026-08-19T02:04:44.153Z] > 35 |     const supabase = createClient(supabaseUrl, supabaseServiceKey);
+[2026-08-19T02:04:44.153Z] |                                  ^
+[2026-08-19T02:04:44.153Z] 36 |
+[2026-08-19T02:04:44.153Z] 37 |     const [catRes, setRes, sesRes] = await Promise.all([
+[2026-08-19T02:04:44.153Z] 38 |       supabase.from('pomodoro_categories').select('*').eq('user_id', user.id).order('created_at'),
+[2026-08-19T02:04:44.154Z] GET /api/pomodoro/get-settings 500 in 497ms
+[2026-08-19T02:05:43.939Z] [API /pomodoro/get-settings] Starting request...
+[2026-08-19T02:05:44.135Z] [API /pomodoro/get-settings] User authenticated: 57fc7b0a-5ba0-42fb-ad0c-f15ee32c6df3
+[2026-08-19T02:05:44.199Z] [API /pomodoro/get-settings] Exception: Error: supabaseKey is required.
+[2026-08-19T02:05:44.199Z] at GET (src/app/api/pomodoro/get-settings/route.ts:35:34)
+[2026-08-19T02:05:44.199Z] 33 |     console.log('[API /pomodoro/get-settings] User authenticated:', user.id);
+[2026-08-19T02:05:44.199Z] 34 |
+[2026-08-19T02:05:44.199Z] > 35 |     const supabase = createClient(supabaseUrl, supabaseServiceKey);
+[2026-08-19T02:05:44.199Z] |                                  ^
+[2026-08-19T02:05:44.199Z] 36 |
+[2026-08-19T02:05:44.199Z] 37 |     const [catRes, setRes, sesRes] = await Promise.all([
+[2026-08-19T02:05:44.199Z] 38 |       supabase.from('pomodoro_categories').select('*').eq('user_id', user.id).order('created_at'),
+[2026-08-19T02:05:44.201Z] GET /api/pomodoro/get-settings 500 in 534ms
+[2026-08-19T02:06:43.945Z] [API /pomodoro/get-settings] Starting request...
+[2026-08-19T02:06:44.125Z] [API /pomodoro/get-settings] User authenticated: 57fc7b0a-5ba0-42fb-ad0c-f15ee32c6df3
+[2026-08-19T02:06:44.199Z] [API /pomodoro/get-settings] Exception: Error: supabaseKey is required.
+[2026-08-19T02:06:44.199Z] at GET (src/app/api/pomodoro/get-settings/route.ts:35:34)
+[2026-08-19T02:06:44.199Z] 33 |     console.log('[API /pomodoro/get-settings] User authenticated:', user.id);
+[2026-08-19T02:06:44.199Z] 34 |
+[2026-08-19T02:06:44.199Z] > 35 |     const supabase = createClient(supabaseUrl, supabaseServiceKey);
+[2026-08-19T02:06:44.199Z] |                                  ^
+[2026-08-19T02:06:44.199Z] 36 |
+[2026-08-19T02:06:44.199Z] 37 |     const [catRes, setRes, sesRes] = await Promise.all([
+[2026-08-19T02:06:44.199Z] 38 |       supabase.from('pomodoro_categories').select('*').eq('user_id', user.id).order('created_at'),
+[2026-08-19T02:06:44.200Z] GET /api/pomodoro/get-settings 500 in 536ms
+[2026-08-19T02:07:43.947Z] [API /pomodoro/get-settings] Starting request...
+[2026-08-19T02:07:44.108Z] [API /pomodoro/get-settings] User authenticated: 57fc7b0a-5ba0-42fb-ad0c-f15ee32c6df3
+[2026-08-19T02:07:44.179Z] [API /pomodoro/get-settings] Exception: Error: supabaseKey is required.
+[2026-08-19T02:07:44.179Z] at GET (src/app/api/pomodoro/get-settings/route.ts:35:34)
+[2026-08-19T02:07:44.179Z] 33 |     console.log('[API /pomodoro/get-settings] User authenticated:', user.id);
+[2026-08-19T02:07:44.179Z] 34 |
+[2026-08-19T02:07:44.179Z] > 35 |     const supabase = createClient(supabaseUrl, supabaseServiceKey);
+[2026-08-19T02:07:44.179Z] |                                  ^
+[2026-08-19T02:07:44.179Z] 36 |
+[2026-08-19T02:07:44.179Z] 37 |     const [catRes, setRes, sesRes] = await Promise.all([
+[2026-08-19T02:07:44.179Z] 38 |       supabase.from('pomodoro_categories').select('*').eq('user_id', user.id).order('created_at'),
+[2026-08-19T02:07:44.180Z] GET /api/pomodoro/get-settings 500 in 511ms
+[2026-08-19T02:08:43.948Z] [API /pomodoro/get-settings] Starting request...
+[2026-08-19T02:08:44.089Z] [API /pomodoro/get-settings] User authenticated: 57fc7b0a-5ba0-42fb-ad0c-f15ee32c6df3
+[2026-08-19T02:08:44.165Z] [API /pomodoro/get-settings] Exception: Error: supabaseKey is required.
+[2026-08-19T02:08:44.165Z] at GET (src/app/api/pomodoro/get-settings/route.ts:35:34)
+[2026-08-19T02:08:44.165Z] 33 |     console.log('[API /pomodoro/get-settings] User authenticated:', user.id);
+[2026-08-19T02:08:44.165Z] 34 |
+[2026-08-19T02:08:44.165Z] > 35 |     const supabase = createClient(supabaseUrl, supabaseServiceKey);
+[2026-08-19T02:08:44.165Z] |                                  ^
+[2026-08-19T02:08:44.165Z] 36 |
+[2026-08-19T02:08:44.165Z] 37 |     const [catRes, setRes, sesRes] = await Promise.all([
+[2026-08-19T02:08:44.165Z] 38 |       supabase.from('pomodoro_categories').select('*').eq('user_id', user.id).order('created_at'),
+[2026-08-19T02:08:44.166Z] GET /api/pomodoro/get-settings 500 in 492ms
+[2026-08-19T02:09:42.951Z] [API /pomodoro/get-settings] Starting request...
+[2026-08-19T02:09:43.109Z] [API /pomodoro/get-settings] User authenticated: 57fc7b0a-5ba0-42fb-ad0c-f15ee32c6df3
+[2026-08-19T02:09:43.176Z] [API /pomodoro/get-settings] Exception: Error: supabaseKey is required.
+[2026-08-19T02:09:43.176Z] at GET (src/app/api/pomodoro/get-settings/route.ts:35:34)
+[2026-08-19T02:09:43.176Z] 33 |     console.log('[API /pomodoro/get-settings] User authenticated:', user.id);
+[2026-08-19T02:09:43.176Z] 34 |
+[2026-08-19T02:09:43.176Z] > 35 |     const supabase = createClient(supabaseUrl, supabaseServiceKey);
+[2026-08-19T02:09:43.176Z] |                                  ^
+[2026-08-19T02:09:43.176Z] 36 |
+[2026-08-19T02:09:43.176Z] 37 |     const [catRes, setRes, sesRes] = await Promise.all([
+[2026-08-19T02:09:43.176Z] 38 |       supabase.from('pomodoro_categories').select('*').eq('user_id', user.id).order('created_at'),
+[2026-08-19T02:09:43.177Z] GET /api/pomodoro/get-settings 500 in 501ms
+[2026-08-19T02:10:10.333Z] [API /pomodoro/get-settings] Starting request...
+[2026-08-19T02:10:10.494Z] [API /pomodoro/get-settings] User authenticated: 57fc7b0a-5ba0-42fb-ad0c-f15ee32c6df3
+[2026-08-19T02:10:10.568Z] [API /pomodoro/get-settings] Exception: Error: supabaseKey is required.
+[2026-08-19T02:10:10.568Z] at GET (src/app/api/pomodoro/get-settings/route.ts:35:34)
+[2026-08-19T02:10:10.568Z] 33 |     console.log('[API /pomodoro/get-settings] User authenticated:', user.id);
+[2026-08-19T02:10:10.568Z] 34 |
+[2026-08-19T02:10:10.568Z] > 35 |     const supabase = createClient(supabaseUrl, supabaseServiceKey);
+[2026-08-19T02:10:10.568Z] |                                  ^
+[2026-08-19T02:10:10.568Z] 36 |
+[2026-08-19T02:10:10.568Z] 37 |     const [catRes, setRes, sesRes] = await Promise.all([
+[2026-08-19T02:10:10.568Z] 38 |       supabase.from('pomodoro_categories').select('*').eq('user_id', user.id).order('created_at'),
+[2026-08-19T02:10:10.569Z] GET /api/pomodoro/get-settings 500 in 508ms
+[2026-08-19T02:10:25.323Z] [API /pomodoro/get-settings] Starting request...
+[2026-08-19T02:10:25.495Z] [API /pomodoro/get-settings] User authenticated: 57fc7b0a-5ba0-42fb-ad0c-f15ee32c6df3
+[2026-08-19T02:10:25.579Z] [API /pomodoro/get-settings] Exception: Error: supabaseKey is required.
+[2026-08-19T02:10:25.579Z] at GET (src/app/api/pomodoro/get-settings/route.ts:35:34)
+[2026-08-19T02:10:25.579Z] 33 |     console.log('[API /pomodoro/get-settings] User authenticated:', user.id);
+[2026-08-19T02:10:25.579Z] 34 |
+[2026-08-19T02:10:25.579Z] > 35 |     const supabase = createClient(supabaseUrl, supabaseServiceKey);
+[2026-08-19T02:10:25.579Z] |                                  ^
+[2026-08-19T02:10:25.579Z] 36 |
+[2026-08-19T02:10:25.579Z] 37 |     const [catRes, setRes, sesRes] = await Promise.all([
+[2026-08-19T02:10:25.579Z] 38 |       supabase.from('pomodoro_categories').select('*').eq('user_id', user.id).order('created_at'),
+[2026-08-19T02:10:25.580Z] GET /api/pomodoro/get-settings 500 in 498ms
+[2026-08-19T02:11:25.937Z] [API /pomodoro/get-settings] Starting request...
+[2026-08-19T02:11:26.098Z] [API /pomodoro/get-settings] User authenticated: 57fc7b0a-5ba0-42fb-ad0c-f15ee32c6df3
+[2026-08-19T02:11:26.185Z] [API /pomodoro/get-settings] Exception: Error: supabaseKey is required.
+[2026-08-19T02:11:26.185Z] at GET (src/app/api/pomodoro/get-settings/route.ts:35:34)
+[2026-08-19T02:11:26.185Z] 33 |     console.log('[API /pomodoro/get-settings] User authenticated:', user.id);
+[2026-08-19T02:11:26.185Z] 34 |
+[2026-08-19T02:11:26.185Z] > 35 |     const supabase = createClient(supabaseUrl, supabaseServiceKey);
+[2026-08-19T02:11:26.185Z] |                                  ^
+[2026-08-19T02:11:26.185Z] 36 |
+[2026-08-19T02:11:26.185Z] 37 |     const [catRes, setRes, sesRes] = await Promise.all([
+[2026-08-19T02:11:26.185Z] 38 |       supabase.from('pomodoro_categories').select('*').eq('user_id', user.id).order('created_at'),
+[2026-08-19T02:11:26.186Z] GET /api/pomodoro/get-settings 500 in 511ms
+[2026-08-19T02:11:37.490Z] [PomodoroTimer] Initial categoryDurations from settings: { produtividade: 25, estudos: 50, descanso: 15 }
+[2026-08-19T02:11:37.530Z] GET /?from_webdev=1 200 in 125ms
+[2026-08-19T02:11:42.388Z] [PomodoroTimer] Initial categoryDurations from settings: { produtividade: 25, estudos: 50, descanso: 15 }
+[2026-08-19T02:11:42.419Z] HEAD / 200 in 100ms
+[2026-08-19T02:11:43.706Z] [PomodoroTimer] Initial categoryDurations from settings: { produtividade: 25, estudos: 50, descanso: 15 }
+[2026-08-19T02:11:43.747Z] GET /?from_webdev=1 200 in 114ms
+[2026-08-19T02:12:25.896Z] [API /pomodoro/get-settings] Starting request...
+[2026-08-19T02:12:26.158Z] [API /pomodoro/get-settings] User authenticated: 57fc7b0a-5ba0-42fb-ad0c-f15ee32c6df3
+[2026-08-19T02:12:26.259Z] [API /pomodoro/get-settings] Exception: Error: supabaseKey is required.
+[2026-08-19T02:12:26.259Z] at GET (src/app/api/pomodoro/get-settings/route.ts:35:34)
+[2026-08-19T02:12:26.259Z] 33 |     console.log('[API /pomodoro/get-settings] User authenticated:', user.id);
+[2026-08-19T02:12:26.259Z] 34 |
+[2026-08-19T02:12:26.259Z] > 35 |     const supabase = createClient(supabaseUrl, supabaseServiceKey);
+[2026-08-19T02:12:26.259Z] |                                  ^
+[2026-08-19T02:12:26.259Z] 36 |
+[2026-08-19T02:12:26.259Z] 37 |     const [catRes, setRes, sesRes] = await Promise.all([
+[2026-08-19T02:12:26.259Z] 38 |       supabase.from('pomodoro_categories').select('*').eq('user_id', user.id).order('created_at'),
+[2026-08-19T02:12:26.261Z] GET /api/pomodoro/get-settings 500 in 615ms
+[2026-08-19T02:13:25.907Z] [API /pomodoro/get-settings] Starting request...
+[2026-08-19T02:13:26.093Z] [API /pomodoro/get-settings] User authenticated: 57fc7b0a-5ba0-42fb-ad0c-f15ee32c6df3
+[2026-08-19T02:13:26.191Z] [API /pomodoro/get-settings] Exception: Error: supabaseKey is required.
+[2026-08-19T02:13:26.191Z] at GET (src/app/api/pomodoro/get-settings/route.ts:35:34)
+[2026-08-19T02:13:26.191Z] 33 |     console.log('[API /pomodoro/get-settings] User authenticated:', user.id);
+[2026-08-19T02:13:26.191Z] 34 |
+[2026-08-19T02:13:26.191Z] > 35 |     const supabase = createClient(supabaseUrl, supabaseServiceKey);
+[2026-08-19T02:13:26.191Z] |                                  ^
+[2026-08-19T02:13:26.191Z] 36 |
+[2026-08-19T02:13:26.191Z] 37 |     const [catRes, setRes, sesRes] = await Promise.all([
+[2026-08-19T02:13:26.191Z] 38 |       supabase.from('pomodoro_categories').select('*').eq('user_id', user.id).order('created_at'),
+[2026-08-19T02:13:26.193Z] GET /api/pomodoro/get-settings 500 in 542ms
+[2026-08-19T02:14:25.913Z] [API /pomodoro/get-settings] Starting request...
+[2026-08-19T02:14:26.065Z] [API /pomodoro/get-settings] User authenticated: 57fc7b0a-5ba0-42fb-ad0c-f15ee32c6df3
+[2026-08-19T02:14:26.142Z] [API /pomodoro/get-settings] Exception: Error: supabaseKey is required.
+[2026-08-19T02:14:26.142Z] at GET (src/app/api/pomodoro/get-settings/route.ts:35:34)
+[2026-08-19T02:14:26.142Z] 33 |     console.log('[API /pomodoro/get-settings] User authenticated:', user.id);
+[2026-08-19T02:14:26.142Z] 34 |
+[2026-08-19T02:14:26.142Z] > 35 |     const supabase = createClient(supabaseUrl, supabaseServiceKey);
+[2026-08-19T02:14:26.142Z] |                                  ^
+[2026-08-19T02:14:26.142Z] 36 |
+[2026-08-19T02:14:26.142Z] 37 |     const [catRes, setRes, sesRes] = await Promise.all([
+[2026-08-19T02:14:26.142Z] 38 |       supabase.from('pomodoro_categories').select('*').eq('user_id', user.id).order('created_at'),
+[2026-08-19T02:14:26.143Z] GET /api/pomodoro/get-settings 500 in 490ms
+[2026-08-19T02:14:48.340Z] [PomodoroTimer] Initial categoryDurations from settings: { produtividade: 25, estudos: 50, descanso: 15 }
+[2026-08-19T02:14:48.382Z] GET /?from_webdev=1 200 in 117ms
+[2026-08-19T02:14:53.043Z] [PomodoroTimer] Initial categoryDurations from settings: { produtividade: 25, estudos: 50, descanso: 15 }
+[2026-08-19T02:14:53.074Z] HEAD / 200 in 100ms
+[2026-08-19T02:14:53.713Z] [PomodoroTimer] Initial categoryDurations from settings: { produtividade: 25, estudos: 50, descanso: 15 }
+[2026-08-19T02:14:53.752Z] GET /?from_webdev=1 200 in 117ms
+[2026-08-19T02:15:25.917Z] [API /pomodoro/get-settings] Starting request...
+[2026-08-19T02:15:26.113Z] @supabase/ssr: createServerClient was configured without the setAll cookie method, but the client needs to set cookies. This can lead to issues such as random logouts, early session termination or increased token refresh requests. If in NextJS, check your middleware.ts file, route handlers and server actions for correctness.
+[2026-08-19T02:15:26.170Z] [API /pomodoro/get-settings] User authenticated: 57fc7b0a-5ba0-42fb-ad0c-f15ee32c6df3
+[2026-08-19T02:15:26.243Z] [API /pomodoro/get-settings] Exception: Error: supabaseKey is required.
+[2026-08-19T02:15:26.243Z] at GET (src/app/api/pomodoro/get-settings/route.ts:35:34)
+[2026-08-19T02:15:26.243Z] 33 |     console.log('[API /pomodoro/get-settings] User authenticated:', user.id);
+[2026-08-19T02:15:26.243Z] 34 |
+[2026-08-19T02:15:26.243Z] > 35 |     const supabase = createClient(supabaseUrl, supabaseServiceKey);
+[2026-08-19T02:15:26.243Z] |                                  ^
+[2026-08-19T02:15:26.243Z] 36 |
+[2026-08-19T02:15:26.243Z] 37 |     const [catRes, setRes, sesRes] = await Promise.all([
+[2026-08-19T02:15:26.243Z] 38 |       supabase.from('pomodoro_categories').select('*').eq('user_id', user.id).order('created_at'),
+[2026-08-19T02:15:26.244Z] GET /api/pomodoro/get-settings 500 in 589ms
+[2026-08-19T02:16:17.141Z] [API /pomodoro/get-settings] Starting request...
+[2026-08-19T02:16:17.309Z] [API /pomodoro/get-settings] User authenticated: 57fc7b0a-5ba0-42fb-ad0c-f15ee32c6df3
+[2026-08-19T02:16:17.377Z] [API /pomodoro/get-settings] Exception: Error: supabaseKey is required.
+[2026-08-19T02:16:17.377Z] at GET (src/app/api/pomodoro/get-settings/route.ts:35:34)
+[2026-08-19T02:16:17.377Z] 33 |     console.log('[API /pomodoro/get-settings] User authenticated:', user.id);
+[2026-08-19T02:16:17.377Z] 34 |
+[2026-08-19T02:16:17.377Z] > 35 |     const supabase = createClient(supabaseUrl, supabaseServiceKey);
+[2026-08-19T02:16:17.377Z] |                                  ^
+[2026-08-19T02:16:17.377Z] 36 |
+[2026-08-19T02:16:17.377Z] 37 |     const [catRes, setRes, sesRes] = await Promise.all([
+[2026-08-19T02:16:17.377Z] 38 |       supabase.from('pomodoro_categories').select('*').eq('user_id', user.id).order('created_at'),
+[2026-08-19T02:16:17.378Z] GET /api/pomodoro/get-settings 500 in 506ms
+[2026-08-19T02:17:17.937Z] [API /pomodoro/get-settings] Starting request...
+[2026-08-19T02:17:18.103Z] [API /pomodoro/get-settings] User authenticated: 57fc7b0a-5ba0-42fb-ad0c-f15ee32c6df3
+[2026-08-19T02:17:18.171Z] [API /pomodoro/get-settings] Exception: Error: supabaseKey is required.
+[2026-08-19T02:17:18.171Z] at GET (src/app/api/pomodoro/get-settings/route.ts:35:34)
+[2026-08-19T02:17:18.171Z] 33 |     console.log('[API /pomodoro/get-settings] User authenticated:', user.id);
+[2026-08-19T02:17:18.171Z] 34 |
+[2026-08-19T02:17:18.171Z] > 35 |     const supabase = createClient(supabaseUrl, supabaseServiceKey);
+[2026-08-19T02:17:18.171Z] |                                  ^
+[2026-08-19T02:17:18.171Z] 36 |
+[2026-08-19T02:17:18.171Z] 37 |     const [catRes, setRes, sesRes] = await Promise.all([
+[2026-08-19T02:17:18.171Z] 38 |       supabase.from('pomodoro_categories').select('*').eq('user_id', user.id).order('created_at'),
+[2026-08-19T02:17:18.172Z] GET /api/pomodoro/get-settings 500 in 480ms
+[2026-08-19T02:17:57.839Z] ✓ Compiled in 160ms
+[2026-08-19T02:18:17.896Z] [API /pomodoro/get-settings] Starting request...
+[2026-08-19T02:18:18.039Z] [API /pomodoro/get-settings] User authenticated: 57fc7b0a-5ba0-42fb-ad0c-f15ee32c6df3
+[2026-08-19T02:18:18.126Z] [API /pomodoro/get-settings] Exception: Error: supabaseKey is required.
+[2026-08-19T02:18:18.126Z] at GET (src/app/api/pomodoro/get-settings/route.ts:35:34)
+[2026-08-19T02:18:18.126Z] 33 |     console.log('[API /pomodoro/get-settings] User authenticated:', user.id);
+[2026-08-19T02:18:18.126Z] 34 |
+[2026-08-19T02:18:18.126Z] > 35 |     const supabase = createClient(supabaseUrl, supabaseServiceKey);
+[2026-08-19T02:18:18.126Z] |                                  ^
+[2026-08-19T02:18:18.126Z] 36 |
+[2026-08-19T02:18:18.126Z] 37 |     const [catRes, setRes, sesRes] = await Promise.all([
+[2026-08-19T02:18:18.126Z] 38 |       supabase.from('pomodoro_categories').select('*').eq('user_id', user.id).order('created_at'),
+[2026-08-19T02:18:18.128Z] GET /api/pomodoro/get-settings 500 in 481ms
+[2026-08-19T02:18:32.496Z] ✓ Compiled / in 53ms
+[2026-08-19T02:18:33.222Z] [PomodoroTimer] Initial categoryDurations from settings: { produtividade: 25, estudos: 50, descanso: 15 }
+[2026-08-19T02:18:33.283Z] GET / 200 in 843ms
+[2026-08-19T02:19:17.883Z] [API /pomodoro/get-settings] Starting request...
+[2026-08-19T02:19:18.034Z] [API /pomodoro/get-settings] User authenticated: 57fc7b0a-5ba0-42fb-ad0c-f15ee32c6df3
+[2026-08-19T02:19:18.119Z] [API /pomodoro/get-settings] Exception: Error: supabaseKey is required.
+[2026-08-19T02:19:18.119Z] at GET (src/app/api/pomodoro/get-settings/route.ts:35:34)
+[2026-08-19T02:19:18.119Z] 33 |     console.log('[API /pomodoro/get-settings] User authenticated:', user.id);
+[2026-08-19T02:19:18.119Z] 34 |
+[2026-08-19T02:19:18.119Z] > 35 |     const supabase = createClient(supabaseUrl, supabaseServiceKey);
+[2026-08-19T02:19:18.119Z] |                                  ^
+[2026-08-19T02:19:18.119Z] 36 |
+[2026-08-19T02:19:18.119Z] 37 |     const [catRes, setRes, sesRes] = await Promise.all([
+[2026-08-19T02:19:18.119Z] 38 |       supabase.from('pomodoro_categories').select('*').eq('user_id', user.id).order('created_at'),
+[2026-08-19T02:19:18.120Z] GET /api/pomodoro/get-settings 500 in 479ms
+[2026-08-19T02:20:17.879Z] [API /pomodoro/get-settings] Starting request...
+[2026-08-19T02:20:18.024Z] [API /pomodoro/get-settings] User authenticated: 57fc7b0a-5ba0-42fb-ad0c-f15ee32c6df3
+[2026-08-19T02:20:18.094Z] [API /pomodoro/get-settings] Exception: Error: supabaseKey is required.
+[2026-08-19T02:20:18.094Z] at GET (src/app/api/pomodoro/get-settings/route.ts:35:34)
+[2026-08-19T02:20:18.094Z] 33 |     console.log('[API /pomodoro/get-settings] User authenticated:', user.id);
+[2026-08-19T02:20:18.094Z] 34 |
+[2026-08-19T02:20:18.094Z] > 35 |     const supabase = createClient(supabaseUrl, supabaseServiceKey);
+[2026-08-19T02:20:18.094Z] |                                  ^
+[2026-08-19T02:20:18.095Z] 36 |
+[2026-08-19T02:20:18.095Z] 37 |     const [catRes, setRes, sesRes] = await Promise.all([
+[2026-08-19T02:20:18.095Z] 38 |       supabase.from('pomodoro_categories').select('*').eq('user_id', user.id).order('created_at'),
+[2026-08-19T02:20:18.097Z] GET /api/pomodoro/get-settings 500 in 459ms
+[2026-08-19T02:20:41.385Z] -----
+[2026-08-19T02:20:41.385Z] [1m[31mFATAL[39m[0m: An unexpected Turbopack error occurred. A panic log has been written to /tmp/next-panic-d01650d58850899788796d2e3b9fcb9b.log.
+[2026-08-19T02:20:41.385Z] To help make Turbopack better, report this error by clicking here: https://github.com/vercel/next.js/discussions/new?category=turbopack-error-report&title=Turbopack%20Error%3A%20Next.js%20package%20not%20found&body=Turbopack%20version%3A%20%6096f69990%60%0ANext.js%20version%3A%20%600.0.0%60%0A%0AError%20message%3A%0A%60%60%60%0ATurbopack%20Error%3A%20Next.js%20package%20not%20found%0A%60%60%60&labels=Turbopack,Turbopack%20Panic%20Backtrace
+[2026-08-19T02:20:41.385Z] -----
+[2026-08-19T02:20:42.582Z] Error [TurbopackInternalError]: Next.js package not found
+[2026-08-19T02:20:42.583Z] Debug info:
+[2026-08-19T02:20:42.583Z] - Execution of get_entrypoints_with_issues_operation failed
+[2026-08-19T02:20:42.583Z] - Execution of EntrypointsOperation::new failed
+[2026-08-19T02:20:42.583Z] - Execution of Project::entrypoints failed
+[2026-08-19T02:20:42.583Z] - Execution of AppProject::routes failed
+[2026-08-19T02:20:42.583Z] - Execution of directory_tree_to_entrypoints_internal failed
+[2026-08-19T02:20:42.583Z] - Execution of directory_tree_to_loader_tree failed
+[2026-08-19T02:20:42.583Z] - Execution of get_next_package failed
+[2026-08-19T02:20:42.583Z] - Next.js package not found
+[2026-08-19T02:20:42.583Z] at <unknown> (TurbopackInternalError: Next.js package not found) {
+[2026-08-19T02:20:42.583Z] location: undefined
+[2026-08-19T02:20:42.583Z] }
+[2026-08-19T02:20:42.693Z] [?25h
+[2026-08-19T02:20:42.711Z] Dev server exited with code 0
+[2026-08-19T02:23:32.094Z] Starting dev server with command: pnpm run dev
+[2026-08-19T02:23:33.082Z] ✓ Lockfile passes supply-chain policies (verified 1h ago)
+[2026-08-19T02:23:33.118Z] [WARN] Moving @eslint/eslintrc that was installed by a different package manager to "node_modules/.ignored"
+[2026-08-19T02:23:33.118Z] [WARN] Moving @types/node that was installed by a different package manager to "node_modules/.ignored"
+[2026-08-19T02:23:33.119Z] [WARN] Moving @types/react that was installed by a different package manager to "node_modules/.ignored"
+[2026-08-19T02:23:33.119Z] [WARN] Moving @types/react-dom that was installed by a different package manager to "node_modules/.ignored"
+[2026-08-19T02:23:33.119Z] [WARN] Moving @types/react-syntax-highlighter that was installed by a different package manager to "node_modules/.ignored"
+[2026-08-19T02:23:33.119Z] [WARN] Moving @types/three that was installed by a different package manager to "node_modules/.ignored"
+[2026-08-19T02:23:33.119Z] [WARN] Moving @tailwindcss/postcss that was installed by a different package manager to "node_modules/.ignored"
+[2026-08-19T02:23:33.119Z] [WARN] Moving eslint that was installed by a different package manager to "node_modules/.ignored"
+[2026-08-19T02:23:33.120Z] [WARN] Moving eslint-config-next that was installed by a different package manager to "node_modules/.ignored"
+[2026-08-19T02:23:33.120Z] [WARN] Moving pg that was installed by a different package manager to "node_modules/.ignored"
+[2026-08-19T02:23:33.120Z] [WARN] Moving tailwindcss that was installed by a different package manager to "node_modules/.ignored"
+[2026-08-19T02:23:33.120Z] [WARN] Moving tw-animate-css that was installed by a different package manager to "node_modules/.ignored"
+[2026-08-19T02:23:33.120Z] [WARN] Moving typescript that was installed by a different package manager to "node_modules/.ignored"
+[2026-08-19T02:23:33.120Z] [WARN] Moving vitest that was installed by a different package manager to "node_modules/.ignored"
+[2026-08-19T02:23:33.120Z] [WARN] Moving @babel/parser that was installed by a different package manager to "node_modules/.ignored"
+[2026-08-19T02:23:33.120Z] [WARN] Moving @dnd-kit/core that was installed by a different package manager to "node_modules/.ignored"
+[2026-08-19T02:23:33.121Z] [WARN] Moving @dnd-kit/sortable that was installed by a different package manager to "node_modules/.ignored"
+[2026-08-19T02:23:33.121Z] [WARN] Moving @dnd-kit/utilities that was installed by a different package manager to "node_modules/.ignored"
+[2026-08-19T02:23:33.121Z] [WARN] Moving @headlessui/react that was installed by a different package manager to "node_modules/.ignored"
+[2026-08-19T02:23:33.121Z] [WARN] Moving @heroicons/react that was installed by a different package manager to "node_modules/.ignored"
+[2026-08-19T02:23:33.121Z] [WARN] Moving @hookform/resolvers that was installed by a different package manager to "node_modules/.ignored"
+[2026-08-19T02:23:33.121Z] [WARN] Moving @libsql/client that was installed by a different package manager to "node_modules/.ignored"
+[2026-08-19T02:23:33.121Z] [WARN] Moving @number-flow/react that was installed by a different package manager to "node_modules/.ignored"
+[2026-08-19T02:23:33.121Z] [WARN] Moving @radix-ui/react-accordion that was installed by a different package manager to "node_modules/.ignored"
+[2026-08-19T02:23:33.121Z] [WARN] Moving @radix-ui/react-alert-dialog that was installed by a different package manager to "node_modules/.ignored"
+[2026-08-19T02:23:33.121Z] [WARN] Moving @radix-ui/react-aspect-ratio that was installed by a different package manager to "node_modules/.ignored"
+[2026-08-19T02:23:33.122Z] [WARN] Moving @radix-ui/react-avatar that was installed by a different package manager to "node_modules/.ignored"
+[2026-08-19T02:23:33.122Z] [WARN] Moving @radix-ui/react-checkbox that was installed by a different package manager to "node_modules/.ignored"
+[2026-08-19T02:23:33.122Z] [WARN] Moving @radix-ui/react-collapsible that was installed by a different package manager to "node_modules/.ignored"
+[2026-08-19T02:23:33.122Z] [WARN] Moving @radix-ui/react-context-menu that was installed by a different package manager to "node_modules/.ignored"
+[2026-08-19T02:23:33.122Z] [WARN] Moving @radix-ui/react-dialog that was installed by a different package manager to "node_modules/.ignored"
+[2026-08-19T02:23:33.122Z] [WARN] Moving @radix-ui/react-dropdown-menu that was installed by a different package manager to "node_modules/.ignored"
+[2026-08-19T02:23:33.122Z] [WARN] Moving @radix-ui/react-hover-card that was installed by a different package manager to "node_modules/.ignored"
+[2026-08-19T02:23:33.122Z] [WARN] Moving @radix-ui/react-label that was installed by a different package manager to "node_modules/.ignored"
+[2026-08-19T02:23:33.122Z] [WARN] Moving @radix-ui/react-menubar that was installed by a different package manager to "node_modules/.ignored"
+[2026-08-19T02:23:33.122Z] [WARN] Moving @radix-ui/react-navigation-menu that was installed by a different package manager to "node_modules/.ignored"
+[2026-08-19T02:23:33.122Z] [WARN] Moving @radix-ui/react-popover that was installed by a different package manager to "node_modules/.ignored"
+[2026-08-19T02:23:33.122Z] [WARN] Moving @radix-ui/react-progress that was installed by a different package manager to "node_modules/.ignored"
+[2026-08-19T02:23:33.123Z] [WARN] Moving @radix-ui/react-radio-group that was installed by a different package manager to "node_modules/.ignored"
+[2026-08-19T02:23:33.123Z] [WARN] Moving @radix-ui/react-scroll-area that was installed by a different package manager to "node_modules/.ignored"
+[2026-08-19T02:23:33.123Z] [WARN] Moving @radix-ui/react-select that was installed by a different package manager to "node_modules/.ignored"
+[2026-08-19T02:23:33.123Z] [WARN] Moving @radix-ui/react-separator that was installed by a different package manager to "node_modules/.ignored"
+[2026-08-19T02:23:33.123Z] [WARN] Moving @radix-ui/react-slider that was installed by a different package manager to "node_modules/.ignored"
+[2026-08-19T02:23:33.123Z] [WARN] Moving @radix-ui/react-slot that was installed by a different package manager to "node_modules/.ignored"
+[2026-08-19T02:23:33.123Z] [WARN] Moving @radix-ui/react-switch that was installed by a different package manager to "node_modules/.ignored"
+[2026-08-19T02:23:33.123Z] [WARN] Moving @radix-ui/react-tabs that was installed by a different package manager to "node_modules/.ignored"
+[2026-08-19T02:23:33.123Z] [WARN] Moving @radix-ui/react-toggle that was installed by a different package manager to "node_modules/.ignored"
+[2026-08-19T02:23:33.123Z] [WARN] Moving @radix-ui/react-toggle-group that was installed by a different package manager to "node_modules/.ignored"
+[2026-08-19T02:23:33.123Z] [WARN] Moving @radix-ui/react-tooltip that was installed by a different package manager to "node_modules/.ignored"
+[2026-08-19T02:23:33.123Z] [WARN] Moving @react-three/drei that was installed by a different package manager to "node_modules/.ignored"
+[2026-08-19T02:23:33.124Z] [WARN] Moving @react-three/fiber that was installed by a different package manager to "node_modules/.ignored"
+[2026-08-19T02:23:33.124Z] [WARN] Moving @supabase/ssr that was installed by a different package manager to "node_modules/.ignored"
+[2026-08-19T02:23:33.124Z] [WARN] Moving @supabase/supabase-js that was installed by a different package manager to "node_modules/.ignored"
+[2026-08-19T02:23:33.124Z] [WARN] Moving @tabler/icons-react that was installed by a different package manager to "node_modules/.ignored"
+[2026-08-19T02:23:33.124Z] [WARN] Moving @tailwindcss/typography that was installed by a different package manager to "node_modules/.ignored"
+[2026-08-19T02:23:33.124Z] [WARN] Moving @tsparticles/engine that was installed by a different package manager to "node_modules/.ignored"
+[2026-08-19T02:23:33.124Z] [WARN] Moving @tsparticles/react that was installed by a different package manager to "node_modules/.ignored"
+[2026-08-19T02:23:33.124Z] [WARN] Moving @tsparticles/slim that was installed by a different package manager to "node_modules/.ignored"
+[2026-08-19T02:23:33.124Z] [WARN] Moving atmn that was installed by a different package manager to "node_modules/.ignored"
+[2026-08-19T02:23:33.124Z] [WARN] Moving autumn-js that was installed by a different package manager to "node_modules/.ignored"
+[2026-08-19T02:23:33.125Z] [WARN] Moving bcrypt that was installed by a different package manager to "node_modules/.ignored"
+[2026-08-19T02:23:33.125Z] [WARN] Moving better-auth that was installed by a different package manager to "node_modules/.ignored"
+[2026-08-19T02:23:33.125Z] [WARN] Moving class-variance-authority that was installed by a different package manager to "node_modules/.ignored"
+[2026-08-19T02:23:33.125Z] [WARN] Moving clsx that was installed by a different package manager to "node_modules/.ignored"
+[2026-08-19T02:23:33.125Z] [WARN] Moving cmdk that was installed by a different package manager to "node_modules/.ignored"
+[2026-08-19T02:23:33.125Z] [WARN] Moving cobe that was installed by a different package manager to "node_modules/.ignored"
+[2026-08-19T02:23:33.125Z] [WARN] Moving date-fns that was installed by a different package manager to "node_modules/.ignored"
+[2026-08-19T02:23:33.125Z] [WARN] Moving dotted-map that was installed by a different package manager to "node_modules/.ignored"
+[2026-08-19T02:23:33.125Z] [WARN] Moving drizzle-kit that was installed by a different package manager to "node_modules/.ignored"
+[2026-08-19T02:23:33.125Z] [WARN] Moving drizzle-orm that was installed by a different package manager to "node_modules/.ignored"
+[2026-08-19T02:23:33.126Z] [WARN] Moving embla-carousel-auto-scroll that was installed by a different package manager to "node_modules/.ignored"
+[2026-08-19T02:23:33.126Z] [WARN] Moving embla-carousel-autoplay that was installed by a different package manager to "node_modules/.ignored"
+[2026-08-19T02:23:33.126Z] [WARN] Moving embla-carousel-react that was installed by a different package manager to "node_modules/.ignored"
+[2026-08-19T02:23:33.126Z] [WARN] Moving estree-walker that was installed by a different package manager to "node_modules/.ignored"
+[2026-08-19T02:23:33.126Z] [WARN] Moving framer-motion that was installed by a different package manager to "node_modules/.ignored"
+[2026-08-19T02:23:33.126Z] [WARN] Moving input-otp that was installed by a different package manager to "node_modules/.ignored"
+[2026-08-19T02:23:33.126Z] [WARN] Moving lucide-react that was installed by a different package manager to "node_modules/.ignored"
+[2026-08-19T02:23:33.126Z] [WARN] Moving mini-svg-data-uri that was installed by a different package manager to "node_modules/.ignored"
+[2026-08-19T02:23:33.126Z] [WARN] Moving motion that was installed by a different package manager to "node_modules/.ignored"
+[2026-08-19T02:23:33.126Z] [WARN] Moving motion-dom that was installed by a different package manager to "node_modules/.ignored"
+[2026-08-19T02:23:33.126Z] [WARN] Moving next that was installed by a different package manager to "node_modules/.ignored"
+[2026-08-19T02:23:33.126Z] [WARN] Moving next-themes that was installed by a different package manager to "node_modules/.ignored"
+[2026-08-19T02:23:33.127Z] [WARN] Moving orchids-visual-edits that was installed by a different package manager to "node_modules/.ignored"
+[2026-08-19T02:23:33.127Z] [WARN] Moving qss that was installed by a different package manager to "node_modules/.ignored"
+[2026-08-19T02:23:33.127Z] [WARN] Moving react that was installed by a different package manager to "node_modules/.ignored"
+[2026-08-19T02:23:33.127Z] [WARN] Moving react-day-picker that was installed by a different package manager to "node_modules/.ignored"
+[2026-08-19T02:23:33.127Z] [WARN] Moving react-dom that was installed by a different package manager to "node_modules/.ignored"
+[2026-08-19T02:23:33.127Z] [WARN] Moving react-dropzone that was installed by a different package manager to "node_modules/.ignored"
+[2026-08-19T02:23:33.127Z] [WARN] Moving react-fast-marquee that was installed by a different package manager to "node_modules/.ignored"
+[2026-08-19T02:23:33.127Z] [WARN] Moving react-hook-form that was installed by a different package manager to "node_modules/.ignored"
+[2026-08-19T02:23:33.127Z] [WARN] Moving react-icons that was installed by a different package manager to "node_modules/.ignored"
+[2026-08-19T02:23:33.127Z] [WARN] Moving react-intersection-observer that was installed by a different package manager to "node_modules/.ignored"
+[2026-08-19T02:23:33.127Z] [WARN] Moving react-resizable-panels that was installed by a different package manager to "node_modules/.ignored"
+[2026-08-19T02:23:33.127Z] [WARN] Moving react-responsive-masonry that was installed by a different package manager to "node_modules/.ignored"
+[2026-08-19T02:23:33.128Z] [WARN] Moving react-syntax-highlighter that was installed by a different package manager to "node_modules/.ignored"
+[2026-08-19T02:23:33.128Z] [WARN] Moving react-wrap-balancer that was installed by a different package manager to "node_modules/.ignored"
+[2026-08-19T02:23:33.128Z] [WARN] Moving recharts that was installed by a different package manager to "node_modules/.ignored"
+[2026-08-19T02:23:33.128Z] [WARN] Moving simplex-noise that was installed by a different package manager to "node_modules/.ignored"
+[2026-08-19T02:23:33.128Z] [WARN] Moving sonner that was installed by a different package manager to "node_modules/.ignored"
+[2026-08-19T02:23:33.128Z] [WARN] Moving stripe that was installed by a different package manager to "node_modules/.ignored"
+[2026-08-19T02:23:33.128Z] [WARN] Moving swiper that was installed by a different package manager to "node_modules/.ignored"
+[2026-08-19T02:23:33.128Z] [WARN] Moving tailwind-merge that was installed by a different package manager to "node_modules/.ignored"
+[2026-08-19T02:23:33.128Z] [WARN] Moving tailwindcss-animate that was installed by a different package manager to "node_modules/.ignored"
+[2026-08-19T02:23:33.128Z] [WARN] Moving three that was installed by a different package manager to "node_modules/.ignored"
+[2026-08-19T02:23:33.128Z] [WARN] Moving three-globe that was installed by a different package manager to "node_modules/.ignored"
+[2026-08-19T02:23:33.128Z] [WARN] Moving uuid that was installed by a different package manager to "node_modules/.ignored"
+[2026-08-19T02:23:33.129Z] [WARN] Moving vaul that was installed by a different package manager to "node_modules/.ignored"
+[2026-08-19T02:23:33.129Z] [WARN] Moving zod that was installed by a different package manager to "node_modules/.ignored"
+[2026-08-19T02:23:33.129Z] [WARN] Moving zustand that was installed by a different package manager to "node_modules/.ignored"
+[2026-08-19T02:23:33.310Z] Progress: resolved 1, reused 0, downloaded 0, added 0
+[2026-08-19T02:23:33.366Z] [WARN] deprecated @tsparticles/engine@3.9.1: Please update to version 4.1.1
+[2026-08-19T02:23:33.367Z] [WARN] deprecated @tsparticles/react@3.0.0: Please update to version 4.1.1
+[2026-08-19T02:23:33.375Z] [WARN] deprecated @tsparticles/slim@3.9.1: Please update to version 4.1.1
+[2026-08-19T02:23:33.731Z] [WARN] deprecated stripe@19.3.1: This version has a major bug where the Files API times out. See issue 2538
+[2026-08-19T02:23:34.155Z] [WARN] deprecated next@15.5.7: This version has a security vulnerability. Please upgrade to a patched version. See https://nextjs.org/blog/security-update-2025-12-11 for more details.
+[2026-08-19T02:23:34.356Z] Progress: resolved 161, reused 123, downloaded 0, added 0
+[2026-08-19T02:23:35.528Z] Progress: resolved 370, reused 326, downloaded 5, added 0
+[2026-08-19T02:23:36.576Z] Progress: resolved 689, reused 538, downloaded 28, added 0
+[2026-08-19T02:23:37.577Z] Progress: resolved 932, reused 735, downloaded 33, added 0
+[2026-08-19T02:23:38.356Z] [WARN] 37 deprecated subdependencies found: @esbuild-kit/core-utils@3.3.2, @esbuild-kit/esm-loader@2.6.5, @tsparticles/basic@3.9.1, @tsparticles/interaction-external-attract@3.9.1, @tsparticles/interaction-external-bounce@3.9.1, @tsparticles/interaction-external-bubble@3.9.1, @tsparticles/interaction-external-connect@3.9.1, @tsparticles/interaction-external-grab@3.9.1, @tsparticles/interaction-external-pause@3.9.1, @tsparticles/interaction-external-push@3.9.1, @tsparticles/interaction-external-remove@3.9.1, @tsparticles/interaction-external-repulse@3.9.1, @tsparticles/interaction-external-slow@3.9.1, @tsparticles/interaction-particles-attract@3.9.1, @tsparticles/interaction-particles-collisions@3.9.1, @tsparticles/interaction-particles-links@3.9.1, @tsparticles/move-base@3.9.1, @tsparticles/move-parallax@3.9.1, @tsparticles/plugin-easing-quad@3.9.1, @tsparticles/plugin-hsl-color@3.9.1, @tsparticles/plugin-rgb-color@3.9.1, @tsparticles/shape-circle@3.9.1, @tsparticles/shape-emoji@3.9.1, @tsparticles/shape-image@3.9.1, @tsparticles/shape-line@3.9.1, @tsparticles/shape-polygon@3.9.1, @tsparticles/shape-square@3.9.1, @tsparticles/shape-star@3.9.1, @tsparticles/updater-color@3.9.1, @tsparticles/updater-life@3.9.1, @tsparticles/updater-opacity@3.9.1, @tsparticles/updater-out-modes@3.9.1, @tsparticles/updater-rotate@3.9.1, @tsparticles/updater-size@3.9.1, @tsparticles/updater-stroke-color@3.9.1, @types/prettier@3.0.0, node-domexception@1.0.0
+[2026-08-19T02:23:38.384Z] Packages: +884
+[2026-08-19T02:23:38.384Z] ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+[2026-08-19T02:23:38.521Z] Packages are hard linked from the content-addressable store to the virtual store.
+[2026-08-19T02:23:38.521Z] Content-addressable store is at: /home/ubuntu/.local/share/pnpm/store/v11
+[2026-08-19T02:23:38.521Z] Virtual store is at:             node_modules/.pnpm
+[2026-08-19T02:23:38.578Z] Progress: resolved 1088, reused 856, downloaded 34, added 175
+[2026-08-19T02:23:39.578Z] Progress: resolved 1088, reused 856, downloaded 34, added 883
+[2026-08-19T02:23:40.220Z] Progress: resolved 1088, reused 856, downloaded 34, added 884, done
+[2026-08-19T02:23:40.409Z] .../node_modules/@tsparticles/engine install$ node ./scripts/install.js
+[2026-08-19T02:23:40.425Z] .../esbuild@0.21.5/node_modules/esbuild postinstall$ node install.js
+[2026-08-19T02:23:40.426Z] .../esbuild@0.28.2/node_modules/esbuild postinstall$ node install.js
+[2026-08-19T02:23:40.426Z] .../esbuild@0.25.12/node_modules/esbuild postinstall$ node install.js
+[2026-08-19T02:23:40.427Z] .../bcrypt@6.0.0/node_modules/bcrypt install$ node-gyp-build
+[2026-08-19T02:23:40.459Z] .../node_modules/@tsparticles/engine install: Thank you for installing tsParticles.
+[2026-08-19T02:23:40.459Z] .../node_modules/@tsparticles/engine install: Remember to checkout the official website https://particles.js.org to explore some samples.
+[2026-08-19T02:23:40.459Z] .../node_modules/@tsparticles/engine install: You can find more samples on CodePen too: https://codepen.io/collection/DPOage
+[2026-08-19T02:23:40.459Z] .../node_modules/@tsparticles/engine install: If you need documentation you can find it here: https://particles.js.org/docs
+[2026-08-19T02:23:40.459Z] .../node_modules/@tsparticles/engine install: Don't forget to star the tsParticles repository, if you like the project and want to support it: https://github.com/tsparticles/tsparticles
+[2026-08-19T02:23:40.459Z] .../node_modules/@tsparticles/engine install: You can read more about the component here: https://github.com/tsparticles/tsparticles/blob/main/components/react/README.md
+[2026-08-19T02:23:40.459Z] .../node_modules/@tsparticles/engine install: [43m[30mFound React installed. Please download react-particles to use tsParticles with a component ready to use and easier to configure.[0m
+[2026-08-19T02:23:40.459Z] .../node_modules/@tsparticles/engine install: Done
+[2026-08-19T02:23:40.488Z] .../esbuild@0.21.5/node_modules/esbuild postinstall: Done
+[2026-08-19T02:23:40.508Z] .../esbuild@0.18.20/node_modules/esbuild postinstall$ node install.js
+[2026-08-19T02:23:40.530Z] .../esbuild@0.28.2/node_modules/esbuild postinstall: Done
+[2026-08-19T02:23:40.538Z] .../esbuild@0.25.12/node_modules/esbuild postinstall: Done
+[2026-08-19T02:23:40.539Z] .../bcrypt@6.0.0/node_modules/bcrypt install: Done
+[2026-08-19T02:23:40.550Z] .../node_modules/unrs-resolver postinstall$ node postinstall.js
+[2026-08-19T02:23:40.560Z] .../sharp@0.34.5/node_modules/sharp install$ node install/check.js || npm run build
+[2026-08-19T02:23:40.584Z] .../esbuild@0.18.20/node_modules/esbuild postinstall: Done
+[2026-08-19T02:23:40.614Z] .../node_modules/unrs-resolver postinstall: Done
+[2026-08-19T02:23:40.653Z] .../sharp@0.34.5/node_modules/sharp install: Done
+[2026-08-19T02:23:41.566Z] [WARN] Issues with peer dependencies found. Run "pnpm peers check" to list them.
+[2026-08-19T02:23:41.566Z] dependencies:
+[2026-08-19T02:23:41.566Z] + @babel/parser 7.29.8 (8.0.4 is available)
+[2026-08-19T02:23:41.567Z] + @dnd-kit/core 6.3.1
+[2026-08-19T02:23:41.567Z] + @dnd-kit/sortable 10.0.0
+[2026-08-19T02:23:41.567Z] + @dnd-kit/utilities 3.2.2
+[2026-08-19T02:23:41.567Z] + @headlessui/react 2.2.10
+[2026-08-19T02:23:41.567Z] + @heroicons/react 2.2.0
+[2026-08-19T02:23:41.567Z] + @hookform/resolvers 5.9.1
+[2026-08-19T02:23:41.567Z] + @libsql/client 0.15.15 (0.17.4 is available)
+[2026-08-19T02:23:41.567Z] + @number-flow/react 0.5.14 (0.6.2 is available)
+[2026-08-19T02:23:41.567Z] + @radix-ui/react-accordion 1.2.20
+[2026-08-19T02:23:41.567Z] + @radix-ui/react-alert-dialog 1.1.23
+[2026-08-19T02:23:41.567Z] + @radix-ui/react-aspect-ratio 1.1.15
+[2026-08-19T02:23:41.567Z] + @radix-ui/react-avatar 1.2.6
+[2026-08-19T02:23:41.567Z] + @radix-ui/react-checkbox 1.3.11
+[2026-08-19T02:23:41.567Z] + @radix-ui/react-collapsible 1.1.20
+[2026-08-19T02:23:41.567Z] + @radix-ui/react-context-menu 2.3.7
+[2026-08-19T02:23:41.567Z] + @radix-ui/react-dialog 1.1.23
+[2026-08-19T02:23:41.567Z] + @radix-ui/react-dropdown-menu 2.1.24
+[2026-08-19T02:23:41.567Z] + @radix-ui/react-hover-card 1.1.23
+[2026-08-19T02:23:41.567Z] + @radix-ui/react-label 2.1.15
+[2026-08-19T02:23:41.567Z] + @radix-ui/react-menubar 1.1.24
+[2026-08-19T02:23:41.567Z] + @radix-ui/react-navigation-menu 1.2.22
+[2026-08-19T02:23:41.567Z] + @radix-ui/react-popover 1.1.23
+[2026-08-19T02:23:41.567Z] + @radix-ui/react-progress 1.1.16
+[2026-08-19T02:23:41.567Z] + @radix-ui/react-radio-group 1.4.7
+[2026-08-19T02:23:41.567Z] + @radix-ui/react-scroll-area 1.2.18
+[2026-08-19T02:23:41.567Z] + @radix-ui/react-select 2.3.7
+[2026-08-19T02:23:41.567Z] + @radix-ui/react-separator 1.1.15
+[2026-08-19T02:23:41.567Z] + @radix-ui/react-slider 1.4.7
+[2026-08-19T02:23:41.567Z] + @radix-ui/react-slot 1.3.3
+[2026-08-19T02:23:41.567Z] + @radix-ui/react-switch 1.3.7
+[2026-08-19T02:23:41.567Z] + @radix-ui/react-tabs 1.1.21
+[2026-08-19T02:23:41.567Z] + @radix-ui/react-toggle 1.1.18
+[2026-08-19T02:23:41.567Z] + @radix-ui/react-toggle-group 1.1.19
+[2026-08-19T02:23:41.567Z] + @radix-ui/react-tooltip 1.2.16
+[2026-08-19T02:23:41.567Z] + @react-three/drei 10.7.8
+[2026-08-19T02:23:41.567Z] + @react-three/fiber 9.7.0
+[2026-08-19T02:23:41.567Z] + @supabase/ssr 0.8.0 (0.12.4 is available)
+[2026-08-19T02:23:41.567Z] + @supabase/supabase-js 2.112.3
+[2026-08-19T02:23:41.567Z] + @tabler/icons-react 3.46.0
+[2026-08-19T02:23:41.567Z] + @tailwindcss/typography 0.5.20
+[2026-08-19T02:23:41.567Z] + @tsparticles/engine 3.9.1 (4.3.2 is available) deprecated
+[2026-08-19T02:23:41.567Z] + @tsparticles/react 3.0.0 (4.3.2 is available) deprecated
+[2026-08-19T02:23:41.567Z] + @tsparticles/slim 3.9.1 (4.3.2 is available) deprecated
+[2026-08-19T02:23:41.567Z] + atmn 0.0.28 (1.1.20 is available)
+[2026-08-19T02:23:41.567Z] + autumn-js 0.1.85 (1.2.53 is available)
+[2026-08-19T02:23:41.567Z] + bcrypt 6.0.0
+[2026-08-19T02:23:41.567Z] + better-auth 1.3.10
+[2026-08-19T02:23:41.567Z] + class-variance-authority 0.7.1
+[2026-08-19T02:23:41.567Z] + clsx 2.1.1
+[2026-08-19T02:23:41.567Z] + cmdk 1.1.1
+[2026-08-19T02:23:41.567Z] + cobe 0.6.5 (2.0.1 is available)
+[2026-08-19T02:23:41.567Z] + date-fns 4.4.0
+[2026-08-19T02:23:41.567Z] + dotted-map 2.2.3 (3.1.0 is available)
+[2026-08-19T02:23:41.567Z] + drizzle-kit 0.31.10
+[2026-08-19T02:23:41.567Z] + drizzle-orm 0.44.7 (0.45.2 is available)
+[2026-08-19T02:23:41.567Z] + embla-carousel-auto-scroll 8.6.0
+[2026-08-19T02:23:41.567Z] + embla-carousel-autoplay 8.6.0
+[2026-08-19T02:23:41.567Z] + embla-carousel-react 8.6.0
+[2026-08-19T02:23:41.567Z] + estree-walker 2.0.2 (3.0.3 is available)
+[2026-08-19T02:23:41.567Z] + framer-motion 12.43.0 (13.1.0 is available)
+[2026-08-19T02:23:41.567Z] + input-otp 1.4.2
+[2026-08-19T02:23:41.567Z] + lucide-react 0.552.0
+[2026-08-19T02:23:41.567Z] + mini-svg-data-uri 1.4.4
+[2026-08-19T02:23:41.567Z] + motion 12.43.0 (13.1.0 is available)
+[2026-08-19T02:23:41.567Z] + motion-dom 12.43.0 (13.0.0 is available)
+[2026-08-19T02:23:41.567Z] + next 15.5.7 (16.3.1 is available) deprecated
+[2026-08-19T02:23:41.567Z] + next-themes 0.4.6
+[2026-08-19T02:23:41.567Z] + orchids-visual-edits 1.0.13
+[2026-08-19T02:23:41.567Z] + qss 3.0.0
+[2026-08-19T02:23:41.567Z] + react 19.0.0 (19.2.8 is available)
+[2026-08-19T02:23:41.567Z] + react-day-picker 9.14.0 (10.0.1 is available)
+[2026-08-19T02:23:41.567Z] + react-dom 19.0.0 (19.2.8 is available)
+[2026-08-19T02:23:41.567Z] + react-dropzone 14.4.1 (20.1.0 is available)
+[2026-08-19T02:23:41.567Z] + react-fast-marquee 1.6.5
+[2026-08-19T02:23:41.567Z] + react-hook-form 7.85.0
+[2026-08-19T02:23:41.567Z] + react-icons 5.7.0
+[2026-08-19T02:23:41.567Z] + react-intersection-observer 10.1.0 (11.0.0 is available)
+[2026-08-19T02:23:41.567Z] + react-resizable-panels 3.0.6 (4.12.3 is available)
+[2026-08-19T02:23:41.567Z] + react-responsive-masonry 2.7.2
+[2026-08-19T02:23:41.567Z] + react-syntax-highlighter 15.6.6 (16.1.1 is available)
+[2026-08-19T02:23:41.567Z] + react-wrap-balancer 1.1.1
+[2026-08-19T02:23:41.567Z] + recharts 3.10.1
+[2026-08-19T02:23:41.567Z] + simplex-noise 4.0.3
+[2026-08-19T02:23:41.567Z] + sonner 2.0.8
+[2026-08-19T02:23:41.567Z] + stripe 19.3.1 (22.5.0 is available) deprecated
+[2026-08-19T02:23:41.567Z] + swiper 12.2.0 (14.1.0 is available)
+[2026-08-19T02:23:41.567Z] + tailwind-merge 3.6.0
+[2026-08-19T02:23:41.567Z] + tailwindcss-animate 1.0.7
+[2026-08-19T02:23:41.567Z] + three 0.178.0 (0.185.1 is available)
+[2026-08-19T02:23:41.567Z] + three-globe 2.45.2
+[2026-08-19T02:23:41.567Z] + uuid 13.0.2
+[2026-08-19T02:23:41.568Z] + vaul 1.1.2
+[2026-08-19T02:23:41.568Z] + zod 4.4.3
+[2026-08-19T02:23:41.568Z] + zustand 5.0.15
+[2026-08-19T02:23:41.568Z] devDependencies:
+[2026-08-19T02:23:41.568Z] + @eslint/eslintrc 3.3.6
+[2026-08-19T02:23:41.568Z] + @tailwindcss/postcss 4.3.3
+[2026-08-19T02:23:41.568Z] + @types/node 20.19.43 (26.2.0 is available)
+[2026-08-19T02:23:41.568Z] + @types/react 19.2.18
+[2026-08-19T02:23:41.568Z] + @types/react-dom 19.2.4
+[2026-08-19T02:23:41.568Z] + @types/react-syntax-highlighter 15.5.13
+[2026-08-19T02:23:41.568Z] + @types/three 0.178.1 (0.185.4 is available)
+[2026-08-19T02:23:41.568Z] + eslint 9.39.5 (10.8.1 is available)
+[2026-08-19T02:23:41.568Z] + eslint-config-next 16.3.1
+[2026-08-19T02:23:41.568Z] + pg 8.23.0
+[2026-08-19T02:23:41.568Z] + tailwindcss 4.3.3
+[2026-08-19T02:23:41.568Z] + tw-animate-css 1.4.0
+[2026-08-19T02:23:41.568Z] + typescript 5.9.3 (7.0.2 is available)
+[2026-08-19T02:23:41.568Z] + vitest 2.1.9
+[2026-08-19T02:23:41.604Z] Done in 9s using pnpm v11.20.0
+[2026-08-19T02:23:41.673Z] $ next dev --turbopack
+[2026-08-19T02:23:43.482Z] ▲ Next.js 15.5.7 (Turbopack)
+[2026-08-19T02:23:43.482Z] - Local:        http://localhost:3000
+[2026-08-19T02:23:43.482Z] - Network:      http://169.254.0.21:3000
+[2026-08-19T02:23:43.482Z] ✓ Starting...
+[2026-08-19T02:23:44.712Z] ✓ Ready in 1701ms
+[2026-08-19T02:23:55.167Z] ○ Compiling /api/pomodoro/get-settings ...
+[2026-08-19T02:23:56.482Z] ✓ Compiled /api/pomodoro/get-settings in 1817ms
+[2026-08-19T02:23:56.875Z] [API /pomodoro/get-settings] Starting request...
+[2026-08-19T02:23:57.182Z] [API /pomodoro/get-settings] User authenticated: 57fc7b0a-5ba0-42fb-ad0c-f15ee32c6df3
+[2026-08-19T02:23:57.337Z] [API /pomodoro/get-settings] Exception: Error: supabaseKey is required.
+[2026-08-19T02:23:57.337Z] at GET (src/app/api/pomodoro/get-settings/route.ts:35:34)
+[2026-08-19T02:23:57.337Z] 33 |     console.log('[API /pomodoro/get-settings] User authenticated:', user.id);
+[2026-08-19T02:23:57.337Z] 34 |
+[2026-08-19T02:23:57.337Z] > 35 |     const supabase = createClient(supabaseUrl, supabaseServiceKey);
+[2026-08-19T02:23:57.337Z] |                                  ^
+[2026-08-19T02:23:57.337Z] 36 |
+[2026-08-19T02:23:57.337Z] 37 |     const [catRes, setRes, sesRes] = await Promise.all([
+[2026-08-19T02:23:57.337Z] 38 |       supabase.from('pomodoro_categories').select('*').eq('user_id', user.id).order('created_at'),
+[2026-08-19T02:23:57.344Z] GET /api/pomodoro/get-settings 500 in 2686ms
+[2026-08-19T02:24:34.024Z] [ELIFECYCLE] Command failed.
+[2026-08-19T02:24:34.052Z] [?25h
+[2026-08-19T02:24:34.060Z] Dev server exited with code -1
+[2026-08-19T02:24:35.103Z] Starting dev server with command: pnpm run dev
+[2026-08-19T02:24:35.665Z] $ next dev --turbopack
+[2026-08-19T02:24:36.960Z] ▲ Next.js 15.5.7 (Turbopack)
+[2026-08-19T02:24:36.960Z] - Local:        http://localhost:3000
+[2026-08-19T02:24:36.960Z] - Network:      http://169.254.0.21:3000
+[2026-08-19T02:24:36.960Z] ✓ Starting...
+[2026-08-19T02:24:37.719Z] ✓ Ready in 1165ms
+[2026-08-19T02:24:38.234Z] ○ Compiling / ...
+[2026-08-19T02:24:44.498Z] ✓ Compiled / in 6.8s
+[2026-08-19T02:24:45.169Z] [PomodoroTimer] Initial categoryDurations from settings: { produtividade: 25, estudos: 50, descanso: 15 }
+[2026-08-19T02:24:45.247Z] GET / 200 in 7521ms
+[2026-08-19T02:24:45.785Z] ⚠ Blocked cross-origin request from 127.0.0.1 to /_next/* resource. To allow this, configure "allowedDevOrigins" in next.config
+[2026-08-19T02:24:45.785Z] Read more: https://nextjs.org/docs/app/api-reference/config/next-config-js/allowedDevOrigins
+[2026-08-19T02:24:55.122Z] ✓ Compiled /api/pomodoro/get-settings in 473ms
+[2026-08-19T02:24:55.441Z] [API /pomodoro/get-settings] Starting request...
+[2026-08-19T02:24:55.596Z] [API /pomodoro/get-settings] User authenticated: 57fc7b0a-5ba0-42fb-ad0c-f15ee32c6df3
+[2026-08-19T02:24:55.747Z] [API /pomodoro/get-settings] Exception: Error: supabaseKey is required.
+[2026-08-19T02:24:55.748Z] at GET (src/app/api/pomodoro/get-settings/route.ts:35:34)
+[2026-08-19T02:24:55.748Z] 33 |     console.log('[API /pomodoro/get-settings] User authenticated:', user.id);
+[2026-08-19T02:24:55.748Z] 34 |
+[2026-08-19T02:24:55.748Z] > 35 |     const supabase = createClient(supabaseUrl, supabaseServiceKey);
+[2026-08-19T02:24:55.748Z] |                                  ^
+[2026-08-19T02:24:55.748Z] 36 |
+[2026-08-19T02:24:55.748Z] 37 |     const [catRes, setRes, sesRes] = await Promise.all([
+[2026-08-19T02:24:55.748Z] 38 |       supabase.from('pomodoro_categories').select('*').eq('user_id', user.id).order('created_at'),
+[2026-08-19T02:24:55.751Z] GET /api/pomodoro/get-settings 500 in 1106ms
+[2026-08-19T02:25:24.992Z] [PomodoroTimer] Initial categoryDurations from settings: { produtividade: 25, estudos: 50, descanso: 15 }
+[2026-08-19T02:25:25.043Z] GET / 200 in 167ms
+[2026-08-19T02:25:25.099Z] [PomodoroTimer] Initial categoryDurations from settings: { produtividade: 25, estudos: 50, descanso: 15 }
+[2026-08-19T02:25:25.146Z] GET / 200 in 248ms
+[2026-08-19T02:25:54.909Z] [API /pomodoro/get-settings] Starting request...
+[2026-08-19T02:25:55.130Z] [API /pomodoro/get-settings] User authenticated: 57fc7b0a-5ba0-42fb-ad0c-f15ee32c6df3
+[2026-08-19T02:25:55.231Z] [API /pomodoro/get-settings] Exception: Error: supabaseKey is required.
+[2026-08-19T02:25:55.231Z] at GET (src/app/api/pomodoro/get-settings/route.ts:35:34)
+[2026-08-19T02:25:55.231Z] 33 |     console.log('[API /pomodoro/get-settings] User authenticated:', user.id);
+[2026-08-19T02:25:55.231Z] 34 |
+[2026-08-19T02:25:55.231Z] > 35 |     const supabase = createClient(supabaseUrl, supabaseServiceKey);
+[2026-08-19T02:25:55.231Z] |                                  ^
+[2026-08-19T02:25:55.231Z] 36 |
+[2026-08-19T02:25:55.231Z] 37 |     const [catRes, setRes, sesRes] = await Promise.all([
+[2026-08-19T02:25:55.231Z] 38 |       supabase.from('pomodoro_categories').select('*').eq('user_id', user.id).order('created_at'),
+[2026-08-19T02:25:55.233Z] GET /api/pomodoro/get-settings 500 in 568ms
+[2026-08-19T02:26:54.695Z] ⨯ [Error: ENOENT: no such file or directory, open '/home/ubuntu/orchids-blindy/.next/server/app/api/pomodoro/get-settings/[__metadata_id__]/route/app-paths-manifest.json'] {
+[2026-08-19T02:26:54.696Z] errno: -2,
+[2026-08-19T02:26:54.696Z] code: 'ENOENT',
+[2026-08-19T02:26:54.696Z] syscall: 'open',
+[2026-08-19T02:26:54.696Z] path: '/home/ubuntu/orchids-blindy/.next/server/app/api/pomodoro/get-settings/[__metadata_id__]/route/app-paths-manifest.json'
+[2026-08-19T02:26:54.696Z] }
+[2026-08-19T02:26:55.199Z] ○ Compiling /_error ...
+[2026-08-19T02:26:56.063Z] ✓ Compiled /_error in 1365ms
+[2026-08-19T02:26:56.093Z] ⨯ [Error: ENOENT: no such file or directory, open '/home/ubuntu/orchids-blindy/.next/static/development/_buildManifest.js.tmp.ip9ekh2kzf'] {
+[2026-08-19T02:26:56.093Z] errno: -2,
+[2026-08-19T02:26:56.093Z] code: 'ENOENT',
+[2026-08-19T02:26:56.093Z] syscall: 'open',
+[2026-08-19T02:26:56.093Z] path: '/home/ubuntu/orchids-blindy/.next/static/development/_buildManifest.js.tmp.ip9ekh2kzf'
+[2026-08-19T02:26:56.093Z] }
+[2026-08-19T02:26:56.149Z] [Error: ENOENT: no such file or directory, open '/home/ubuntu/orchids-blindy/.next/server/app/api/pomodoro/get-settings/[__metadata_id__]/route/app-paths-manifest.json'] {
+[2026-08-19T02:26:56.149Z] errno: -2,
+[2026-08-19T02:26:56.149Z] code: 'ENOENT',
+[2026-08-19T02:26:56.149Z] syscall: 'open',
+[2026-08-19T02:26:56.149Z] path: '/home/ubuntu/orchids-blindy/.next/server/app/api/pomodoro/get-settings/[__metadata_id__]/route/app-paths-manifest.json'
+[2026-08-19T02:26:56.149Z] }
+[2026-08-19T02:26:56.187Z] ⨯ [Error: ENOENT: no such file or directory, open '/home/ubuntu/orchids-blindy/.next/static/development/_buildManifest.js.tmp.b9flmu2p0v'] {
+[2026-08-19T02:26:56.187Z] errno: -2,
+[2026-08-19T02:26:56.187Z] code: 'ENOENT',
+[2026-08-19T02:26:56.187Z] syscall: 'open',
+[2026-08-19T02:26:56.187Z] path: '/home/ubuntu/orchids-blindy/.next/static/development/_buildManifest.js.tmp.b9flmu2p0v'
+[2026-08-19T02:26:56.187Z] }
+[2026-08-19T02:26:56.217Z] [Error: ENOENT: no such file or directory, open '/home/ubuntu/orchids-blindy/.next/static/development/_buildManifest.js.tmp.vuwl70zg02'] {
+[2026-08-19T02:26:56.217Z] errno: -2,
+[2026-08-19T02:26:56.217Z] code: 'ENOENT',
+[2026-08-19T02:26:56.217Z] syscall: 'open',
+[2026-08-19T02:26:56.217Z] path: '/home/ubuntu/orchids-blindy/.next/static/development/_buildManifest.js.tmp.vuwl70zg02'
+[2026-08-19T02:26:56.217Z] }
+[2026-08-19T02:27:54.711Z] ⨯ [Error: ENOENT: no such file or directory, open '/home/ubuntu/orchids-blindy/.next/server/app/api/pomodoro/get-settings/[__metadata_id__]/route/app-paths-manifest.json'] {
+[2026-08-19T02:27:54.711Z] errno: -2,
+[2026-08-19T02:27:54.711Z] code: 'ENOENT',
+[2026-08-19T02:27:54.711Z] syscall: 'open',
+[2026-08-19T02:27:54.711Z] path: '/home/ubuntu/orchids-blindy/.next/server/app/api/pomodoro/get-settings/[__metadata_id__]/route/app-paths-manifest.json'
+[2026-08-19T02:27:54.711Z] }
+[2026-08-19T02:27:54.742Z] ⨯ [Error: ENOENT: no such file or directory, open '/home/ubuntu/orchids-blindy/.next/server/pages/_app/build-manifest.json'] {
+[2026-08-19T02:27:54.742Z] errno: -2,
+[2026-08-19T02:27:54.742Z] code: 'ENOENT',
+[2026-08-19T02:27:54.742Z] syscall: 'open',
+[2026-08-19T02:27:54.742Z] path: '/home/ubuntu/orchids-blindy/.next/server/pages/_app/build-manifest.json'
+[2026-08-19T02:27:54.742Z] }
+[2026-08-19T02:27:54.773Z] [Error: ENOENT: no such file or directory, open '/home/ubuntu/orchids-blindy/.next/server/app/api/pomodoro/get-settings/[__metadata_id__]/route/app-paths-manifest.json'] {
+[2026-08-19T02:27:54.774Z] errno: -2,
+[2026-08-19T02:27:54.774Z] code: 'ENOENT',
+[2026-08-19T02:27:54.774Z] syscall: 'open',
+[2026-08-19T02:27:54.774Z] path: '/home/ubuntu/orchids-blindy/.next/server/app/api/pomodoro/get-settings/[__metadata_id__]/route/app-paths-manifest.json'
+[2026-08-19T02:27:54.774Z] }
+[2026-08-19T02:27:54.802Z] ⨯ [Error: ENOENT: no such file or directory, open '/home/ubuntu/orchids-blindy/.next/server/pages/_app/build-manifest.json'] {
+[2026-08-19T02:27:54.802Z] errno: -2,
+[2026-08-19T02:27:54.802Z] code: 'ENOENT',
+[2026-08-19T02:27:54.802Z] syscall: 'open',
+[2026-08-19T02:27:54.802Z] path: '/home/ubuntu/orchids-blindy/.next/server/pages/_app/build-manifest.json'
+[2026-08-19T02:27:54.802Z] }
+[2026-08-19T02:27:54.834Z] [Error: ENOENT: no such file or directory, open '/home/ubuntu/orchids-blindy/.next/server/pages/_app/build-manifest.json'] {
+[2026-08-19T02:27:54.834Z] errno: -2,
+[2026-08-19T02:27:54.834Z] code: 'ENOENT',
+[2026-08-19T02:27:54.834Z] syscall: 'open',
+[2026-08-19T02:27:54.834Z] path: '/home/ubuntu/orchids-blindy/.next/server/pages/_app/build-manifest.json'
+[2026-08-19T02:27:54.834Z] }
+[2026-08-19T02:28:54.711Z] ⨯ [Error: ENOENT: no such file or directory, open '/home/ubuntu/orchids-blindy/.next/server/app/api/pomodoro/get-settings/[__metadata_id__]/route/app-paths-manifest.json'] {
+[2026-08-19T02:28:54.713Z] errno: -2,
+[2026-08-19T02:28:54.713Z] code: 'ENOENT',
+[2026-08-19T02:28:54.713Z] syscall: 'open',
+[2026-08-19T02:28:54.713Z] path: '/home/ubuntu/orchids-blindy/.next/server/app/api/pomodoro/get-settings/[__metadata_id__]/route/app-paths-manifest.json'
+[2026-08-19T02:28:54.713Z] }
+[2026-08-19T02:28:54.745Z] ⨯ [Error: ENOENT: no such file or directory, open '/home/ubuntu/orchids-blindy/.next/server/pages/_app/build-manifest.json'] {
+[2026-08-19T02:28:54.745Z] errno: -2,
+[2026-08-19T02:28:54.745Z] code: 'ENOENT',
+[2026-08-19T02:28:54.745Z] syscall: 'open',
+[2026-08-19T02:28:54.746Z] path: '/home/ubuntu/orchids-blindy/.next/server/pages/_app/build-manifest.json'
+[2026-08-19T02:28:54.746Z] }
+[2026-08-19T02:28:54.772Z] [Error: ENOENT: no such file or directory, open '/home/ubuntu/orchids-blindy/.next/server/app/api/pomodoro/get-settings/[__metadata_id__]/route/app-paths-manifest.json'] {
+[2026-08-19T02:28:54.772Z] errno: -2,
+[2026-08-19T02:28:54.772Z] code: 'ENOENT',
+[2026-08-19T02:28:54.772Z] syscall: 'open',
+[2026-08-19T02:28:54.772Z] path: '/home/ubuntu/orchids-blindy/.next/server/app/api/pomodoro/get-settings/[__metadata_id__]/route/app-paths-manifest.json'
+[2026-08-19T02:28:54.772Z] }
+[2026-08-19T02:28:54.795Z] ⨯ [Error: ENOENT: no such file or directory, open '/home/ubuntu/orchids-blindy/.next/server/pages/_app/build-manifest.json'] {
+[2026-08-19T02:28:54.795Z] errno: -2,
+[2026-08-19T02:28:54.795Z] code: 'ENOENT',
+[2026-08-19T02:28:54.795Z] syscall: 'open',
+[2026-08-19T02:28:54.795Z] path: '/home/ubuntu/orchids-blindy/.next/server/pages/_app/build-manifest.json'
+[2026-08-19T02:28:54.795Z] }
+[2026-08-19T02:28:54.816Z] [Error: ENOENT: no such file or directory, open '/home/ubuntu/orchids-blindy/.next/server/pages/_app/build-manifest.json'] {
+[2026-08-19T02:28:54.817Z] errno: -2,
+[2026-08-19T02:28:54.817Z] code: 'ENOENT',
+[2026-08-19T02:28:54.817Z] syscall: 'open',
+[2026-08-19T02:28:54.817Z] path: '/home/ubuntu/orchids-blindy/.next/server/pages/_app/build-manifest.json'
+[2026-08-19T02:28:54.817Z] }
+[2026-08-19T02:29:48.746Z] ✓ Compiled in 856ms
+[2026-08-19T02:29:54.750Z] ⨯ [Error: ENOENT: no such file or directory, open '/home/ubuntu/orchids-blindy/.next/server/app/api/pomodoro/get-settings/[__metadata_id__]/route/app-paths-manifest.json'] {
+[2026-08-19T02:29:54.753Z] errno: -2,
+[2026-08-19T02:29:54.753Z] code: 'ENOENT',
+[2026-08-19T02:29:54.753Z] syscall: 'open',
+[2026-08-19T02:29:54.753Z] path: '/home/ubuntu/orchids-blindy/.next/server/app/api/pomodoro/get-settings/[__metadata_id__]/route/app-paths-manifest.json'
+[2026-08-19T02:29:54.753Z] }
+[2026-08-19T02:29:54.780Z] ⨯ [Error: ENOENT: no such file or directory, open '/home/ubuntu/orchids-blindy/.next/server/pages/_app/build-manifest.json'] {
+[2026-08-19T02:29:54.780Z] errno: -2,
+[2026-08-19T02:29:54.780Z] code: 'ENOENT',
+[2026-08-19T02:29:54.780Z] syscall: 'open',
+[2026-08-19T02:29:54.780Z] path: '/home/ubuntu/orchids-blindy/.next/server/pages/_app/build-manifest.json'
+[2026-08-19T02:29:54.780Z] }
+[2026-08-19T02:29:54.809Z] [Error: ENOENT: no such file or directory, open '/home/ubuntu/orchids-blindy/.next/server/app/api/pomodoro/get-settings/[__metadata_id__]/route/app-paths-manifest.json'] {
+[2026-08-19T02:29:54.809Z] errno: -2,
+[2026-08-19T02:29:54.809Z] code: 'ENOENT',
+[2026-08-19T02:29:54.809Z] syscall: 'open',
+[2026-08-19T02:29:54.809Z] path: '/home/ubuntu/orchids-blindy/.next/server/app/api/pomodoro/get-settings/[__metadata_id__]/route/app-paths-manifest.json'
+[2026-08-19T02:29:54.809Z] }
+[2026-08-19T02:29:54.839Z] ⨯ [Error: ENOENT: no such file or directory, open '/home/ubuntu/orchids-blindy/.next/server/pages/_app/build-manifest.json'] {
+[2026-08-19T02:29:54.839Z] errno: -2,
+[2026-08-19T02:29:54.839Z] code: 'ENOENT',
+[2026-08-19T02:29:54.839Z] syscall: 'open',
+[2026-08-19T02:29:54.839Z] path: '/home/ubuntu/orchids-blindy/.next/server/pages/_app/build-manifest.json'
+[2026-08-19T02:29:54.839Z] }
+[2026-08-19T02:29:54.874Z] [Error: ENOENT: no such file or directory, open '/home/ubuntu/orchids-blindy/.next/server/pages/_app/build-manifest.json'] {
+[2026-08-19T02:29:54.874Z] errno: -2,
+[2026-08-19T02:29:54.874Z] code: 'ENOENT',
+[2026-08-19T02:29:54.874Z] syscall: 'open',
+[2026-08-19T02:29:54.874Z] path: '/home/ubuntu/orchids-blindy/.next/server/pages/_app/build-manifest.json'
+[2026-08-19T02:29:54.874Z] }
+[2026-08-19T02:29:56.446Z] [ELIFECYCLE] Command failed.
+[2026-08-19T02:29:56.537Z] [?25h
+[2026-08-19T02:29:56.547Z] Dev server exited with code -1
+[2026-08-19T02:29:57.629Z] Starting dev server with command: pnpm run dev
+[2026-08-19T02:29:58.126Z] $ next dev --turbopack
+[2026-08-19T02:29:59.549Z] ▲ Next.js 15.5.7 (Turbopack)
+[2026-08-19T02:29:59.549Z] - Local:        http://localhost:3000
+[2026-08-19T02:29:59.549Z] - Network:      http://169.254.0.21:3000
+[2026-08-19T02:29:59.549Z] ✓ Starting...
+[2026-08-19T02:30:00.348Z] ✓ Ready in 1243ms
+[2026-08-19T02:30:00.861Z] ○ Compiling / ...
+[2026-08-19T02:30:07.373Z] ✓ Compiled / in 7s
+[2026-08-19T02:30:08.096Z] [PomodoroTimer] Initial categoryDurations from settings: { produtividade: 25, estudos: 50, descanso: 15 }
+[2026-08-19T02:30:08.200Z] GET / 200 in 7846ms
+[2026-08-19T02:30:08.763Z] ⚠ Blocked cross-origin request from 127.0.0.1 to /_next/* resource. To allow this, configure "allowedDevOrigins" in next.config
+[2026-08-19T02:30:08.764Z] Read more: https://nextjs.org/docs/app/api-reference/config/next-config-js/allowedDevOrigins
+[2026-08-19T02:30:37.636Z] ⨯ [Error: ENOENT: no such file or directory, open '/home/ubuntu/orchids-blindy/.next/server/app/page/app-build-manifest.json'] {
+[2026-08-19T02:30:37.636Z] errno: -2,
+[2026-08-19T02:30:37.636Z] code: 'ENOENT',
+[2026-08-19T02:30:37.636Z] syscall: 'open',
+[2026-08-19T02:30:37.636Z] path: '/home/ubuntu/orchids-blindy/.next/server/app/page/app-build-manifest.json'
+[2026-08-19T02:30:37.636Z] }
+[2026-08-19T02:30:38.139Z] ○ Compiling /_error ...
+[2026-08-19T02:30:39.138Z] ✓ Compiled /_error in 1500ms
+[2026-08-19T02:30:39.171Z] ⨯ [Error: ENOENT: no such file or directory, open '/home/ubuntu/orchids-blindy/.next/static/development/_buildManifest.js.tmp.8gt9mxg82x'] {
+[2026-08-19T02:30:39.172Z] errno: -2,
+[2026-08-19T02:30:39.172Z] code: 'ENOENT',
+[2026-08-19T02:30:39.172Z] syscall: 'open',
+[2026-08-19T02:30:39.172Z] path: '/home/ubuntu/orchids-blindy/.next/static/development/_buildManifest.js.tmp.8gt9mxg82x'
+[2026-08-19T02:30:39.172Z] }
+[2026-08-19T02:30:39.237Z] [Error: ENOENT: no such file or directory, open '/home/ubuntu/orchids-blindy/.next/server/app/page/app-build-manifest.json'] {
+[2026-08-19T02:30:39.238Z] errno: -2,
+[2026-08-19T02:30:39.238Z] code: 'ENOENT',
+[2026-08-19T02:30:39.238Z] syscall: 'open',
+[2026-08-19T02:30:39.238Z] path: '/home/ubuntu/orchids-blindy/.next/server/app/page/app-build-manifest.json'
+[2026-08-19T02:30:39.238Z] }
+[2026-08-19T02:30:39.284Z] ⨯ [Error: ENOENT: no such file or directory, open '/home/ubuntu/orchids-blindy/.next/static/development/_buildManifest.js.tmp.p3nddfsp79q'] {
+[2026-08-19T02:30:39.284Z] errno: -2,
+[2026-08-19T02:30:39.284Z] code: 'ENOENT',
+[2026-08-19T02:30:39.284Z] syscall: 'open',
+[2026-08-19T02:30:39.284Z] path: '/home/ubuntu/orchids-blindy/.next/static/development/_buildManifest.js.tmp.p3nddfsp79q'
+[2026-08-19T02:30:39.284Z] }
+[2026-08-19T02:30:39.324Z] [Error: ENOENT: no such file or directory, open '/home/ubuntu/orchids-blindy/.next/static/development/_buildManifest.js.tmp.kr49gxhwzhq'] {
+[2026-08-19T02:30:39.324Z] errno: -2,
+[2026-08-19T02:30:39.324Z] code: 'ENOENT',
+[2026-08-19T02:30:39.324Z] syscall: 'open',
+[2026-08-19T02:30:39.324Z] path: '/home/ubuntu/orchids-blindy/.next/static/development/_buildManifest.js.tmp.kr49gxhwzhq'
+[2026-08-19T02:30:39.324Z] }
+[2026-08-19T02:30:39.868Z] ✓ Compiled /favicon.ico in 290ms
+[2026-08-19T02:30:39.900Z] ⨯ [Error: ENOENT: no such file or directory, open '/home/ubuntu/orchids-blindy/.next/static/development/_buildManifest.js.tmp.s0fa9l8y15'] {
+[2026-08-19T02:30:39.901Z] errno: -2,
+[2026-08-19T02:30:39.901Z] code: 'ENOENT',
+[2026-08-19T02:30:39.901Z] syscall: 'open',
+[2026-08-19T02:30:39.901Z] path: '/home/ubuntu/orchids-blindy/.next/static/development/_buildManifest.js.tmp.s0fa9l8y15'
+[2026-08-19T02:30:39.901Z] }
+[2026-08-19T02:30:55.016Z] ✓ Compiled /api/pomodoro/get-settings in 370ms
+[2026-08-19T02:30:55.048Z] ⨯ [Error: ENOENT: no such file or directory, open '/home/ubuntu/orchids-blindy/.next/static/development/_buildManifest.js.tmp.jsptti914ne'] {
+[2026-08-19T02:30:55.048Z] errno: -2,
+[2026-08-19T02:30:55.048Z] code: 'ENOENT',
+[2026-08-19T02:30:55.048Z] syscall: 'open',
+[2026-08-19T02:30:55.048Z] path: '/home/ubuntu/orchids-blindy/.next/static/development/_buildManifest.js.tmp.jsptti914ne'
+[2026-08-19T02:30:55.048Z] }
+[2026-08-19T02:30:55.076Z] ⨯ [Error: ENOENT: no such file or directory, open '/home/ubuntu/orchids-blindy/.next/server/pages/_app/build-manifest.json'] {
+[2026-08-19T02:30:55.076Z] errno: -2,
+[2026-08-19T02:30:55.076Z] code: 'ENOENT',
+[2026-08-19T02:30:55.076Z] syscall: 'open',
+[2026-08-19T02:30:55.076Z] path: '/home/ubuntu/orchids-blindy/.next/server/pages/_app/build-manifest.json'
+[2026-08-19T02:30:55.076Z] }
+[2026-08-19T02:30:55.102Z] [Error: ENOENT: no such file or directory, open '/home/ubuntu/orchids-blindy/.next/static/development/_buildManifest.js.tmp.jsptti914ne'] {
+[2026-08-19T02:30:55.102Z] errno: -2,
+[2026-08-19T02:30:55.102Z] code: 'ENOENT',
+[2026-08-19T02:30:55.102Z] syscall: 'open',
+[2026-08-19T02:30:55.102Z] path: '/home/ubuntu/orchids-blindy/.next/static/development/_buildManifest.js.tmp.jsptti914ne'
+[2026-08-19T02:30:55.102Z] }
+[2026-08-19T02:30:55.131Z] ⨯ [Error: ENOENT: no such file or directory, open '/home/ubuntu/orchids-blindy/.next/server/pages/_app/build-manifest.json'] {
+[2026-08-19T02:30:55.131Z] errno: -2,
+[2026-08-19T02:30:55.131Z] code: 'ENOENT',
+[2026-08-19T02:30:55.131Z] syscall: 'open',
+[2026-08-19T02:30:55.131Z] path: '/home/ubuntu/orchids-blindy/.next/server/pages/_app/build-manifest.json'
+[2026-08-19T02:30:55.131Z] }
+[2026-08-19T02:30:55.159Z] [Error: ENOENT: no such file or directory, open '/home/ubuntu/orchids-blindy/.next/server/pages/_app/build-manifest.json'] {
+[2026-08-19T02:30:55.159Z] errno: -2,
+[2026-08-19T02:30:55.159Z] code: 'ENOENT',
+[2026-08-19T02:30:55.159Z] syscall: 'open',
+[2026-08-19T02:30:55.159Z] path: '/home/ubuntu/orchids-blindy/.next/server/pages/_app/build-manifest.json'
+[2026-08-19T02:30:55.159Z] }
+[2026-08-19T02:31:54.707Z] ⨯ [Error: ENOENT: no such file or directory, open '/home/ubuntu/orchids-blindy/.next/static/development/_buildManifest.js.tmp.jusij0clb5'] {
+[2026-08-19T02:31:54.707Z] errno: -2,
+[2026-08-19T02:31:54.708Z] code: 'ENOENT',
+[2026-08-19T02:31:54.708Z] syscall: 'open',
+[2026-08-19T02:31:54.708Z] path: '/home/ubuntu/orchids-blindy/.next/static/development/_buildManifest.js.tmp.jusij0clb5'
+[2026-08-19T02:31:54.708Z] }
+[2026-08-19T02:31:54.736Z] ⨯ [Error: ENOENT: no such file or directory, open '/home/ubuntu/orchids-blindy/.next/server/pages/_app/build-manifest.json'] {
+[2026-08-19T02:31:54.736Z] errno: -2,
+[2026-08-19T02:31:54.736Z] code: 'ENOENT',
+[2026-08-19T02:31:54.736Z] syscall: 'open',
+[2026-08-19T02:31:54.736Z] path: '/home/ubuntu/orchids-blindy/.next/server/pages/_app/build-manifest.json'
+[2026-08-19T02:31:54.736Z] }
+[2026-08-19T02:31:54.773Z] [Error: ENOENT: no such file or directory, open '/home/ubuntu/orchids-blindy/.next/static/development/_buildManifest.js.tmp.jusij0clb5'] {
+[2026-08-19T02:31:54.774Z] errno: -2,
+[2026-08-19T02:31:54.774Z] code: 'ENOENT',
+[2026-08-19T02:31:54.774Z] syscall: 'open',
+[2026-08-19T02:31:54.774Z] path: '/home/ubuntu/orchids-blindy/.next/static/development/_buildManifest.js.tmp.jusij0clb5'
+[2026-08-19T02:31:54.774Z] }
+[2026-08-19T02:31:54.797Z] ⨯ [Error: ENOENT: no such file or directory, open '/home/ubuntu/orchids-blindy/.next/server/pages/_app/build-manifest.json'] {
+[2026-08-19T02:31:54.797Z] errno: -2,
+[2026-08-19T02:31:54.797Z] code: 'ENOENT',
+[2026-08-19T02:31:54.797Z] syscall: 'open',
+[2026-08-19T02:31:54.797Z] path: '/home/ubuntu/orchids-blindy/.next/server/pages/_app/build-manifest.json'
+[2026-08-19T02:31:54.797Z] }
+[2026-08-19T02:31:54.821Z] [Error: ENOENT: no such file or directory, open '/home/ubuntu/orchids-blindy/.next/server/pages/_app/build-manifest.json'] {
+[2026-08-19T02:31:54.821Z] errno: -2,
+[2026-08-19T02:31:54.821Z] code: 'ENOENT',
+[2026-08-19T02:31:54.821Z] syscall: 'open',
+[2026-08-19T02:31:54.821Z] path: '/home/ubuntu/orchids-blindy/.next/server/pages/_app/build-manifest.json'
+[2026-08-19T02:31:54.821Z] }
+[2026-08-19T02:32:54.692Z] ⨯ [Error: ENOENT: no such file or directory, open '/home/ubuntu/orchids-blindy/.next/static/development/_buildManifest.js.tmp.lgoj6by52v'] {
+[2026-08-19T02:32:54.692Z] errno: -2,
+[2026-08-19T02:32:54.693Z] code: 'ENOENT',
+[2026-08-19T02:32:54.693Z] syscall: 'open',
+[2026-08-19T02:32:54.693Z] path: '/home/ubuntu/orchids-blindy/.next/static/development/_buildManifest.js.tmp.lgoj6by52v'
+[2026-08-19T02:32:54.693Z] }
+[2026-08-19T02:32:54.722Z] ⨯ [Error: ENOENT: no such file or directory, open '/home/ubuntu/orchids-blindy/.next/server/pages/_app/build-manifest.json'] {
+[2026-08-19T02:32:54.723Z] errno: -2,
+[2026-08-19T02:32:54.723Z] code: 'ENOENT',
+[2026-08-19T02:32:54.723Z] syscall: 'open',
+[2026-08-19T02:32:54.723Z] path: '/home/ubuntu/orchids-blindy/.next/server/pages/_app/build-manifest.json'
+[2026-08-19T02:32:54.723Z] }
+[2026-08-19T02:32:54.750Z] [Error: ENOENT: no such file or directory, open '/home/ubuntu/orchids-blindy/.next/static/development/_buildManifest.js.tmp.lgoj6by52v'] {
+[2026-08-19T02:32:54.750Z] errno: -2,
+[2026-08-19T02:32:54.750Z] code: 'ENOENT',
+[2026-08-19T02:32:54.750Z] syscall: 'open',
+[2026-08-19T02:32:54.750Z] path: '/home/ubuntu/orchids-blindy/.next/static/development/_buildManifest.js.tmp.lgoj6by52v'
+[2026-08-19T02:32:54.750Z] }
+[2026-08-19T02:32:54.771Z] ⨯ [Error: ENOENT: no such file or directory, open '/home/ubuntu/orchids-blindy/.next/server/pages/_app/build-manifest.json'] {
+[2026-08-19T02:32:54.771Z] errno: -2,
+[2026-08-19T02:32:54.771Z] code: 'ENOENT',
+[2026-08-19T02:32:54.771Z] syscall: 'open',
+[2026-08-19T02:32:54.771Z] path: '/home/ubuntu/orchids-blindy/.next/server/pages/_app/build-manifest.json'
+[2026-08-19T02:32:54.771Z] }
+[2026-08-19T02:32:54.793Z] [Error: ENOENT: no such file or directory, open '/home/ubuntu/orchids-blindy/.next/server/pages/_app/build-manifest.json'] {
+[2026-08-19T02:32:54.793Z] errno: -2,
+[2026-08-19T02:32:54.793Z] code: 'ENOENT',
+[2026-08-19T02:32:54.793Z] syscall: 'open',
+[2026-08-19T02:32:54.793Z] path: '/home/ubuntu/orchids-blindy/.next/server/pages/_app/build-manifest.json'
+[2026-08-19T02:32:54.793Z] }
+[2026-08-19T02:33:54.707Z] ⨯ [Error: ENOENT: no such file or directory, open '/home/ubuntu/orchids-blindy/.next/static/development/_buildManifest.js.tmp.9t0xj2wa2b'] {
+[2026-08-19T02:33:54.709Z] errno: -2,
+[2026-08-19T02:33:54.709Z] code: 'ENOENT',
+[2026-08-19T02:33:54.709Z] syscall: 'open',
+[2026-08-19T02:33:54.709Z] path: '/home/ubuntu/orchids-blindy/.next/static/development/_buildManifest.js.tmp.9t0xj2wa2b'
+[2026-08-19T02:33:54.709Z] }
+[2026-08-19T02:33:54.738Z] ⨯ [Error: ENOENT: no such file or directory, open '/home/ubuntu/orchids-blindy/.next/server/pages/_app/build-manifest.json'] {
+[2026-08-19T02:33:54.738Z] errno: -2,
+[2026-08-19T02:33:54.738Z] code: 'ENOENT',
+[2026-08-19T02:33:54.738Z] syscall: 'open',
+[2026-08-19T02:33:54.738Z] path: '/home/ubuntu/orchids-blindy/.next/server/pages/_app/build-manifest.json'
+[2026-08-19T02:33:54.738Z] }
+[2026-08-19T02:33:54.771Z] [Error: ENOENT: no such file or directory, open '/home/ubuntu/orchids-blindy/.next/static/development/_buildManifest.js.tmp.9t0xj2wa2b'] {
+[2026-08-19T02:33:54.771Z] errno: -2,
+[2026-08-19T02:33:54.771Z] code: 'ENOENT',
+[2026-08-19T02:33:54.771Z] syscall: 'open',
+[2026-08-19T02:33:54.771Z] path: '/home/ubuntu/orchids-blindy/.next/static/development/_buildManifest.js.tmp.9t0xj2wa2b'
+[2026-08-19T02:33:54.771Z] }
+[2026-08-19T02:33:54.792Z] ⨯ [Error: ENOENT: no such file or directory, open '/home/ubuntu/orchids-blindy/.next/server/pages/_app/build-manifest.json'] {
+[2026-08-19T02:33:54.792Z] errno: -2,
+[2026-08-19T02:33:54.792Z] code: 'ENOENT',
+[2026-08-19T02:33:54.792Z] syscall: 'open',
+[2026-08-19T02:33:54.792Z] path: '/home/ubuntu/orchids-blindy/.next/server/pages/_app/build-manifest.json'
+[2026-08-19T02:33:54.792Z] }
+[2026-08-19T02:33:54.814Z] [Error: ENOENT: no such file or directory, open '/home/ubuntu/orchids-blindy/.next/server/pages/_app/build-manifest.json'] {
+[2026-08-19T02:33:54.814Z] errno: -2,
+[2026-08-19T02:33:54.814Z] code: 'ENOENT',
+[2026-08-19T02:33:54.814Z] syscall: 'open',
+[2026-08-19T02:33:54.815Z] path: '/home/ubuntu/orchids-blindy/.next/server/pages/_app/build-manifest.json'
+[2026-08-19T02:33:54.815Z] }
+[2026-08-19T02:34:54.732Z] ⨯ [Error: ENOENT: no such file or directory, open '/home/ubuntu/orchids-blindy/.next/static/development/_buildManifest.js.tmp.8bab9fw3iv3'] {
+[2026-08-19T02:34:54.738Z] errno: -2,
+[2026-08-19T02:34:54.738Z] code: 'ENOENT',
+[2026-08-19T02:34:54.738Z] syscall: 'open',
+[2026-08-19T02:34:54.738Z] path: '/home/ubuntu/orchids-blindy/.next/static/development/_buildManifest.js.tmp.8bab9fw3iv3'
+[2026-08-19T02:34:54.738Z] }
+[2026-08-19T02:34:54.765Z] ⨯ [Error: ENOENT: no such file or directory, open '/home/ubuntu/orchids-blindy/.next/server/pages/_app/build-manifest.json'] {
+[2026-08-19T02:34:54.765Z] errno: -2,
+[2026-08-19T02:34:54.765Z] code: 'ENOENT',
+[2026-08-19T02:34:54.765Z] syscall: 'open',
+[2026-08-19T02:34:54.765Z] path: '/home/ubuntu/orchids-blindy/.next/server/pages/_app/build-manifest.json'
+[2026-08-19T02:34:54.765Z] }
+[2026-08-19T02:34:54.795Z] [Error: ENOENT: no such file or directory, open '/home/ubuntu/orchids-blindy/.next/static/development/_buildManifest.js.tmp.8bab9fw3iv3'] {
+[2026-08-19T02:34:54.795Z] errno: -2,
+[2026-08-19T02:34:54.795Z] code: 'ENOENT',
+[2026-08-19T02:34:54.795Z] syscall: 'open',
+[2026-08-19T02:34:54.795Z] path: '/home/ubuntu/orchids-blindy/.next/static/development/_buildManifest.js.tmp.8bab9fw3iv3'
+[2026-08-19T02:34:54.795Z] }
+[2026-08-19T02:34:54.818Z] ⨯ [Error: ENOENT: no such file or directory, open '/home/ubuntu/orchids-blindy/.next/server/pages/_app/build-manifest.json'] {
+[2026-08-19T02:34:54.818Z] errno: -2,
+[2026-08-19T02:34:54.818Z] code: 'ENOENT',
+[2026-08-19T02:34:54.818Z] syscall: 'open',
+[2026-08-19T02:34:54.818Z] path: '/home/ubuntu/orchids-blindy/.next/server/pages/_app/build-manifest.json'
+[2026-08-19T02:34:54.818Z] }
+[2026-08-19T02:34:54.848Z] [Error: ENOENT: no such file or directory, open '/home/ubuntu/orchids-blindy/.next/server/pages/_app/build-manifest.json'] {
+[2026-08-19T02:34:54.848Z] errno: -2,
+[2026-08-19T02:34:54.848Z] code: 'ENOENT',
+[2026-08-19T02:34:54.848Z] syscall: 'open',
+[2026-08-19T02:34:54.848Z] path: '/home/ubuntu/orchids-blindy/.next/server/pages/_app/build-manifest.json'
+[2026-08-19T02:34:54.848Z] }
+[2026-08-19T02:35:46.427Z] [ELIFECYCLE] Command failed.
+[2026-08-19T02:35:46.535Z] [?25h
+[2026-08-19T02:35:46.543Z] Dev server exited with code -1
+[2026-08-19T02:35:47.650Z] Starting dev server with command: pnpm run dev
+[2026-08-19T02:35:48.212Z] $ next dev --turbopack
+[2026-08-19T02:35:49.636Z] ▲ Next.js 15.5.7 (Turbopack)
+[2026-08-19T02:35:49.636Z] - Local:        http://localhost:3000
+[2026-08-19T02:35:49.636Z] - Network:      http://169.254.0.21:3000
+[2026-08-19T02:35:49.636Z] ✓ Starting...
+[2026-08-19T02:35:50.395Z] ✓ Ready in 1208ms
+[2026-08-19T02:35:55.208Z] ○ Compiling /api/pomodoro/get-settings ...
+[2026-08-19T02:35:56.574Z] ✓ Compiled /api/pomodoro/get-settings in 1868ms
+[2026-08-19T02:35:56.967Z] [API /pomodoro/get-settings] Starting request...
+[2026-08-19T02:35:57.229Z] [API /pomodoro/get-settings] User authenticated: 57fc7b0a-5ba0-42fb-ad0c-f15ee32c6df3
+[2026-08-19T02:35:57.441Z] [API /pomodoro/get-settings] Categories response: {
+[2026-08-19T02:35:57.441Z] count: 3,
+[2026-08-19T02:35:57.441Z] error: undefined,
+[2026-08-19T02:35:57.441Z] data: [
+[2026-08-19T02:35:57.441Z] {
+[2026-08-19T02:35:57.441Z] id: '67040b77-248a-420d-8be2-5c5eca65ca8f',
+[2026-08-19T02:35:57.441Z] user_id: '57fc7b0a-5ba0-42fb-ad0c-f15ee32c6df3',
+[2026-08-19T02:35:57.441Z] name: 'Produzindo',
+[2026-08-19T02:35:57.441Z] color: '#ff6600',
+[2026-08-19T02:35:57.441Z] duration_minutes: 57,
+[2026-08-19T02:35:57.441Z] created_at: '2026-01-19T22:01:03.082007+00:00'
+[2026-08-19T02:35:57.441Z] },
+[2026-08-19T02:35:57.441Z] {
+[2026-08-19T02:35:57.441Z] id: '5e6728b1-cde5-4c8b-a296-116604eadee0',
+[2026-08-19T02:35:57.441Z] user_id: '57fc7b0a-5ba0-42fb-ad0c-f15ee32c6df3',
+[2026-08-19T02:35:57.441Z] name: 'Estudando',
+[2026-08-19T02:35:57.441Z] color: '#002aff',
+[2026-08-19T02:35:57.441Z] duration_minutes: 30,
+[2026-08-19T02:35:57.441Z] created_at: '2026-01-19T22:01:03.284823+00:00'
+[2026-08-19T02:35:57.441Z] },
+[2026-08-19T02:35:57.441Z] {
+[2026-08-19T02:35:57.441Z] id: '4ec39e04-b451-4c7a-845d-571dc624e600',
+[2026-08-19T02:35:57.441Z] user_id: '57fc7b0a-5ba0-42fb-ad0c-f15ee32c6df3',
+[2026-08-19T02:35:57.441Z] name: 'Conteúdos',
+[2026-08-19T02:35:57.442Z] color: '#00d13f',
+[2026-08-19T02:35:57.442Z] duration_minutes: 27,
+[2026-08-19T02:35:57.442Z] created_at: '2026-01-19T22:01:03.486292+00:00'
+[2026-08-19T02:35:57.442Z] }
+[2026-08-19T02:35:57.442Z] ]
+[2026-08-19T02:35:57.442Z] }
+[2026-08-19T02:35:57.442Z] [API /pomodoro/get-settings] Settings response: {
+[2026-08-19T02:35:57.442Z] data: {
+[2026-08-19T02:35:57.442Z] id: '6729871f-4efa-4304-a753-1f7dd1859400',
+[2026-08-19T02:35:57.442Z] user_id: '57fc7b0a-5ba0-42fb-ad0c-f15ee32c6df3',
+[2026-08-19T02:35:57.442Z] short_break_minutes: 5,
+[2026-08-19T02:35:57.442Z] long_break_minutes: 15,
+[2026-08-19T02:35:57.442Z] cycles_until_long_break: 4,
+[2026-08-19T02:35:57.442Z] updated_at: '2026-01-31T22:04:42.725+00:00'
+[2026-08-19T02:35:57.442Z] },
+[2026-08-19T02:35:57.442Z] error: undefined
+[2026-08-19T02:35:57.442Z] }
+[2026-08-19T02:35:57.442Z] [API /pomodoro/get-settings] Sessions response: { count: 19, error: undefined }
+[2026-08-19T02:35:57.442Z] [API /pomodoro/get-settings] Returning settings with 19 sessions
+[2026-08-19T02:35:57.449Z] GET /api/pomodoro/get-settings 200 in 2750ms
+[2026-08-19T02:36:22.949Z] [ELIFECYCLE] Command failed.
+[2026-08-19T02:36:22.979Z] [?25h
+[2026-08-19T02:36:22.989Z] Dev server exited with code -1
+[2026-08-19T02:36:24.036Z] Starting dev server with command: pnpm run dev
+[2026-08-19T02:36:24.644Z] $ next dev --turbopack
+[2026-08-19T02:36:26.149Z] ▲ Next.js 15.5.7 (Turbopack)
+[2026-08-19T02:36:26.149Z] - Local:        http://localhost:3000
+[2026-08-19T02:36:26.149Z] - Network:      http://169.254.0.21:3000
+[2026-08-19T02:36:26.149Z] ✓ Starting...
+[2026-08-19T02:36:26.946Z] ✓ Ready in 1274ms
+[2026-08-19T02:36:41.735Z] ○ Compiling / ...
+[2026-08-19T02:36:48.466Z] ✓ Compiled / in 7.2s
+[2026-08-19T02:36:49.204Z] [PomodoroTimer] Initial categoryDurations from settings: { produtividade: 25, estudos: 50, descanso: 15 }
+[2026-08-19T02:36:49.290Z] GET / 200 in 8062ms
+[2026-08-19T02:36:49.815Z] ⚠ Blocked cross-origin request from 127.0.0.1 to /_next/* resource. To allow this, configure "allowedDevOrigins" in next.config
+[2026-08-19T02:36:49.815Z] Read more: https://nextjs.org/docs/app/api-reference/config/next-config-js/allowedDevOrigins
+[2026-08-19T02:36:55.141Z] ✓ Compiled /api/pomodoro/get-settings in 466ms
+[2026-08-19T02:36:55.500Z] [API /pomodoro/get-settings] Starting request...
+[2026-08-19T02:36:55.682Z] [API /pomodoro/get-settings] User authenticated: 57fc7b0a-5ba0-42fb-ad0c-f15ee32c6df3
+[2026-08-19T02:36:56.209Z] [API /pomodoro/get-settings] Categories response: {
+[2026-08-19T02:36:56.209Z] count: 3,
+[2026-08-19T02:36:56.209Z] error: undefined,
+[2026-08-19T02:36:56.209Z] data: [
+[2026-08-19T02:36:56.209Z] {
+[2026-08-19T02:36:56.209Z] id: '67040b77-248a-420d-8be2-5c5eca65ca8f',
+[2026-08-19T02:36:56.209Z] user_id: '57fc7b0a-5ba0-42fb-ad0c-f15ee32c6df3',
+[2026-08-19T02:36:56.209Z] name: 'Produzindo',
+[2026-08-19T02:36:56.209Z] color: '#ff6600',
+[2026-08-19T02:36:56.209Z] duration_minutes: 57,
+[2026-08-19T02:36:56.209Z] created_at: '2026-01-19T22:01:03.082007+00:00'
+[2026-08-19T02:36:56.209Z] },
+[2026-08-19T02:36:56.209Z] {
+[2026-08-19T02:36:56.209Z] id: '5e6728b1-cde5-4c8b-a296-116604eadee0',
+[2026-08-19T02:36:56.209Z] user_id: '57fc7b0a-5ba0-42fb-ad0c-f15ee32c6df3',
+[2026-08-19T02:36:56.209Z] name: 'Estudando',
+[2026-08-19T02:36:56.209Z] color: '#002aff',
+[2026-08-19T02:36:56.209Z] duration_minutes: 30,
+[2026-08-19T02:36:56.209Z] created_at: '2026-01-19T22:01:03.284823+00:00'
+[2026-08-19T02:36:56.209Z] },
+[2026-08-19T02:36:56.209Z] {
+[2026-08-19T02:36:56.209Z] id: '4ec39e04-b451-4c7a-845d-571dc624e600',
+[2026-08-19T02:36:56.209Z] user_id: '57fc7b0a-5ba0-42fb-ad0c-f15ee32c6df3',
+[2026-08-19T02:36:56.209Z] name: 'Conteúdos',
+[2026-08-19T02:36:56.209Z] color: '#00d13f',
+[2026-08-19T02:36:56.209Z] duration_minutes: 27,
+[2026-08-19T02:36:56.209Z] created_at: '2026-01-19T22:01:03.486292+00:00'
+[2026-08-19T02:36:56.209Z] }
+[2026-08-19T02:36:56.209Z] ]
+[2026-08-19T02:36:56.209Z] }
+[2026-08-19T02:36:56.209Z] [API /pomodoro/get-settings] Settings response: {
+[2026-08-19T02:36:56.209Z] data: {
+[2026-08-19T02:36:56.209Z] id: '6729871f-4efa-4304-a753-1f7dd1859400',
+[2026-08-19T02:36:56.209Z] user_id: '57fc7b0a-5ba0-42fb-ad0c-f15ee32c6df3',
+[2026-08-19T02:36:56.209Z] short_break_minutes: 5,
+[2026-08-19T02:36:56.209Z] long_break_minutes: 15,
+[2026-08-19T02:36:56.209Z] cycles_until_long_break: 4,
+[2026-08-19T02:36:56.209Z] updated_at: '2026-01-31T22:04:42.725+00:00'
+[2026-08-19T02:36:56.209Z] },
+[2026-08-19T02:36:56.209Z] error: undefined
+[2026-08-19T02:36:56.209Z] }
+[2026-08-19T02:36:56.210Z] [API /pomodoro/get-settings] Sessions response: { count: 19, error: undefined }
+[2026-08-19T02:36:56.210Z] [API /pomodoro/get-settings] Returning settings with 19 sessions
+[2026-08-19T02:36:56.213Z] GET /api/pomodoro/get-settings 200 in 1542ms
+[2026-08-19T02:36:58.216Z] [PomodoroTimer] Initial categoryDurations from settings: { produtividade: 25, estudos: 50, descanso: 15 }
+[2026-08-19T02:36:58.269Z] GET / 200 in 171ms
+[2026-08-19T02:37:54.753Z] ⨯ [Error: ENOENT: no such file or directory, open '/home/ubuntu/orchids-blindy/.next/server/app/api/pomodoro/get-settings/[__metadata_id__]/route/app-paths-manifest.json'] {
+[2026-08-19T02:37:54.753Z] errno: -2,
+[2026-08-19T02:37:54.753Z] code: 'ENOENT',
+[2026-08-19T02:37:54.753Z] syscall: 'open',
+[2026-08-19T02:37:54.753Z] path: '/home/ubuntu/orchids-blindy/.next/server/app/api/pomodoro/get-settings/[__metadata_id__]/route/app-paths-manifest.json'
+[2026-08-19T02:37:54.753Z] }
+[2026-08-19T02:37:55.256Z] ○ Compiling /_error ...
+[2026-08-19T02:37:56.102Z] ✓ Compiled /_error in 1347ms
+[2026-08-19T02:37:56.131Z] ⨯ [Error: ENOENT: no such file or directory, open '/home/ubuntu/orchids-blindy/.next/static/development/_buildManifest.js.tmp.skvxvi9w0ad'] {
+[2026-08-19T02:37:56.131Z] errno: -2,
+[2026-08-19T02:37:56.131Z] code: 'ENOENT',
+[2026-08-19T02:37:56.131Z] syscall: 'open',
+[2026-08-19T02:37:56.131Z] path: '/home/ubuntu/orchids-blindy/.next/static/development/_buildManifest.js.tmp.skvxvi9w0ad'
+[2026-08-19T02:37:56.131Z] }
+[2026-08-19T02:37:56.185Z] [Error: ENOENT: no such file or directory, open '/home/ubuntu/orchids-blindy/.next/server/app/api/pomodoro/get-settings/[__metadata_id__]/route/app-paths-manifest.json'] {
+[2026-08-19T02:37:56.185Z] errno: -2,
+[2026-08-19T02:37:56.185Z] code: 'ENOENT',
+[2026-08-19T02:37:56.185Z] syscall: 'open',
+[2026-08-19T02:37:56.185Z] path: '/home/ubuntu/orchids-blindy/.next/server/app/api/pomodoro/get-settings/[__metadata_id__]/route/app-paths-manifest.json'
+[2026-08-19T02:37:56.185Z] }
+[2026-08-19T02:37:56.223Z] ⨯ [Error: ENOENT: no such file or directory, open '/home/ubuntu/orchids-blindy/.next/static/development/_buildManifest.js.tmp.9y4h6uf6ja7'] {
+[2026-08-19T02:37:56.223Z] errno: -2,
+[2026-08-19T02:37:56.223Z] code: 'ENOENT',
+[2026-08-19T02:37:56.223Z] syscall: 'open',
+[2026-08-19T02:37:56.223Z] path: '/home/ubuntu/orchids-blindy/.next/static/development/_buildManifest.js.tmp.9y4h6uf6ja7'
+[2026-08-19T02:37:56.223Z] }
+[2026-08-19T02:37:56.253Z] [Error: ENOENT: no such file or directory, open '/home/ubuntu/orchids-blindy/.next/static/development/_buildManifest.js.tmp.ogjvpt4s92h'] {
+[2026-08-19T02:37:56.253Z] errno: -2,
+[2026-08-19T02:37:56.253Z] code: 'ENOENT',
+[2026-08-19T02:37:56.253Z] syscall: 'open',
+[2026-08-19T02:37:56.253Z] path: '/home/ubuntu/orchids-blindy/.next/static/development/_buildManifest.js.tmp.ogjvpt4s92h'
+[2026-08-19T02:37:56.253Z] }
+[2026-08-19T02:38:40.951Z] ⨯ [Error: ENOENT: no such file or directory, open '/home/ubuntu/orchids-blindy/.next/server/app/api/pomodoro/get-settings/[__metadata_id__]/route/app-paths-manifest.json'] {
+[2026-08-19T02:38:40.952Z] errno: -2,
+[2026-08-19T02:38:40.952Z] code: 'ENOENT',
+[2026-08-19T02:38:40.952Z] syscall: 'open',
+[2026-08-19T02:38:40.952Z] path: '/home/ubuntu/orchids-blindy/.next/server/app/api/pomodoro/get-settings/[__metadata_id__]/route/app-paths-manifest.json'
+[2026-08-19T02:38:40.952Z] }
+[2026-08-19T02:38:40.989Z] ⨯ [Error: ENOENT: no such file or directory, open '/home/ubuntu/orchids-blindy/.next/static/development/_buildManifest.js.tmp.thv1n1a0xvn'] {
+[2026-08-19T02:38:40.989Z] errno: -2,
+[2026-08-19T02:38:40.989Z] code: 'ENOENT',
+[2026-08-19T02:38:40.989Z] syscall: 'open',
+[2026-08-19T02:38:40.989Z] path: '/home/ubuntu/orchids-blindy/.next/static/development/_buildManifest.js.tmp.thv1n1a0xvn'
+[2026-08-19T02:38:40.989Z] }
+[2026-08-19T02:38:41.025Z] [Error: ENOENT: no such file or directory, open '/home/ubuntu/orchids-blindy/.next/server/app/api/pomodoro/get-settings/[__metadata_id__]/route/app-paths-manifest.json'] {
+[2026-08-19T02:38:41.025Z] errno: -2,
+[2026-08-19T02:38:41.025Z] code: 'ENOENT',
+[2026-08-19T02:38:41.025Z] syscall: 'open',
+[2026-08-19T02:38:41.025Z] path: '/home/ubuntu/orchids-blindy/.next/server/app/api/pomodoro/get-settings/[__metadata_id__]/route/app-paths-manifest.json'
+[2026-08-19T02:38:41.025Z] }
+[2026-08-19T02:38:41.053Z] ⨯ [Error: ENOENT: no such file or directory, open '/home/ubuntu/orchids-blindy/.next/static/development/_buildManifest.js.tmp.bvp4wsni7a7'] {
+[2026-08-19T02:38:41.054Z] errno: -2,
+[2026-08-19T02:38:41.054Z] code: 'ENOENT',
+[2026-08-19T02:38:41.054Z] syscall: 'open',
+[2026-08-19T02:38:41.054Z] path: '/home/ubuntu/orchids-blindy/.next/static/development/_buildManifest.js.tmp.bvp4wsni7a7'
+[2026-08-19T02:38:41.054Z] }
+[2026-08-19T02:38:41.082Z] [Error: ENOENT: no such file or directory, open '/home/ubuntu/orchids-blindy/.next/static/development/_buildManifest.js.tmp.7ezjz1zl7ee'] {
+[2026-08-19T02:38:41.082Z] errno: -2,
+[2026-08-19T02:38:41.082Z] code: 'ENOENT',
+[2026-08-19T02:38:41.082Z] syscall: 'open',
+[2026-08-19T02:38:41.082Z] path: '/home/ubuntu/orchids-blindy/.next/static/development/_buildManifest.js.tmp.7ezjz1zl7ee'
+[2026-08-19T02:38:41.082Z] }
+[2026-08-19T02:38:44.235Z] ⨯ [Error: ENOENT: no such file or directory, open '/home/ubuntu/orchids-blindy/.next/server/app/page/app-build-manifest.json'] {
+[2026-08-19T02:38:44.235Z] errno: -2,
+[2026-08-19T02:38:44.235Z] code: 'ENOENT',
+[2026-08-19T02:38:44.235Z] syscall: 'open',
+[2026-08-19T02:38:44.235Z] path: '/home/ubuntu/orchids-blindy/.next/server/app/page/app-build-manifest.json'
+[2026-08-19T02:38:44.235Z] }
+[2026-08-19T02:38:44.280Z] ⨯ [Error: ENOENT: no such file or directory, open '/home/ubuntu/orchids-blindy/.next/static/development/_buildManifest.js.tmp.yk65i14l0jb'] {
+[2026-08-19T02:38:44.280Z] errno: -2,
+[2026-08-19T02:38:44.280Z] code: 'ENOENT',
+[2026-08-19T02:38:44.280Z] syscall: 'open',
+[2026-08-19T02:38:44.280Z] path: '/home/ubuntu/orchids-blindy/.next/static/development/_buildManifest.js.tmp.yk65i14l0jb'
+[2026-08-19T02:38:44.280Z] }
+[2026-08-19T02:38:44.317Z] [Error: ENOENT: no such file or directory, open '/home/ubuntu/orchids-blindy/.next/server/app/page/app-build-manifest.json'] {
+[2026-08-19T02:38:44.317Z] errno: -2,
+[2026-08-19T02:38:44.317Z] code: 'ENOENT',
+[2026-08-19T02:38:44.317Z] syscall: 'open',
+[2026-08-19T02:38:44.317Z] path: '/home/ubuntu/orchids-blindy/.next/server/app/page/app-build-manifest.json'
+[2026-08-19T02:38:44.317Z] }
+[2026-08-19T02:38:44.346Z] ⨯ [Error: ENOENT: no such file or directory, open '/home/ubuntu/orchids-blindy/.next/static/development/_buildManifest.js.tmp.kzujvnxfwkm'] {
+[2026-08-19T02:38:44.346Z] errno: -2,
+[2026-08-19T02:38:44.346Z] code: 'ENOENT',
+[2026-08-19T02:38:44.346Z] syscall: 'open',
+[2026-08-19T02:38:44.346Z] path: '/home/ubuntu/orchids-blindy/.next/static/development/_buildManifest.js.tmp.kzujvnxfwkm'
+[2026-08-19T02:38:44.346Z] }
+[2026-08-19T02:38:44.378Z] [Error: ENOENT: no such file or directory, open '/home/ubuntu/orchids-blindy/.next/static/development/_buildManifest.js.tmp.i812fjyo56g'] {
+[2026-08-19T02:38:44.378Z] errno: -2,
+[2026-08-19T02:38:44.378Z] code: 'ENOENT',
+[2026-08-19T02:38:44.378Z] syscall: 'open',
+[2026-08-19T02:38:44.378Z] path: '/home/ubuntu/orchids-blindy/.next/static/development/_buildManifest.js.tmp.i812fjyo56g'
+[2026-08-19T02:38:44.378Z] }
+[2026-08-19T02:38:46.142Z] ⨯ [Error: ENOENT: no such file or directory, open '/home/ubuntu/orchids-blindy/.next/server/app/page/app-build-manifest.json'] {
+[2026-08-19T02:38:46.142Z] errno: -2,
+[2026-08-19T02:38:46.142Z] code: 'ENOENT',
+[2026-08-19T02:38:46.142Z] syscall: 'open',
+[2026-08-19T02:38:46.142Z] path: '/home/ubuntu/orchids-blindy/.next/server/app/page/app-build-manifest.json'
+[2026-08-19T02:38:46.142Z] }
+[2026-08-19T02:38:46.195Z] ⨯ [Error: ENOENT: no such file or directory, open '/home/ubuntu/orchids-blindy/.next/static/development/_buildManifest.js.tmp.qt8spee6ub'] {
+[2026-08-19T02:38:46.195Z] errno: -2,
+[2026-08-19T02:38:46.195Z] code: 'ENOENT',
+[2026-08-19T02:38:46.195Z] syscall: 'open',
+[2026-08-19T02:38:46.195Z] path: '/home/ubuntu/orchids-blindy/.next/static/development/_buildManifest.js.tmp.qt8spee6ub'
+[2026-08-19T02:38:46.195Z] }
+[2026-08-19T02:38:46.238Z] [Error: ENOENT: no such file or directory, open '/home/ubuntu/orchids-blindy/.next/server/app/page/app-build-manifest.json'] {
+[2026-08-19T02:38:46.238Z] errno: -2,
+[2026-08-19T02:38:46.238Z] code: 'ENOENT',
+[2026-08-19T02:38:46.238Z] syscall: 'open',
+[2026-08-19T02:38:46.238Z] path: '/home/ubuntu/orchids-blindy/.next/server/app/page/app-build-manifest.json'
+[2026-08-19T02:38:46.238Z] }
+[2026-08-19T02:38:46.268Z] ⨯ [Error: ENOENT: no such file or directory, open '/home/ubuntu/orchids-blindy/.next/static/development/_buildManifest.js.tmp.o808r3xz4vo'] {
+[2026-08-19T02:38:46.268Z] errno: -2,
+[2026-08-19T02:38:46.268Z] code: 'ENOENT',
+[2026-08-19T02:38:46.268Z] syscall: 'open',
+[2026-08-19T02:38:46.268Z] path: '/home/ubuntu/orchids-blindy/.next/static/development/_buildManifest.js.tmp.o808r3xz4vo'
+[2026-08-19T02:38:46.268Z] }
+[2026-08-19T02:38:46.297Z] [Error: ENOENT: no such file or directory, open '/home/ubuntu/orchids-blindy/.next/static/development/_buildManifest.js.tmp.24jc2u4hvak'] {
+[2026-08-19T02:38:46.297Z] errno: -2,
+[2026-08-19T02:38:46.297Z] code: 'ENOENT',
+[2026-08-19T02:38:46.297Z] syscall: 'open',
+[2026-08-19T02:38:46.297Z] path: '/home/ubuntu/orchids-blindy/.next/static/development/_buildManifest.js.tmp.24jc2u4hvak'
+[2026-08-19T02:38:46.297Z] }
+[2026-08-19T02:38:48.015Z] ✓ Compiled /favicon.ico in 151ms
+[2026-08-19T02:38:48.039Z] ⨯ [Error: ENOENT: no such file or directory, open '/home/ubuntu/orchids-blindy/.next/static/development/_buildManifest.js.tmp.xp6sob4ep1f'] {
+[2026-08-19T02:38:48.039Z] errno: -2,
+[2026-08-19T02:38:48.039Z] code: 'ENOENT',
+[2026-08-19T02:38:48.039Z] syscall: 'open',
+[2026-08-19T02:38:48.039Z] path: '/home/ubuntu/orchids-blindy/.next/static/development/_buildManifest.js.tmp.xp6sob4ep1f'
+[2026-08-19T02:38:48.039Z] }
+[2026-08-19T02:38:50.157Z] ⨯ [Error: ENOENT: no such file or directory, open '/home/ubuntu/orchids-blindy/.next/static/development/_buildManifest.js.tmp.2bdmv756nmn'] {
+[2026-08-19T02:38:50.157Z] errno: -2,
+[2026-08-19T02:38:50.157Z] code: 'ENOENT',
+[2026-08-19T02:38:50.157Z] syscall: 'open',
+[2026-08-19T02:38:50.157Z] path: '/home/ubuntu/orchids-blindy/.next/static/development/_buildManifest.js.tmp.2bdmv756nmn'
+[2026-08-19T02:38:50.157Z] }
+[2026-08-19T02:39:06.285Z] ⨯ [Error: ENOENT: no such file or directory, open '/home/ubuntu/orchids-blindy/.next/server/app/page/app-build-manifest.json'] {
+[2026-08-19T02:39:06.285Z] errno: -2,
+[2026-08-19T02:39:06.285Z] code: 'ENOENT',
+[2026-08-19T02:39:06.285Z] syscall: 'open',
+[2026-08-19T02:39:06.285Z] path: '/home/ubuntu/orchids-blindy/.next/server/app/page/app-build-manifest.json'
+[2026-08-19T02:39:06.285Z] }
+[2026-08-19T02:39:06.327Z] ⨯ [Error: ENOENT: no such file or directory, open '/home/ubuntu/orchids-blindy/.next/static/development/_buildManifest.js.tmp.xmzcvwld7kn'] {
+[2026-08-19T02:39:06.327Z] errno: -2,
+[2026-08-19T02:39:06.327Z] code: 'ENOENT',
+[2026-08-19T02:39:06.327Z] syscall: 'open',
+[2026-08-19T02:39:06.327Z] path: '/home/ubuntu/orchids-blindy/.next/static/development/_buildManifest.js.tmp.xmzcvwld7kn'
+[2026-08-19T02:39:06.327Z] }
+[2026-08-19T02:39:06.365Z] [Error: ENOENT: no such file or directory, open '/home/ubuntu/orchids-blindy/.next/server/app/page/app-build-manifest.json'] {
+[2026-08-19T02:39:06.365Z] errno: -2,
+[2026-08-19T02:39:06.365Z] code: 'ENOENT',
+[2026-08-19T02:39:06.365Z] syscall: 'open',
+[2026-08-19T02:39:06.365Z] path: '/home/ubuntu/orchids-blindy/.next/server/app/page/app-build-manifest.json'
+[2026-08-19T02:39:06.365Z] }
+[2026-08-19T02:39:06.412Z] ⨯ [Error: ENOENT: no such file or directory, open '/home/ubuntu/orchids-blindy/.next/static/development/_buildManifest.js.tmp.vided1axq6o'] {
+[2026-08-19T02:39:06.412Z] errno: -2,
+[2026-08-19T02:39:06.412Z] code: 'ENOENT',
+[2026-08-19T02:39:06.412Z] syscall: 'open',
+[2026-08-19T02:39:06.412Z] path: '/home/ubuntu/orchids-blindy/.next/static/development/_buildManifest.js.tmp.vided1axq6o'
+[2026-08-19T02:39:06.412Z] }
+[2026-08-19T02:39:06.442Z] [Error: ENOENT: no such file or directory, open '/home/ubuntu/orchids-blindy/.next/static/development/_buildManifest.js.tmp.zsul8wo13ck'] {
+[2026-08-19T02:39:06.442Z] errno: -2,
+[2026-08-19T02:39:06.442Z] code: 'ENOENT',
+[2026-08-19T02:39:06.442Z] syscall: 'open',
+[2026-08-19T02:39:06.442Z] path: '/home/ubuntu/orchids-blindy/.next/static/development/_buildManifest.js.tmp.zsul8wo13ck'
+[2026-08-19T02:39:06.442Z] }
+[2026-08-19T02:39:07.420Z] ⨯ [Error: ENOENT: no such file or directory, open '/home/ubuntu/orchids-blindy/.next/server/app/page/app-build-manifest.json'] {
+[2026-08-19T02:39:07.420Z] errno: -2,
+[2026-08-19T02:39:07.420Z] code: 'ENOENT',
+[2026-08-19T02:39:07.420Z] syscall: 'open',
+[2026-08-19T02:39:07.420Z] path: '/home/ubuntu/orchids-blindy/.next/server/app/page/app-build-manifest.json'
+[2026-08-19T02:39:07.420Z] }
+[2026-08-19T02:39:07.460Z] ⨯ [Error: ENOENT: no such file or directory, open '/home/ubuntu/orchids-blindy/.next/static/development/_buildManifest.js.tmp.lnhzg8gyybl'] {
+[2026-08-19T02:39:07.460Z] errno: -2,
+[2026-08-19T02:39:07.460Z] code: 'ENOENT',
+[2026-08-19T02:39:07.460Z] syscall: 'open',
+[2026-08-19T02:39:07.460Z] path: '/home/ubuntu/orchids-blindy/.next/static/development/_buildManifest.js.tmp.lnhzg8gyybl'
+[2026-08-19T02:39:07.460Z] }
+[2026-08-19T02:39:07.493Z] [Error: ENOENT: no such file or directory, open '/home/ubuntu/orchids-blindy/.next/server/app/page/app-build-manifest.json'] {
+[2026-08-19T02:39:07.494Z] errno: -2,
+[2026-08-19T02:39:07.494Z] code: 'ENOENT',
+[2026-08-19T02:39:07.494Z] syscall: 'open',
+[2026-08-19T02:39:07.494Z] path: '/home/ubuntu/orchids-blindy/.next/server/app/page/app-build-manifest.json'
+[2026-08-19T02:39:07.494Z] }
+[2026-08-19T02:39:07.524Z] ⨯ [Error: ENOENT: no such file or directory, open '/home/ubuntu/orchids-blindy/.next/static/development/_buildManifest.js.tmp.iez9w3xhro'] {
+[2026-08-19T02:39:07.524Z] errno: -2,
+[2026-08-19T02:39:07.524Z] code: 'ENOENT',
+[2026-08-19T02:39:07.524Z] syscall: 'open',
+[2026-08-19T02:39:07.524Z] path: '/home/ubuntu/orchids-blindy/.next/static/development/_buildManifest.js.tmp.iez9w3xhro'
+[2026-08-19T02:39:07.524Z] }
+[2026-08-19T02:39:07.560Z] [Error: ENOENT: no such file or directory, open '/home/ubuntu/orchids-blindy/.next/static/development/_buildManifest.js.tmp.tm82mmiffj9'] {
+[2026-08-19T02:39:07.560Z] errno: -2,
+[2026-08-19T02:39:07.560Z] code: 'ENOENT',
+[2026-08-19T02:39:07.560Z] syscall: 'open',
+[2026-08-19T02:39:07.560Z] path: '/home/ubuntu/orchids-blindy/.next/static/development/_buildManifest.js.tmp.tm82mmiffj9'
+[2026-08-19T02:39:07.560Z] }
+[2026-08-19T02:40:08.578Z] ⨯ [Error: ENOENT: no such file or directory, open '/home/ubuntu/orchids-blindy/.next/server/app/page/app-build-manifest.json'] {
+[2026-08-19T02:40:08.579Z] errno: -2,
+[2026-08-19T02:40:08.579Z] code: 'ENOENT',
+[2026-08-19T02:40:08.579Z] syscall: 'open',
+[2026-08-19T02:40:08.579Z] path: '/home/ubuntu/orchids-blindy/.next/server/app/page/app-build-manifest.json'
+[2026-08-19T02:40:08.579Z] }
+[2026-08-19T02:40:08.620Z] ⨯ [Error: ENOENT: no such file or directory, open '/home/ubuntu/orchids-blindy/.next/static/development/_buildManifest.js.tmp.ehdn2aepuo5'] {
+[2026-08-19T02:40:08.620Z] errno: -2,
+[2026-08-19T02:40:08.620Z] code: 'ENOENT',
+[2026-08-19T02:40:08.620Z] syscall: 'open',
+[2026-08-19T02:40:08.620Z] path: '/home/ubuntu/orchids-blindy/.next/static/development/_buildManifest.js.tmp.ehdn2aepuo5'
+[2026-08-19T02:40:08.620Z] }
+[2026-08-19T02:40:08.658Z] [Error: ENOENT: no such file or directory, open '/home/ubuntu/orchids-blindy/.next/server/app/page/app-build-manifest.json'] {
+[2026-08-19T02:40:08.658Z] errno: -2,
+[2026-08-19T02:40:08.658Z] code: 'ENOENT',
+[2026-08-19T02:40:08.658Z] syscall: 'open',
+[2026-08-19T02:40:08.658Z] path: '/home/ubuntu/orchids-blindy/.next/server/app/page/app-build-manifest.json'
+[2026-08-19T02:40:08.658Z] }
+[2026-08-19T02:40:08.690Z] ⨯ [Error: ENOENT: no such file or directory, open '/home/ubuntu/orchids-blindy/.next/static/development/_buildManifest.js.tmp.jkjycsuhx0p'] {
+[2026-08-19T02:40:08.690Z] errno: -2,
+[2026-08-19T02:40:08.690Z] code: 'ENOENT',
+[2026-08-19T02:40:08.690Z] syscall: 'open',
+[2026-08-19T02:40:08.690Z] path: '/home/ubuntu/orchids-blindy/.next/static/development/_buildManifest.js.tmp.jkjycsuhx0p'
+[2026-08-19T02:40:08.690Z] }
+[2026-08-19T02:40:08.718Z] [Error: ENOENT: no such file or directory, open '/home/ubuntu/orchids-blindy/.next/static/development/_buildManifest.js.tmp.ef7b7b78xe'] {
+[2026-08-19T02:40:08.718Z] errno: -2,
+[2026-08-19T02:40:08.718Z] code: 'ENOENT',
+[2026-08-19T02:40:08.718Z] syscall: 'open',
+[2026-08-19T02:40:08.718Z] path: '/home/ubuntu/orchids-blindy/.next/static/development/_buildManifest.js.tmp.ef7b7b78xe'
+[2026-08-19T02:40:08.718Z] }
+[2026-08-19T02:40:08.784Z] ⨯ [Error: ENOENT: no such file or directory, open '/home/ubuntu/orchids-blindy/.next/static/development/_buildManifest.js.tmp.depl0kgy8h5'] {
+[2026-08-19T02:40:08.784Z] errno: -2,
+[2026-08-19T02:40:08.784Z] code: 'ENOENT',
+[2026-08-19T02:40:08.784Z] syscall: 'open',
+[2026-08-19T02:40:08.784Z] path: '/home/ubuntu/orchids-blindy/.next/static/development/_buildManifest.js.tmp.depl0kgy8h5'
+[2026-08-19T02:40:08.784Z] }
+[2026-08-19T02:40:24.463Z] [ELIFECYCLE] Command failed.
+[2026-08-19T02:40:24.539Z] [?25h
+[2026-08-19T02:40:24.548Z] Dev server exited with code -1
+[2026-08-19T02:40:25.646Z] Starting dev server with command: pnpm run dev
+[2026-08-19T02:40:26.135Z] $ next dev --turbopack
+[2026-08-19T02:40:27.395Z] ▲ Next.js 15.5.7 (Turbopack)
+[2026-08-19T02:40:27.395Z] - Local:        http://localhost:3000
+[2026-08-19T02:40:27.395Z] - Network:      http://169.254.0.21:3000
+[2026-08-19T02:40:27.395Z] ✓ Starting...
+[2026-08-19T02:40:28.101Z] ✓ Ready in 1114ms
+[2026-08-19T02:40:28.618Z] ○ Compiling / ...
+[2026-08-19T02:40:34.833Z] ✓ Compiled / in 6.7s
+[2026-08-19T02:40:35.516Z] [PomodoroTimer] Initial categoryDurations from settings: { produtividade: 25, estudos: 50, descanso: 15 }
+[2026-08-19T02:40:35.608Z] GET / 200 in 7501ms
+[2026-08-19T02:40:36.125Z] ⚠ Blocked cross-origin request from 127.0.0.1 to /_next/* resource. To allow this, configure "allowedDevOrigins" in next.config
+[2026-08-19T02:40:36.125Z] Read more: https://nextjs.org/docs/app/api-reference/config/next-config-js/allowedDevOrigins
+[2026-08-19T02:43:35.521Z] [PomodoroTimer] Initial categoryDurations from settings: { produtividade: 25, estudos: 50, descanso: 15 }
+[2026-08-19T02:43:35.565Z] GET / 200 in 183ms
+[2026-08-19T02:43:39.403Z] ⚠ Blocked cross-origin request from 3000-ih0lty215c9qdqm3to6te-a91e88fb.us4.manus.computer to /_next/* resource. To allow this, configure "allowedDevOrigins" in next.config
+[2026-08-19T02:43:39.403Z] Read more: https://nextjs.org/docs/app/api-reference/config/next-config-js/allowedDevOrigins
+[2026-08-19T02:43:39.558Z] ✓ Compiled /favicon.ico in 296ms
+[2026-08-19T02:43:39.841Z] GET /favicon.ico?favicon.0b3bf435.ico 200 in 582ms
+[2026-08-19T02:43:39.999Z] ✓ Compiled /api/pomodoro/get-settings in 346ms
+[2026-08-19T02:43:40.277Z] [API /pomodoro/get-settings] Starting request...
+[2026-08-19T02:43:40.609Z] [API /pomodoro/get-settings] User authenticated: 57fc7b0a-5ba0-42fb-ad0c-f15ee32c6df3
+[2026-08-19T02:43:40.834Z] [API /pomodoro/get-settings] Categories response: {
+[2026-08-19T02:43:40.834Z] count: 3,
+[2026-08-19T02:43:40.834Z] error: undefined,
+[2026-08-19T02:43:40.834Z] data: [
+[2026-08-19T02:43:40.834Z] {
+[2026-08-19T02:43:40.834Z] id: '67040b77-248a-420d-8be2-5c5eca65ca8f',
+[2026-08-19T02:43:40.834Z] user_id: '57fc7b0a-5ba0-42fb-ad0c-f15ee32c6df3',
+[2026-08-19T02:43:40.834Z] name: 'Produzindo',
+[2026-08-19T02:43:40.834Z] color: '#ff6600',
+[2026-08-19T02:43:40.834Z] duration_minutes: 57,
+[2026-08-19T02:43:40.834Z] created_at: '2026-01-19T22:01:03.082007+00:00'
+[2026-08-19T02:43:40.834Z] },
+[2026-08-19T02:43:40.834Z] {
+[2026-08-19T02:43:40.834Z] id: '5e6728b1-cde5-4c8b-a296-116604eadee0',
+[2026-08-19T02:43:40.834Z] user_id: '57fc7b0a-5ba0-42fb-ad0c-f15ee32c6df3',
+[2026-08-19T02:43:40.834Z] name: 'Estudando',
+[2026-08-19T02:43:40.834Z] color: '#002aff',
+[2026-08-19T02:43:40.834Z] duration_minutes: 30,
+[2026-08-19T02:43:40.834Z] created_at: '2026-01-19T22:01:03.284823+00:00'
+[2026-08-19T02:43:40.834Z] },
+[2026-08-19T02:43:40.834Z] {
+[2026-08-19T02:43:40.834Z] id: '4ec39e04-b451-4c7a-845d-571dc624e600',
+[2026-08-19T02:43:40.834Z] user_id: '57fc7b0a-5ba0-42fb-ad0c-f15ee32c6df3',
+[2026-08-19T02:43:40.834Z] name: 'Conteúdos',
+[2026-08-19T02:43:40.834Z] color: '#00d13f',
+[2026-08-19T02:43:40.834Z] duration_minutes: 27,
+[2026-08-19T02:43:40.834Z] created_at: '2026-01-19T22:01:03.486292+00:00'
+[2026-08-19T02:43:40.834Z] }
+[2026-08-19T02:43:40.834Z] ]
+[2026-08-19T02:43:40.834Z] }
+[2026-08-19T02:43:40.834Z] [API /pomodoro/get-settings] Settings response: {
+[2026-08-19T02:43:40.834Z] data: {
+[2026-08-19T02:43:40.834Z] id: '6729871f-4efa-4304-a753-1f7dd1859400',
+[2026-08-19T02:43:40.834Z] user_id: '57fc7b0a-5ba0-42fb-ad0c-f15ee32c6df3',
+[2026-08-19T02:43:40.834Z] short_break_minutes: 5,
+[2026-08-19T02:43:40.834Z] long_break_minutes: 15,
+[2026-08-19T02:43:40.834Z] cycles_until_long_break: 4,
+[2026-08-19T02:43:40.834Z] updated_at: '2026-01-31T22:04:42.725+00:00'
+[2026-08-19T02:43:40.834Z] },
+[2026-08-19T02:43:40.834Z] error: undefined
+[2026-08-19T02:43:40.834Z] }
+[2026-08-19T02:43:40.834Z] [API /pomodoro/get-settings] Sessions response: { count: 19, error: undefined }
+[2026-08-19T02:43:40.834Z] [API /pomodoro/get-settings] Returning settings with 19 sessions
+[2026-08-19T02:43:40.836Z] GET /api/pomodoro/get-settings 200 in 1185ms
+[2026-08-19T02:43:45.181Z] [API /pomodoro/get-settings] Starting request...
+[2026-08-19T02:43:45.343Z] [API /pomodoro/get-settings] User authenticated: 57fc7b0a-5ba0-42fb-ad0c-f15ee32c6df3
+[2026-08-19T02:43:45.478Z] [API /pomodoro/get-settings] Categories response: {
+[2026-08-19T02:43:45.478Z] count: 3,
+[2026-08-19T02:43:45.478Z] error: undefined,
+[2026-08-19T02:43:45.478Z] data: [
+[2026-08-19T02:43:45.478Z] {
+[2026-08-19T02:43:45.478Z] id: '67040b77-248a-420d-8be2-5c5eca65ca8f',
+[2026-08-19T02:43:45.478Z] user_id: '57fc7b0a-5ba0-42fb-ad0c-f15ee32c6df3',
+[2026-08-19T02:43:45.478Z] name: 'Produzindo',
+[2026-08-19T02:43:45.478Z] color: '#ff6600',
+[2026-08-19T02:43:45.478Z] duration_minutes: 57,
+[2026-08-19T02:43:45.478Z] created_at: '2026-01-19T22:01:03.082007+00:00'
+[2026-08-19T02:43:45.478Z] },
+[2026-08-19T02:43:45.479Z] {
+[2026-08-19T02:43:45.479Z] id: '5e6728b1-cde5-4c8b-a296-116604eadee0',
+[2026-08-19T02:43:45.479Z] user_id: '57fc7b0a-5ba0-42fb-ad0c-f15ee32c6df3',
+[2026-08-19T02:43:45.479Z] name: 'Estudando',
+[2026-08-19T02:43:45.479Z] color: '#002aff',
+[2026-08-19T02:43:45.479Z] duration_minutes: 30,
+[2026-08-19T02:43:45.479Z] created_at: '2026-01-19T22:01:03.284823+00:00'
+[2026-08-19T02:43:45.479Z] },
+[2026-08-19T02:43:45.479Z] {
+[2026-08-19T02:43:45.479Z] id: '4ec39e04-b451-4c7a-845d-571dc624e600',
+[2026-08-19T02:43:45.479Z] user_id: '57fc7b0a-5ba0-42fb-ad0c-f15ee32c6df3',
+[2026-08-19T02:43:45.479Z] name: 'Conteúdos',
+[2026-08-19T02:43:45.479Z] color: '#00d13f',
+[2026-08-19T02:43:45.479Z] duration_minutes: 27,
+[2026-08-19T02:43:45.479Z] created_at: '2026-01-19T22:01:03.486292+00:00'
+[2026-08-19T02:43:45.479Z] }
+[2026-08-19T02:43:45.479Z] ]
+[2026-08-19T02:43:45.479Z] }
+[2026-08-19T02:43:45.479Z] [API /pomodoro/get-settings] Settings response: {
+[2026-08-19T02:43:45.479Z] data: {
+[2026-08-19T02:43:45.479Z] id: '6729871f-4efa-4304-a753-1f7dd1859400',
+[2026-08-19T02:43:45.479Z] user_id: '57fc7b0a-5ba0-42fb-ad0c-f15ee32c6df3',
+[2026-08-19T02:43:45.479Z] short_break_minutes: 5,
+[2026-08-19T02:43:45.479Z] long_break_minutes: 15,
+[2026-08-19T02:43:45.479Z] cycles_until_long_break: 4,
+[2026-08-19T02:43:45.479Z] updated_at: '2026-01-31T22:04:42.725+00:00'
+[2026-08-19T02:43:45.479Z] },
+[2026-08-19T02:43:45.479Z] error: undefined
+[2026-08-19T02:43:45.479Z] }
+[2026-08-19T02:43:45.479Z] [API /pomodoro/get-settings] Sessions response: { count: 19, error: undefined }
+[2026-08-19T02:43:45.479Z] [API /pomodoro/get-settings] Returning settings with 19 sessions
+[2026-08-19T02:43:45.480Z] GET /api/pomodoro/get-settings 200 in 533ms
+[2026-08-19T02:44:45.118Z] [API /pomodoro/get-settings] Starting request...
+[2026-08-19T02:44:45.263Z] [API /pomodoro/get-settings] User authenticated: 57fc7b0a-5ba0-42fb-ad0c-f15ee32c6df3
+[2026-08-19T02:44:45.505Z] [API /pomodoro/get-settings] Categories response: {
+[2026-08-19T02:44:45.505Z] count: 3,
+[2026-08-19T02:44:45.505Z] error: undefined,
+[2026-08-19T02:44:45.505Z] data: [
+[2026-08-19T02:44:45.505Z] {
+[2026-08-19T02:44:45.505Z] id: '67040b77-248a-420d-8be2-5c5eca65ca8f',
+[2026-08-19T02:44:45.505Z] user_id: '57fc7b0a-5ba0-42fb-ad0c-f15ee32c6df3',
+[2026-08-19T02:44:45.505Z] name: 'Produzindo',
+[2026-08-19T02:44:45.505Z] color: '#ff6600',
+[2026-08-19T02:44:45.505Z] duration_minutes: 57,
+[2026-08-19T02:44:45.505Z] created_at: '2026-01-19T22:01:03.082007+00:00'
+[2026-08-19T02:44:45.505Z] },
+[2026-08-19T02:44:45.505Z] {
+[2026-08-19T02:44:45.505Z] id: '5e6728b1-cde5-4c8b-a296-116604eadee0',
+[2026-08-19T02:44:45.505Z] user_id: '57fc7b0a-5ba0-42fb-ad0c-f15ee32c6df3',
+[2026-08-19T02:44:45.505Z] name: 'Estudando',
+[2026-08-19T02:44:45.505Z] color: '#002aff',
+[2026-08-19T02:44:45.505Z] duration_minutes: 30,
+[2026-08-19T02:44:45.505Z] created_at: '2026-01-19T22:01:03.284823+00:00'
+[2026-08-19T02:44:45.505Z] },
+[2026-08-19T02:44:45.505Z] {
+[2026-08-19T02:44:45.505Z] id: '4ec39e04-b451-4c7a-845d-571dc624e600',
+[2026-08-19T02:44:45.505Z] user_id: '57fc7b0a-5ba0-42fb-ad0c-f15ee32c6df3',
+[2026-08-19T02:44:45.505Z] name: 'Conteúdos',
+[2026-08-19T02:44:45.505Z] color: '#00d13f',
+[2026-08-19T02:44:45.505Z] duration_minutes: 27,
+[2026-08-19T02:44:45.505Z] created_at: '2026-01-19T22:01:03.486292+00:00'
+[2026-08-19T02:44:45.505Z] }
+[2026-08-19T02:44:45.505Z] ]
+[2026-08-19T02:44:45.505Z] }
+[2026-08-19T02:44:45.505Z] [API /pomodoro/get-settings] Settings response: {
+[2026-08-19T02:44:45.505Z] data: {
+[2026-08-19T02:44:45.505Z] id: '6729871f-4efa-4304-a753-1f7dd1859400',
+[2026-08-19T02:44:45.505Z] user_id: '57fc7b0a-5ba0-42fb-ad0c-f15ee32c6df3',
+[2026-08-19T02:44:45.505Z] short_break_minutes: 5,
+[2026-08-19T02:44:45.505Z] long_break_minutes: 15,
+[2026-08-19T02:44:45.505Z] cycles_until_long_break: 4,
+[2026-08-19T02:44:45.505Z] updated_at: '2026-01-31T22:04:42.725+00:00'
+[2026-08-19T02:44:45.505Z] },
+[2026-08-19T02:44:45.505Z] error: undefined
+[2026-08-19T02:44:45.505Z] }
+[2026-08-19T02:44:45.505Z] [API /pomodoro/get-settings] Sessions response: { count: 19, error: undefined }
+[2026-08-19T02:44:45.505Z] [API /pomodoro/get-settings] Returning settings with 19 sessions
+[2026-08-19T02:44:45.507Z] GET /api/pomodoro/get-settings 200 in 653ms
+[2026-08-19T02:45:45.915Z] [API /pomodoro/get-settings] Starting request...
+[2026-08-19T02:45:46.118Z] [API /pomodoro/get-settings] User authenticated: 57fc7b0a-5ba0-42fb-ad0c-f15ee32c6df3
+[2026-08-19T02:45:46.303Z] [API /pomodoro/get-settings] Categories response: {
+[2026-08-19T02:45:46.303Z] count: 3,
+[2026-08-19T02:45:46.303Z] error: undefined,
+[2026-08-19T02:45:46.303Z] data: [
+[2026-08-19T02:45:46.303Z] {
+[2026-08-19T02:45:46.303Z] id: '67040b77-248a-420d-8be2-5c5eca65ca8f',
+[2026-08-19T02:45:46.303Z] user_id: '57fc7b0a-5ba0-42fb-ad0c-f15ee32c6df3',
+[2026-08-19T02:45:46.304Z] name: 'Produzindo',
+[2026-08-19T02:45:46.304Z] color: '#ff6600',
+[2026-08-19T02:45:46.304Z] duration_minutes: 57,
+[2026-08-19T02:45:46.304Z] created_at: '2026-01-19T22:01:03.082007+00:00'
+[2026-08-19T02:45:46.304Z] },
+[2026-08-19T02:45:46.304Z] {
+[2026-08-19T02:45:46.304Z] id: '5e6728b1-cde5-4c8b-a296-116604eadee0',
+[2026-08-19T02:45:46.304Z] user_id: '57fc7b0a-5ba0-42fb-ad0c-f15ee32c6df3',
+[2026-08-19T02:45:46.304Z] name: 'Estudando',
+[2026-08-19T02:45:46.304Z] color: '#002aff',
+[2026-08-19T02:45:46.304Z] duration_minutes: 30,
+[2026-08-19T02:45:46.304Z] created_at: '2026-01-19T22:01:03.284823+00:00'
+[2026-08-19T02:45:46.304Z] },
+[2026-08-19T02:45:46.304Z] {
+[2026-08-19T02:45:46.304Z] id: '4ec39e04-b451-4c7a-845d-571dc624e600',
+[2026-08-19T02:45:46.304Z] user_id: '57fc7b0a-5ba0-42fb-ad0c-f15ee32c6df3',
+[2026-08-19T02:45:46.304Z] name: 'Conteúdos',
+[2026-08-19T02:45:46.304Z] color: '#00d13f',
+[2026-08-19T02:45:46.304Z] duration_minutes: 27,
+[2026-08-19T02:45:46.304Z] created_at: '2026-01-19T22:01:03.486292+00:00'
+[2026-08-19T02:45:46.304Z] }
+[2026-08-19T02:45:46.304Z] ]
+[2026-08-19T02:45:46.304Z] }
+[2026-08-19T02:45:46.304Z] [API /pomodoro/get-settings] Settings response: {
+[2026-08-19T02:45:46.304Z] data: {
+[2026-08-19T02:45:46.304Z] id: '6729871f-4efa-4304-a753-1f7dd1859400',
+[2026-08-19T02:45:46.304Z] user_id: '57fc7b0a-5ba0-42fb-ad0c-f15ee32c6df3',
+[2026-08-19T02:45:46.304Z] short_break_minutes: 5,
+[2026-08-19T02:45:46.304Z] long_break_minutes: 15,
+[2026-08-19T02:45:46.304Z] cycles_until_long_break: 4,
+[2026-08-19T02:45:46.304Z] updated_at: '2026-01-31T22:04:42.725+00:00'
+[2026-08-19T02:45:46.304Z] },
+[2026-08-19T02:45:46.304Z] error: undefined
+[2026-08-19T02:45:46.304Z] }
+[2026-08-19T02:45:46.304Z] [API /pomodoro/get-settings] Sessions response: { count: 19, error: undefined }
+[2026-08-19T02:45:46.304Z] [API /pomodoro/get-settings] Returning settings with 19 sessions
+[2026-08-19T02:45:46.305Z] GET /api/pomodoro/get-settings 200 in 640ms

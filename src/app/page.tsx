@@ -21,6 +21,10 @@ import { STORAGE_KEYS } from '@/lib/utils/storage.constants';
 import { Organization, CreateOrganizationData } from '@/lib/types/organization';
 import { createClient } from '@/lib/supabase/client';
 import { format } from 'date-fns';
+import { FloatingHeader } from '@/components/layout/FloatingHeader';
+import { QuickCaptureModal } from '@/components/quick-capture/QuickCaptureModal';
+import { ProfileSettingsModal } from '@/components/profile/ProfileSettingsModal';
+import { useVisoesData } from '@/hooks/useVisoesData';
 
 type Section = 'flows' | 'visoes' | 'painel' | 'equipes';
 
@@ -41,6 +45,10 @@ function MainApp() {
     updatePomodoroSettings,
     addProject,
   } = useBlindadosData();
+  const { addNote } = useVisoesData();
+
+  const [isQuickCaptureOpen, setIsQuickCaptureOpen] = useState(false);
+  const [isProfileOpen, setIsProfileOpen] = useState(false);
 
   useAutoFix();
 
@@ -80,6 +88,19 @@ function MainApp() {
   useEffect(() => {
     safeStorage.setString(STORAGE_KEYS.ACTIVE_SECTION, activeSection);
   }, [activeSection]);
+
+  useEffect(() => {
+    const handleQuickCaptureShortcut = (event: KeyboardEvent) => {
+      const target = event.target as HTMLElement | null;
+      const isTyping = target?.tagName === 'INPUT' || target?.tagName === 'TEXTAREA' || target?.isContentEditable;
+      if (!isTyping && (event.metaKey || event.ctrlKey) && event.shiftKey && event.key.toLowerCase() === 'n') {
+        event.preventDefault();
+        setIsQuickCaptureOpen(true);
+      }
+    };
+    window.addEventListener('keydown', handleQuickCaptureShortcut);
+    return () => window.removeEventListener('keydown', handleQuickCaptureShortcut);
+  }, []);
 
   useEffect(() => {
     safeStorage.setString(STORAGE_KEYS.SIDEBAR_COLLAPSED, String(collapsed));
@@ -247,6 +268,25 @@ function MainApp() {
     downloadCSV(data);
   }, [data]);
 
+  const handleQuickCaptureSave = useCallback(async (title: string, content: string) => {
+    await addNote(title, content, '#22d3ee');
+  }, [addNote]);
+
+  const handleSaveProfile = useCallback(async (displayName: string) => {
+    if (!user) return;
+    const { error: authError } = await supabase.auth.updateUser({
+      data: { ...user.user_metadata, nickname: displayName, full_name: displayName },
+    });
+    if (authError) throw authError;
+    const { error: profileError } = await supabase.from('profiles').upsert({
+      id: user.id,
+      full_name: displayName,
+      nickname: displayName,
+      updated_at: new Date().toISOString(),
+    }, { onConflict: 'id' });
+    if (profileError) throw profileError;
+  }, [supabase, user]);
+
   const safeSettings = useMemo(() => ({
     categories: data.pomodoro?.settings?.categories || [],
     intervals: {
@@ -303,7 +343,28 @@ function MainApp() {
         onCreate={handleCreateOrganization}
       />
 
-      <main className="flex-1 h-screen overflow-hidden">
+      <main className="flex-1 h-screen overflow-hidden flex flex-col">
+        <FloatingHeader
+          userName={user?.user_metadata?.nickname || user?.user_metadata?.full_name || user?.email?.split('@')[0] || 'Usuário Spady'}
+          avatarUrl={(user?.user_metadata?.avatar_url as string | undefined) || null}
+          onOpenCapture={() => setIsQuickCaptureOpen(true)}
+          onOpenProfile={() => setIsProfileOpen(true)}
+        />
+
+        <QuickCaptureModal
+          isOpen={isQuickCaptureOpen}
+          onClose={() => setIsQuickCaptureOpen(false)}
+          onSave={handleQuickCaptureSave}
+        />
+
+        <ProfileSettingsModal
+          isOpen={isProfileOpen}
+          user={user}
+          onSaveProfile={handleSaveProfile}
+          onClose={() => setIsProfileOpen(false)}
+        />
+
+        <div className="min-h-0 flex-1 overflow-hidden">
         <AnimatePresence mode="wait" initial={false}>
           {activeSection === 'flows' && (
             <motion.div
@@ -402,6 +463,7 @@ function MainApp() {
             </motion.div>
           )}
         </AnimatePresence>
+        </div>
       </main>
     </div>
   );

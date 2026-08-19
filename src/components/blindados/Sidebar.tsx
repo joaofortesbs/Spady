@@ -94,10 +94,10 @@ export function Sidebar({
             transition={{ duration: 0.2 }}
           >
             <h1 className="text-lg font-bold text-white tracking-wide">
-              Blindados
+              Spady
             </h1>
             <p className="text-[10px] text-[#00f6ff]/60 uppercase tracking-widest">
-              Productivity Suite
+              Focus OS
             </p>
           </motion.div>
         )}

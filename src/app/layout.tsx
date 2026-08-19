@@ -5,8 +5,8 @@ import ErrorReporter from "@/components/ErrorReporter";
 import Script from "next/script";
 
 export const metadata: Metadata = {
-  title: "Blindados - Productivity Suite",
-  description: "Plataforma de produtividade com Pomodoro, gráficos de tempo e Kanban",
+  title: "Spady - Focus OS",
+  description: "Sistema operacional de foco, contexto e execução para rotinas complexas",
 };
 
 export default function RootLayout({
@@ -15,7 +15,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="pt-BR">
       <body className="antialiased">
         <Script
           id="orchids-browser-logs"
