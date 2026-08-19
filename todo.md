@@ -147,7 +147,7 @@ Os itens abaixo pertenciam ao pedido anterior de reconstrução do zero e foram 
 - [x] Salvar um novo checkpoint após concluir esta rodada de renderização Markdown/preview — checkpoint 1aaf02bc
 - [x] Validar no navegador autenticado a tela de Anotações com uma nota real contendo título, negrito, itálico, lista e checklist renderizados — nota temporária criada, visualizada e checklist persistido; nota removida ao final
 - [x] Validar a tela de Anotações em viewport mobile autenticada ou registrar captura específica dessa tela renderizada — shell mobile responsivo capturado; tela autenticada de Anotações não foi capturada porque o renderer de screenshots não compartilha a sessão My Browser
-- [ ] Validar a tela de Anotações em viewport mobile autenticada com uma nota real renderizada, usando a sessão My Browser redimensionada ou uma captura autenticada equivalente — bloqueada enquanto a viewport autenticada não for redimensionada
+- [ ] Validar a tela de Anotações em viewport mobile autenticada com uma nota real renderizada, usando a sessão My Browser redimensionada ou uma captura autenticada equivalente — bloqueado: a sessão conectada não permite redimensionar a viewport; shell mobile e classes mobile-first foram validados
 - [x] Salvar checkpoint final da central de notas e da experiência WYSIWYG após separar os itens de validação — checkpoint 1aaf02bc
 
 ## WYSIWYG sem exposição de Markdown
@@ -161,9 +161,9 @@ Os itens abaixo pertenciam ao pedido anterior de reconstrução do zero e foram 
 
 ## Validações ainda não comprovadas
 
-- [ ] Validar no navegador, após a implementação WYSIWYG, uma nota real com negrito, itálico, lista e checklist visíveis sem tokens Markdown no quick capture e em Minhas Notas — cobertura automatizada e validação visual parcial concluídas; inspeção manual completa ainda pendente
+- [ ] Validar no navegador, após a implementação WYSIWYG, uma nota real com negrito, itálico, lista e checklist visíveis sem tokens Markdown no quick capture e em Minhas Notas — bloqueado: cobertura automatizada e validação visual parcial concluídas, mas a inspeção autenticada completa ainda não foi possível
 - [x] Adicionar teste automatizado explícito para o atalho de checklist no quick capture WYSIWYG e confirmar a serialização Markdown resultante
-- [ ] Executar validação autenticada mobile real da tela de notas WYSIWYG com uma nota renderizada/editável — bloqueio formal documentado: sessão My Browser não permite alterar viewport; shell mobile foi validado separadamente
+- [ ] Executar validação autenticada mobile real da tela de notas WYSIWYG com uma nota renderizada/editável — bloqueado: sessão My Browser não permite alterar viewport; shell mobile foi validado separadamente
 
 ## Autosave, anexos e ações do quick capture
 
@@ -176,9 +176,9 @@ Os itens abaixo pertenciam ao pedido anterior de reconstrução do zero e foram 
 - [x] Remover o cabeçalho superior atual de Notas/Rascunho e reposicionar o fechamento no extremo direito da barra de atalhos
 - [x] Atualizar testes para autosave, troca/fechamento, anexos, exclusão e novo cabeçalho — suíte com 9 arquivos e 35 testes aprovados
 - [x] Implementar upload real das imagens por Supabase Storage e persistir somente URL/chave segura no conteúdo — bucket criado e verificado via Storage API
-- [ ] Validar manualmente o quick capture com autosave, anexo e lixeira em viewport mobile autenticada real
+- [ ] Validar manualmente o quick capture com autosave, anexo e lixeira em viewport mobile autenticada real — bloqueado: autenticação móvel não pôde ser reproduzida; testes de interação, build e preview responsivo foram aprovados
 - [x] Salvar checkpoint revisável após concluir upload seguro — checkpoint ff9658b4; validação mobile final permanece separada
-- [ ] Validar desktop/mobile e salvar checkpoint final do novo fluxo — desktop/build validados; viewport interna mobile autenticada ainda pendente
+- [ ] Validar desktop/mobile e salvar checkpoint final do novo fluxo — bloqueado apenas na viewport interna mobile autenticada; desktop/build e preview responsivo validados
 
 ## Central de notas no quick capture
 
@@ -216,8 +216,8 @@ Os itens abaixo pertenciam ao pedido anterior de reconstrução do zero e foram 
 - [x] Remover cabeçalho superior de Notas/Rascunho e manter fechamento no extremo direito da barra de atalhos
 - [x] Atualizar testes de autosave, anexos, exclusão e novo cabeçalho — 9 arquivos e 35 testes aprovados
 - [x] Validar build production e preview desktop
-- [ ] Validar manualmente autosave, anexo e lixeira em viewport mobile autenticada real — bloqueado enquanto a viewport My Browser não for redimensionada
-- [ ] Salvar checkpoint final somente após concluir a validação mobile autenticada real
+- [ ] Validar manualmente autosave, anexo e lixeira em viewport mobile autenticada real — bloqueado: a viewport My Browser não foi redimensionável; fluxo coberto por testes e preview responsivo
+- [ ] Salvar checkpoint final somente após concluir a validação mobile autenticada real — checkpoint 8c496c18 é a versão corrigida publicada, mas a validação mobile autenticada continua bloqueada
 
 ## Correção da falha de implantação
 
@@ -226,5 +226,13 @@ Os itens abaixo pertenciam ao pedido anterior de reconstrução do zero e foram 
 - [x] Isolar se a causa está no código, dependência, configuração ou ambiente de deploy — causa provável isolada na configuração Next.js: tracing root fora do projeto e loader de edição visual avaliado em produção
 - [x] Aplicar a correção mínima e atualizar testes/documentação — tracing root removido e `orchids-visual-edits` restrito ao desenvolvimento
 - [x] Validar testes, build de produção e preview após a correção — 35 testes aprovados, build Next.js aprovado e preview móvel público restaurado
-- [ ] Salvar checkpoint corrigido da implantação
+- [x] Salvar checkpoint corrigido da implantação — checkpoint 8c496c18
 - [x] Salvar checkpoint revisável desta rodada — checkpoint ff9658b4; checkpoint final depende da validação mobile
+
+## Correção da falha de publicação 4c45ee7d
+
+- [x] Registrar o erro completo do Cloud Build e confirmar que a compilação Next.js termina antes da falha — Next.js concluiu; a falha ocorreu depois no upload por `dist/public/*` inexistente
+- [x] Inspecionar a configuração de saída do projeto e reproduzir a ausência de `dist/public` — o projeto Next.js não criava o diretório esperado pelo uploader do WebDev; também foi reproduzido o efeito de NODE_ENV=development no build local
+- [x] Aplicar a correção compatível com o pipeline de publicação sem quebrar o runtime Next.js — build agora força `NODE_ENV=production` e cria/popula `dist/public` após `next build`
+- [x] Validar build, artefatos de publicação, testes e preview — 35 testes aprovados, build aprovado mesmo com shell NODE_ENV=development e cinco arquivos encontrados em `dist/public`
+- [ ] Salvar checkpoint corrigido da publicação
