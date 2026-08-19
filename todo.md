@@ -108,7 +108,7 @@ Os itens abaixo pertenciam ao pedido anterior de reconstrução do zero e foram 
 - [x] Persistir conteúdo estruturado sem quebrar o formato atual de notas
 - [x] Escrever testes do drag interaction, editor e serialização — editor e serialização cobertos; drag validado por implementação pointer capture e revisão manual visual
 - [x] Validar desktop, mobile, teclado, arraste, Escape, reduced motion e regressões — desktop autenticado e editor/slash menu validados; mobile por preview responsivo; typecheck sem erros nos arquivos novos
-- [ ] Salvar checkpoint da correção do quick capture
+- [x] Salvar checkpoint da correção do quick capture
 
 ## Gaps adicionais do editor a fechar antes do checkpoint
 

@@ -7795,3 +7795,57 @@
 [2026-08-19T03:18:19.837Z] HEAD / 200 in 94ms
 [2026-08-19T03:18:20.721Z] [PomodoroTimer] Initial categoryDurations from settings: { produtividade: 25, estudos: 50, descanso: 15 }
 [2026-08-19T03:18:20.759Z] GET /?from_webdev=1 200 in 105ms
+[2026-08-19T03:18:37.735Z] [PomodoroTimer] Initial categoryDurations from settings: { produtividade: 25, estudos: 50, descanso: 15 }
+[2026-08-19T03:18:37.769Z] GET / 200 in 103ms
+[2026-08-19T03:18:38.955Z] [API /pomodoro/get-settings] Starting request...
+[2026-08-19T03:18:39.103Z] [API /pomodoro/get-settings] User authenticated: 57fc7b0a-5ba0-42fb-ad0c-f15ee32c6df3
+[2026-08-19T03:18:39.282Z] [API /pomodoro/get-settings] Categories response: {
+[2026-08-19T03:18:39.282Z] count: 3,
+[2026-08-19T03:18:39.282Z] error: undefined,
+[2026-08-19T03:18:39.282Z] data: [
+[2026-08-19T03:18:39.282Z] {
+[2026-08-19T03:18:39.282Z] id: '67040b77-248a-420d-8be2-5c5eca65ca8f',
+[2026-08-19T03:18:39.282Z] user_id: '57fc7b0a-5ba0-42fb-ad0c-f15ee32c6df3',
+[2026-08-19T03:18:39.282Z] name: 'Produzindo',
+[2026-08-19T03:18:39.282Z] color: '#ff6600',
+[2026-08-19T03:18:39.282Z] duration_minutes: 57,
+[2026-08-19T03:18:39.282Z] created_at: '2026-01-19T22:01:03.082007+00:00'
+[2026-08-19T03:18:39.282Z] },
+[2026-08-19T03:18:39.282Z] {
+[2026-08-19T03:18:39.282Z] id: '5e6728b1-cde5-4c8b-a296-116604eadee0',
+[2026-08-19T03:18:39.282Z] user_id: '57fc7b0a-5ba0-42fb-ad0c-f15ee32c6df3',
+[2026-08-19T03:18:39.282Z] name: 'Estudando',
+[2026-08-19T03:18:39.282Z] color: '#002aff',
+[2026-08-19T03:18:39.282Z] duration_minutes: 30,
+[2026-08-19T03:18:39.282Z] created_at: '2026-01-19T22:01:03.284823+00:00'
+[2026-08-19T03:18:39.282Z] },
+[2026-08-19T03:18:39.282Z] {
+[2026-08-19T03:18:39.282Z] id: '4ec39e04-b451-4c7a-845d-571dc624e600',
+[2026-08-19T03:18:39.282Z] user_id: '57fc7b0a-5ba0-42fb-ad0c-f15ee32c6df3',
+[2026-08-19T03:18:39.282Z] name: 'Conteúdos',
+[2026-08-19T03:18:39.282Z] color: '#00d13f',
+[2026-08-19T03:18:39.282Z] duration_minutes: 27,
+[2026-08-19T03:18:39.282Z] created_at: '2026-01-19T22:01:03.486292+00:00'
+[2026-08-19T03:18:39.282Z] }
+[2026-08-19T03:18:39.282Z] ]
+[2026-08-19T03:18:39.282Z] }
+[2026-08-19T03:18:39.282Z] [API /pomodoro/get-settings] Settings response: {
+[2026-08-19T03:18:39.282Z] data: {
+[2026-08-19T03:18:39.282Z] id: '6729871f-4efa-4304-a753-1f7dd1859400',
+[2026-08-19T03:18:39.282Z] user_id: '57fc7b0a-5ba0-42fb-ad0c-f15ee32c6df3',
+[2026-08-19T03:18:39.282Z] short_break_minutes: 5,
+[2026-08-19T03:18:39.282Z] long_break_minutes: 15,
+[2026-08-19T03:18:39.282Z] cycles_until_long_break: 4,
+[2026-08-19T03:18:39.282Z] updated_at: '2026-01-31T22:04:42.725+00:00'
+[2026-08-19T03:18:39.282Z] },
+[2026-08-19T03:18:39.282Z] error: undefined
+[2026-08-19T03:18:39.282Z] }
+[2026-08-19T03:18:39.282Z] [API /pomodoro/get-settings] Sessions response: { count: 19, error: undefined }
+[2026-08-19T03:18:39.282Z] [API /pomodoro/get-settings] Returning settings with 19 sessions
+[2026-08-19T03:18:39.284Z] GET /api/pomodoro/get-settings 200 in 569ms
+[2026-08-19T03:18:53.575Z] [PomodoroTimer] Initial categoryDurations from settings: { produtividade: 25, estudos: 50, descanso: 15 }
+[2026-08-19T03:18:53.614Z] GET /?from_webdev=1 200 in 104ms
+[2026-08-19T03:18:57.575Z] [PomodoroTimer] Initial categoryDurations from settings: { produtividade: 25, estudos: 50, descanso: 15 }
+[2026-08-19T03:18:57.597Z] HEAD / 200 in 84ms
+[2026-08-19T03:18:58.737Z] [PomodoroTimer] Initial categoryDurations from settings: { produtividade: 25, estudos: 50, descanso: 15 }
+[2026-08-19T03:18:58.772Z] GET /?from_webdev=1 200 in 98ms
