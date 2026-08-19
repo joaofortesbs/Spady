@@ -253,4 +253,4 @@ Os itens abaixo pertenciam ao pedido anterior de reconstrução do zero e foram 
 - [x] Fazer o gráfico do dashboard refletir a sessão atual em tempo real, com barras/linhas visíveis durante a contagem — overlay de progresso ao vivo e dados Recharts continuam atualizados pelo live session bus
 - [x] Adicionar testes para configuração, reinício/troca de sessão, contagem e gráfico ao vivo — 3 testes puros adicionados; suíte total passou de 35 para 38 testes
 - [x] Validar o fluxo no preview em desktop e viewport móvel — build e preview responderam 200; shell responsivo capturado em 375px; fluxo autenticado interno permanece dependente da sessão conectada
-- [ ] Salvar checkpoint da correção
+- [x] Salvar checkpoint da correção — checkpoint 3143ec77

@@ -8879,3 +8879,11 @@
 [2026-08-19T20:25:13.840Z] HEAD / 200 in 126ms
 [2026-08-19T20:25:15.142Z] [PomodoroTimer] Initial categoryDurations from settings: { produtividade: 25, estudos: 50, descanso: 15 }
 [2026-08-19T20:25:15.186Z] GET /?from_webdev=1 200 in 144ms
+[2026-08-19T20:25:26.145Z] [PomodoroTimer] Initial categoryDurations from settings: { produtividade: 25, estudos: 50, descanso: 15 }
+[2026-08-19T20:25:26.189Z] GET / 200 in 136ms
+[2026-08-19T20:26:12.775Z] [PomodoroTimer] Initial categoryDurations from settings: { produtividade: 25, estudos: 50, descanso: 15 }
+[2026-08-19T20:26:12.820Z] GET /?from_webdev=1 200 in 141ms
+[2026-08-19T20:26:17.626Z] [PomodoroTimer] Initial categoryDurations from settings: { produtividade: 25, estudos: 50, descanso: 15 }
+[2026-08-19T20:26:17.663Z] HEAD / 200 in 131ms
+[2026-08-19T20:26:19.130Z] [PomodoroTimer] Initial categoryDurations from settings: { produtividade: 25, estudos: 50, descanso: 15 }
+[2026-08-19T20:26:19.173Z] GET /?from_webdev=1 200 in 135ms
