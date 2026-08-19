@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { buildQuickCaptureNote } from "./quickCapture";
+import { buildQuickCaptureNote, parseQuickCaptureContent, serializeQuickCaptureBlocks } from "./quickCapture";
 
 describe("buildQuickCaptureNote", () => {
   it("uses the first content line as a fallback title", () => {
@@ -20,5 +20,12 @@ describe("buildQuickCaptureNote", () => {
 
   it("returns null when the capture is empty", () => {
     expect(buildQuickCaptureNote("   ", "\n  ")).toBeNull();
+  });
+});
+
+describe("quick capture structured markdown", () => {
+  it("preserves headings, highlight and checklist blocks", () => {
+    const blocks = parseQuickCaptureContent("# Plano\n==Foco==\n- [ ] Revisar");
+    expect(serializeQuickCaptureBlocks(blocks)).toBe("# Plano\n==Foco==\n- [ ] Revisar");
   });
 });

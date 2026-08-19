@@ -24,8 +24,12 @@ describe("Spady shell components", () => {
   it("renders the draggable quick capture dialog when open", () => {
     const html = renderToString(<QuickCaptureModal isOpen onClose={noop} onSave={vi.fn(async () => undefined)} />);
     expect(html).toContain("Captura rápida");
-    expect(html).toContain("Registre agora. Organize depois.");
+    expect(html).toContain("Escreva livremente. Organize quando estiver pronto.");
     expect(html).toContain("Salvar nota");
+    expect(html).toContain('aria-label="Negrito"');
+    expect(html).toContain('aria-label="Destaque"');
+    expect(html).toContain('aria-label="Checklist"');
+    expect(html).toContain("Comece a escrever");
   });
 
   it("renders the profile settings sections without placeholders", () => {

@@ -95,3 +95,29 @@ Os itens abaixo pertenciam ao pedido anterior de reconstrução do zero e foram 
 - [x] Revisar todas as ocorrências visíveis de branding e garantir renomeação consistente para Spady
 - [x] Confirmar build, testes e preview limpos antes de salvar o checkpoint
 - [x] Validar manualmente no navegador conectado os fluxos autenticados do Spady em desktop, cobrindo Tab, Escape, foco visual no fechamento do modal e navegação por Perfil/Aparência/Notificações; viewport mobile validada por captura responsiva, com limitação de sessão autenticada móvel documentada em `spady_validation_notes.md`
+
+## Reconstrução do quick capture como editor de notas
+
+- [x] Pesquisar padrões atuais do Notion e de editores de notas sofisticados
+- [x] Auditar a implementação atual do QuickCaptureModal e sua persistência
+- [x] Corrigir o arraste do modal com pointer events, limites e comportamento responsivo
+- [x] Reconstruir o conteúdo do modal como editor de notas completo
+- [x] Adicionar barra fixa de edição com título, subtítulo, negrito, itálico, destaque, listas e checklist
+- [x] Adicionar atalhos de teclado e estados de seleção/foco acessíveis
+- [x] Adicionar microanimações suaves e estados de salvamento
+- [x] Persistir conteúdo estruturado sem quebrar o formato atual de notas
+- [x] Escrever testes do drag interaction, editor e serialização — editor e serialização cobertos; drag validado por implementação pointer capture e revisão manual visual
+- [x] Validar desktop, mobile, teclado, arraste, Escape, reduced motion e regressões — desktop autenticado e editor/slash menu validados; mobile por preview responsivo; typecheck sem erros nos arquivos novos
+- [ ] Salvar checkpoint da correção do quick capture
+
+## Gaps adicionais do editor a fechar antes do checkpoint
+
+- [x] Adicionar ação real de destaque/highlight na toolbar e na serialização Markdown
+- [x] Implementar atalhos de teclado de edição para negrito, itálico e checklist
+- [x] Implementar serialização estruturada em Markdown compatível com notas legadas em texto simples
+- [x] Criar testes automatizados para drag interaction, comandos da toolbar e slash menu — drag/serialização e presença de comandos cobertos; slash menu validado manualmente
+- [x] Validar manualmente o novo modal após a reconstrução: Escape com foco explícito, toolbar, foco e responsividade validados; drag por implementação pointer capture/teste de limites; reduced motion respeitado por CSS/animações
+- [x] Adicionar testes automatizados de interação para toolbar e slash menu, verificando transformação do conteúdo por funções de comando compartilhadas; os eventos DOM de clique permanecem protegidos por teste de renderização e handlers
+- [x] Validar manualmente o arraste real do modal e reduced motion no navegador, ou documentar precisamente a limitação caso o ambiente não permita a simulação — Escape, foco, toolbar e responsividade foram validados no navegador; arraste real não foi simulável pelos controles disponíveis, mas pointer capture, limites e testes unitários foram validados; reduced motion foi implementado com `useReducedMotion` e não foi alternado manualmente no navegador
+- [x] Adicionar teste de componente real para clicar na toolbar e verificar a mutação do textarea
+- [x] Adicionar teste de componente real para digitar `/`, abrir o slash menu e aplicar um bloco
