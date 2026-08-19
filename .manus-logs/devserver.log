@@ -8152,3 +8152,381 @@
 [2026-08-19T18:46:49.720Z] HEAD / 200 in 116ms
 [2026-08-19T18:46:51.123Z] [PomodoroTimer] Initial categoryDurations from settings: { produtividade: 25, estudos: 50, descanso: 15 }
 [2026-08-19T18:46:51.169Z] GET /?from_webdev=1 200 in 124ms
+[2026-08-19T18:46:56.354Z] [PomodoroTimer] Initial categoryDurations from settings: { produtividade: 25, estudos: 50, descanso: 15 }
+[2026-08-19T18:46:56.398Z] GET / 200 in 123ms
+[2026-08-19T19:28:40.708Z] [PomodoroTimer] Initial categoryDurations from settings: { produtividade: 25, estudos: 50, descanso: 15 }
+[2026-08-19T19:28:40.748Z] GET /?from_webdev=1 200 in 142ms
+[2026-08-19T19:28:45.383Z] [PomodoroTimer] Initial categoryDurations from settings: { produtividade: 25, estudos: 50, descanso: 15 }
+[2026-08-19T19:28:45.411Z] HEAD / 200 in 122ms
+[2026-08-19T19:28:47.102Z] [PomodoroTimer] Initial categoryDurations from settings: { produtividade: 25, estudos: 50, descanso: 15 }
+[2026-08-19T19:28:47.140Z] GET /?from_webdev=1 200 in 112ms
+[2026-08-19T19:33:02.906Z] [PomodoroTimer] Initial categoryDurations from settings: { produtividade: 25, estudos: 50, descanso: 15 }
+[2026-08-19T19:33:02.942Z] GET /?from_webdev=1 200 in 137ms
+[2026-08-19T19:33:07.711Z] [PomodoroTimer] Initial categoryDurations from settings: { produtividade: 25, estudos: 50, descanso: 15 }
+[2026-08-19T19:33:07.742Z] HEAD / 200 in 115ms
+[2026-08-19T19:33:08.923Z] [PomodoroTimer] Initial categoryDurations from settings: { produtividade: 25, estudos: 50, descanso: 15 }
+[2026-08-19T19:33:08.959Z] GET /?from_webdev=1 200 in 110ms
+[2026-08-19T19:33:09.101Z] [PomodoroTimer] Initial categoryDurations from settings: { produtividade: 25, estudos: 50, descanso: 15 }
+[2026-08-19T19:33:09.138Z] GET /?from_webdev=1 200 in 110ms
+[2026-08-19T19:34:46.557Z] ⨯ [Error: ENOENT: no such file or directory, open '/home/ubuntu/orchids-blindy/.next/server/app/page/app-build-manifest.json'] {
+[2026-08-19T19:34:46.557Z] errno: -2,
+[2026-08-19T19:34:46.557Z] code: 'ENOENT',
+[2026-08-19T19:34:46.557Z] syscall: 'open',
+[2026-08-19T19:34:46.557Z] path: '/home/ubuntu/orchids-blindy/.next/server/app/page/app-build-manifest.json'
+[2026-08-19T19:34:46.557Z] }
+[2026-08-19T19:34:47.060Z] ○ Compiling /_error ...
+[2026-08-19T19:34:48.019Z] ✓ Compiled /_error in 1460ms
+[2026-08-19T19:34:48.061Z] ⨯ [Error: ENOENT: no such file or directory, open '/home/ubuntu/orchids-blindy/.next/static/development/_buildManifest.js.tmp.q1p0ygnthz'] {
+[2026-08-19T19:34:48.061Z] errno: -2,
+[2026-08-19T19:34:48.061Z] code: 'ENOENT',
+[2026-08-19T19:34:48.061Z] syscall: 'open',
+[2026-08-19T19:34:48.061Z] path: '/home/ubuntu/orchids-blindy/.next/static/development/_buildManifest.js.tmp.q1p0ygnthz'
+[2026-08-19T19:34:48.061Z] }
+[2026-08-19T19:34:48.107Z] [Error: ENOENT: no such file or directory, open '/home/ubuntu/orchids-blindy/.next/server/app/page/app-build-manifest.json'] {
+[2026-08-19T19:34:48.107Z] errno: -2,
+[2026-08-19T19:34:48.107Z] code: 'ENOENT',
+[2026-08-19T19:34:48.107Z] syscall: 'open',
+[2026-08-19T19:34:48.107Z] path: '/home/ubuntu/orchids-blindy/.next/server/app/page/app-build-manifest.json'
+[2026-08-19T19:34:48.107Z] }
+[2026-08-19T19:34:48.140Z] ⨯ [Error: ENOENT: no such file or directory, open '/home/ubuntu/orchids-blindy/.next/static/development/_buildManifest.js.tmp.fb6wanap95i'] {
+[2026-08-19T19:34:48.140Z] errno: -2,
+[2026-08-19T19:34:48.140Z] code: 'ENOENT',
+[2026-08-19T19:34:48.140Z] syscall: 'open',
+[2026-08-19T19:34:48.140Z] path: '/home/ubuntu/orchids-blindy/.next/static/development/_buildManifest.js.tmp.fb6wanap95i'
+[2026-08-19T19:34:48.140Z] }
+[2026-08-19T19:34:48.192Z] [Error: ENOENT: no such file or directory, open '/home/ubuntu/orchids-blindy/.next/static/development/_buildManifest.js.tmp.1dqx5oofbea'] {
+[2026-08-19T19:34:48.192Z] errno: -2,
+[2026-08-19T19:34:48.192Z] code: 'ENOENT',
+[2026-08-19T19:34:48.192Z] syscall: 'open',
+[2026-08-19T19:34:48.192Z] path: '/home/ubuntu/orchids-blindy/.next/static/development/_buildManifest.js.tmp.1dqx5oofbea'
+[2026-08-19T19:34:48.192Z] }
+[2026-08-19T19:34:48.489Z] ⨯ [Error: ENOENT: no such file or directory, open '/home/ubuntu/orchids-blindy/.next/server/app/page/app-build-manifest.json'] {
+[2026-08-19T19:34:48.490Z] errno: -2,
+[2026-08-19T19:34:48.490Z] code: 'ENOENT',
+[2026-08-19T19:34:48.490Z] syscall: 'open',
+[2026-08-19T19:34:48.490Z] path: '/home/ubuntu/orchids-blindy/.next/server/app/page/app-build-manifest.json'
+[2026-08-19T19:34:48.490Z] }
+[2026-08-19T19:34:48.537Z] ⨯ [Error: ENOENT: no such file or directory, open '/home/ubuntu/orchids-blindy/.next/static/development/_buildManifest.js.tmp.c27r3oh492'] {
+[2026-08-19T19:34:48.537Z] errno: -2,
+[2026-08-19T19:34:48.537Z] code: 'ENOENT',
+[2026-08-19T19:34:48.537Z] syscall: 'open',
+[2026-08-19T19:34:48.537Z] path: '/home/ubuntu/orchids-blindy/.next/static/development/_buildManifest.js.tmp.c27r3oh492'
+[2026-08-19T19:34:48.537Z] }
+[2026-08-19T19:34:48.582Z] [Error: ENOENT: no such file or directory, open '/home/ubuntu/orchids-blindy/.next/server/app/page/app-build-manifest.json'] {
+[2026-08-19T19:34:48.582Z] errno: -2,
+[2026-08-19T19:34:48.582Z] code: 'ENOENT',
+[2026-08-19T19:34:48.582Z] syscall: 'open',
+[2026-08-19T19:34:48.582Z] path: '/home/ubuntu/orchids-blindy/.next/server/app/page/app-build-manifest.json'
+[2026-08-19T19:34:48.582Z] }
+[2026-08-19T19:34:48.615Z] ⨯ [Error: ENOENT: no such file or directory, open '/home/ubuntu/orchids-blindy/.next/static/development/_buildManifest.js.tmp.9gf5oot5py'] {
+[2026-08-19T19:34:48.615Z] errno: -2,
+[2026-08-19T19:34:48.615Z] code: 'ENOENT',
+[2026-08-19T19:34:48.615Z] syscall: 'open',
+[2026-08-19T19:34:48.615Z] path: '/home/ubuntu/orchids-blindy/.next/static/development/_buildManifest.js.tmp.9gf5oot5py'
+[2026-08-19T19:34:48.615Z] }
+[2026-08-19T19:34:48.647Z] [Error: ENOENT: no such file or directory, open '/home/ubuntu/orchids-blindy/.next/static/development/_buildManifest.js.tmp.ji0boapzoe'] {
+[2026-08-19T19:34:48.647Z] errno: -2,
+[2026-08-19T19:34:48.647Z] code: 'ENOENT',
+[2026-08-19T19:34:48.647Z] syscall: 'open',
+[2026-08-19T19:34:48.647Z] path: '/home/ubuntu/orchids-blindy/.next/static/development/_buildManifest.js.tmp.ji0boapzoe'
+[2026-08-19T19:34:48.647Z] }
+[2026-08-19T19:34:50.066Z] ⨯ [Error: ENOENT: no such file or directory, open '/home/ubuntu/orchids-blindy/.next/server/app/page/app-build-manifest.json'] {
+[2026-08-19T19:34:50.066Z] errno: -2,
+[2026-08-19T19:34:50.066Z] code: 'ENOENT',
+[2026-08-19T19:34:50.066Z] syscall: 'open',
+[2026-08-19T19:34:50.066Z] path: '/home/ubuntu/orchids-blindy/.next/server/app/page/app-build-manifest.json'
+[2026-08-19T19:34:50.066Z] }
+[2026-08-19T19:34:50.103Z] ⨯ [Error: ENOENT: no such file or directory, open '/home/ubuntu/orchids-blindy/.next/static/development/_buildManifest.js.tmp.v3g9z0wsln9'] {
+[2026-08-19T19:34:50.103Z] errno: -2,
+[2026-08-19T19:34:50.103Z] code: 'ENOENT',
+[2026-08-19T19:34:50.103Z] syscall: 'open',
+[2026-08-19T19:34:50.103Z] path: '/home/ubuntu/orchids-blindy/.next/static/development/_buildManifest.js.tmp.v3g9z0wsln9'
+[2026-08-19T19:34:50.103Z] }
+[2026-08-19T19:34:50.139Z] [Error: ENOENT: no such file or directory, open '/home/ubuntu/orchids-blindy/.next/server/app/page/app-build-manifest.json'] {
+[2026-08-19T19:34:50.139Z] errno: -2,
+[2026-08-19T19:34:50.139Z] code: 'ENOENT',
+[2026-08-19T19:34:50.139Z] syscall: 'open',
+[2026-08-19T19:34:50.139Z] path: '/home/ubuntu/orchids-blindy/.next/server/app/page/app-build-manifest.json'
+[2026-08-19T19:34:50.139Z] }
+[2026-08-19T19:34:50.169Z] ⨯ [Error: ENOENT: no such file or directory, open '/home/ubuntu/orchids-blindy/.next/static/development/_buildManifest.js.tmp.lf5uln2sr3'] {
+[2026-08-19T19:34:50.169Z] errno: -2,
+[2026-08-19T19:34:50.169Z] code: 'ENOENT',
+[2026-08-19T19:34:50.169Z] syscall: 'open',
+[2026-08-19T19:34:50.169Z] path: '/home/ubuntu/orchids-blindy/.next/static/development/_buildManifest.js.tmp.lf5uln2sr3'
+[2026-08-19T19:34:50.169Z] }
+[2026-08-19T19:34:50.197Z] [Error: ENOENT: no such file or directory, open '/home/ubuntu/orchids-blindy/.next/static/development/_buildManifest.js.tmp.tsqxt9g42h9'] {
+[2026-08-19T19:34:50.197Z] errno: -2,
+[2026-08-19T19:34:50.197Z] code: 'ENOENT',
+[2026-08-19T19:34:50.197Z] syscall: 'open',
+[2026-08-19T19:34:50.197Z] path: '/home/ubuntu/orchids-blindy/.next/static/development/_buildManifest.js.tmp.tsqxt9g42h9'
+[2026-08-19T19:34:50.197Z] }
+[2026-08-19T19:34:51.064Z] ⨯ [Error: ENOENT: no such file or directory, open '/home/ubuntu/orchids-blindy/.next/server/app/page/app-build-manifest.json'] {
+[2026-08-19T19:34:51.064Z] errno: -2,
+[2026-08-19T19:34:51.064Z] code: 'ENOENT',
+[2026-08-19T19:34:51.064Z] syscall: 'open',
+[2026-08-19T19:34:51.064Z] path: '/home/ubuntu/orchids-blindy/.next/server/app/page/app-build-manifest.json'
+[2026-08-19T19:34:51.064Z] }
+[2026-08-19T19:34:51.101Z] ⨯ [Error: ENOENT: no such file or directory, open '/home/ubuntu/orchids-blindy/.next/static/development/_buildManifest.js.tmp.p35llq4db3j'] {
+[2026-08-19T19:34:51.101Z] errno: -2,
+[2026-08-19T19:34:51.101Z] code: 'ENOENT',
+[2026-08-19T19:34:51.101Z] syscall: 'open',
+[2026-08-19T19:34:51.101Z] path: '/home/ubuntu/orchids-blindy/.next/static/development/_buildManifest.js.tmp.p35llq4db3j'
+[2026-08-19T19:34:51.101Z] }
+[2026-08-19T19:34:51.134Z] [Error: ENOENT: no such file or directory, open '/home/ubuntu/orchids-blindy/.next/server/app/page/app-build-manifest.json'] {
+[2026-08-19T19:34:51.134Z] errno: -2,
+[2026-08-19T19:34:51.134Z] code: 'ENOENT',
+[2026-08-19T19:34:51.134Z] syscall: 'open',
+[2026-08-19T19:34:51.134Z] path: '/home/ubuntu/orchids-blindy/.next/server/app/page/app-build-manifest.json'
+[2026-08-19T19:34:51.134Z] }
+[2026-08-19T19:34:51.166Z] ⨯ [Error: ENOENT: no such file or directory, open '/home/ubuntu/orchids-blindy/.next/static/development/_buildManifest.js.tmp.uyant0r06fe'] {
+[2026-08-19T19:34:51.166Z] errno: -2,
+[2026-08-19T19:34:51.166Z] code: 'ENOENT',
+[2026-08-19T19:34:51.166Z] syscall: 'open',
+[2026-08-19T19:34:51.166Z] path: '/home/ubuntu/orchids-blindy/.next/static/development/_buildManifest.js.tmp.uyant0r06fe'
+[2026-08-19T19:34:51.166Z] }
+[2026-08-19T19:34:51.197Z] [Error: ENOENT: no such file or directory, open '/home/ubuntu/orchids-blindy/.next/static/development/_buildManifest.js.tmp.hlafxkb0wnd'] {
+[2026-08-19T19:34:51.197Z] errno: -2,
+[2026-08-19T19:34:51.197Z] code: 'ENOENT',
+[2026-08-19T19:34:51.197Z] syscall: 'open',
+[2026-08-19T19:34:51.197Z] path: '/home/ubuntu/orchids-blindy/.next/static/development/_buildManifest.js.tmp.hlafxkb0wnd'
+[2026-08-19T19:34:51.197Z] }
+[2026-08-19T19:34:52.076Z] ⨯ [Error: ENOENT: no such file or directory, open '/home/ubuntu/orchids-blindy/.next/server/app/page/app-build-manifest.json'] {
+[2026-08-19T19:34:52.076Z] errno: -2,
+[2026-08-19T19:34:52.076Z] code: 'ENOENT',
+[2026-08-19T19:34:52.076Z] syscall: 'open',
+[2026-08-19T19:34:52.076Z] path: '/home/ubuntu/orchids-blindy/.next/server/app/page/app-build-manifest.json'
+[2026-08-19T19:34:52.076Z] }
+[2026-08-19T19:34:52.113Z] ⨯ [Error: ENOENT: no such file or directory, open '/home/ubuntu/orchids-blindy/.next/server/app/page/app-build-manifest.json'] {
+[2026-08-19T19:34:52.113Z] errno: -2,
+[2026-08-19T19:34:52.113Z] code: 'ENOENT',
+[2026-08-19T19:34:52.113Z] syscall: 'open',
+[2026-08-19T19:34:52.113Z] path: '/home/ubuntu/orchids-blindy/.next/server/app/page/app-build-manifest.json'
+[2026-08-19T19:34:52.113Z] }
+[2026-08-19T19:34:52.136Z] ⨯ [Error: ENOENT: no such file or directory, open '/home/ubuntu/orchids-blindy/.next/static/development/_buildManifest.js.tmp.torbr4ozr0g'] {
+[2026-08-19T19:34:52.136Z] errno: -2,
+[2026-08-19T19:34:52.136Z] code: 'ENOENT',
+[2026-08-19T19:34:52.136Z] syscall: 'open',
+[2026-08-19T19:34:52.136Z] path: '/home/ubuntu/orchids-blindy/.next/static/development/_buildManifest.js.tmp.torbr4ozr0g'
+[2026-08-19T19:34:52.136Z] }
+[2026-08-19T19:34:52.175Z] ⨯ [Error: ENOENT: no such file or directory, open '/home/ubuntu/orchids-blindy/.next/static/development/_buildManifest.js.tmp.xb39nmap1e'] {
+[2026-08-19T19:34:52.176Z] errno: -2,
+[2026-08-19T19:34:52.176Z] code: 'ENOENT',
+[2026-08-19T19:34:52.176Z] syscall: 'open',
+[2026-08-19T19:34:52.176Z] path: '/home/ubuntu/orchids-blindy/.next/static/development/_buildManifest.js.tmp.xb39nmap1e'
+[2026-08-19T19:34:52.176Z] }
+[2026-08-19T19:34:52.206Z] [Error: ENOENT: no such file or directory, open '/home/ubuntu/orchids-blindy/.next/server/app/page/app-build-manifest.json'] {
+[2026-08-19T19:34:52.206Z] errno: -2,
+[2026-08-19T19:34:52.206Z] code: 'ENOENT',
+[2026-08-19T19:34:52.206Z] syscall: 'open',
+[2026-08-19T19:34:52.206Z] path: '/home/ubuntu/orchids-blindy/.next/server/app/page/app-build-manifest.json'
+[2026-08-19T19:34:52.206Z] }
+[2026-08-19T19:34:52.245Z] [Error: ENOENT: no such file or directory, open '/home/ubuntu/orchids-blindy/.next/server/app/page/app-build-manifest.json'] {
+[2026-08-19T19:34:52.245Z] errno: -2,
+[2026-08-19T19:34:52.245Z] code: 'ENOENT',
+[2026-08-19T19:34:52.245Z] syscall: 'open',
+[2026-08-19T19:34:52.245Z] path: '/home/ubuntu/orchids-blindy/.next/server/app/page/app-build-manifest.json'
+[2026-08-19T19:34:52.245Z] }
+[2026-08-19T19:34:52.272Z] ⨯ [Error: ENOENT: no such file or directory, open '/home/ubuntu/orchids-blindy/.next/static/development/_buildManifest.js.tmp.c0lu55ei1qj'] {
+[2026-08-19T19:34:52.272Z] errno: -2,
+[2026-08-19T19:34:52.272Z] code: 'ENOENT',
+[2026-08-19T19:34:52.272Z] syscall: 'open',
+[2026-08-19T19:34:52.272Z] path: '/home/ubuntu/orchids-blindy/.next/static/development/_buildManifest.js.tmp.c0lu55ei1qj'
+[2026-08-19T19:34:52.272Z] }
+[2026-08-19T19:34:52.303Z] ⨯ [Error: ENOENT: no such file or directory, open '/home/ubuntu/orchids-blindy/.next/static/development/_buildManifest.js.tmp.btmzefhlizg'] {
+[2026-08-19T19:34:52.303Z] errno: -2,
+[2026-08-19T19:34:52.303Z] code: 'ENOENT',
+[2026-08-19T19:34:52.303Z] syscall: 'open',
+[2026-08-19T19:34:52.303Z] path: '/home/ubuntu/orchids-blindy/.next/static/development/_buildManifest.js.tmp.btmzefhlizg'
+[2026-08-19T19:34:52.303Z] }
+[2026-08-19T19:34:52.325Z] [Error: ENOENT: no such file or directory, open '/home/ubuntu/orchids-blindy/.next/static/development/_buildManifest.js.tmp.qi880hcz5k'] {
+[2026-08-19T19:34:52.325Z] errno: -2,
+[2026-08-19T19:34:52.325Z] code: 'ENOENT',
+[2026-08-19T19:34:52.325Z] syscall: 'open',
+[2026-08-19T19:34:52.325Z] path: '/home/ubuntu/orchids-blindy/.next/static/development/_buildManifest.js.tmp.qi880hcz5k'
+[2026-08-19T19:34:52.325Z] }
+[2026-08-19T19:34:52.354Z] [Error: ENOENT: no such file or directory, open '/home/ubuntu/orchids-blindy/.next/static/development/_buildManifest.js.tmp.btv6b4up1mw'] {
+[2026-08-19T19:34:52.354Z] errno: -2,
+[2026-08-19T19:34:52.354Z] code: 'ENOENT',
+[2026-08-19T19:34:52.354Z] syscall: 'open',
+[2026-08-19T19:34:52.354Z] path: '/home/ubuntu/orchids-blindy/.next/static/development/_buildManifest.js.tmp.btv6b4up1mw'
+[2026-08-19T19:34:52.354Z] }
+[2026-08-19T19:34:53.069Z] ⨯ [Error: ENOENT: no such file or directory, open '/home/ubuntu/orchids-blindy/.next/server/app/page/app-build-manifest.json'] {
+[2026-08-19T19:34:53.069Z] errno: -2,
+[2026-08-19T19:34:53.069Z] code: 'ENOENT',
+[2026-08-19T19:34:53.069Z] syscall: 'open',
+[2026-08-19T19:34:53.069Z] path: '/home/ubuntu/orchids-blindy/.next/server/app/page/app-build-manifest.json'
+[2026-08-19T19:34:53.069Z] }
+[2026-08-19T19:34:53.106Z] ⨯ [Error: ENOENT: no such file or directory, open '/home/ubuntu/orchids-blindy/.next/static/development/_buildManifest.js.tmp.2va1ty9bohm'] {
+[2026-08-19T19:34:53.106Z] errno: -2,
+[2026-08-19T19:34:53.106Z] code: 'ENOENT',
+[2026-08-19T19:34:53.106Z] syscall: 'open',
+[2026-08-19T19:34:53.106Z] path: '/home/ubuntu/orchids-blindy/.next/static/development/_buildManifest.js.tmp.2va1ty9bohm'
+[2026-08-19T19:34:53.106Z] }
+[2026-08-19T19:34:53.142Z] [Error: ENOENT: no such file or directory, open '/home/ubuntu/orchids-blindy/.next/server/app/page/app-build-manifest.json'] {
+[2026-08-19T19:34:53.142Z] errno: -2,
+[2026-08-19T19:34:53.142Z] code: 'ENOENT',
+[2026-08-19T19:34:53.142Z] syscall: 'open',
+[2026-08-19T19:34:53.142Z] path: '/home/ubuntu/orchids-blindy/.next/server/app/page/app-build-manifest.json'
+[2026-08-19T19:34:53.142Z] }
+[2026-08-19T19:34:53.172Z] ⨯ [Error: ENOENT: no such file or directory, open '/home/ubuntu/orchids-blindy/.next/static/development/_buildManifest.js.tmp.yj3gz15xyv'] {
+[2026-08-19T19:34:53.172Z] errno: -2,
+[2026-08-19T19:34:53.172Z] code: 'ENOENT',
+[2026-08-19T19:34:53.172Z] syscall: 'open',
+[2026-08-19T19:34:53.172Z] path: '/home/ubuntu/orchids-blindy/.next/static/development/_buildManifest.js.tmp.yj3gz15xyv'
+[2026-08-19T19:34:53.172Z] }
+[2026-08-19T19:34:53.209Z] [Error: ENOENT: no such file or directory, open '/home/ubuntu/orchids-blindy/.next/static/development/_buildManifest.js.tmp.yubn69i3zyo'] {
+[2026-08-19T19:34:53.210Z] errno: -2,
+[2026-08-19T19:34:53.210Z] code: 'ENOENT',
+[2026-08-19T19:34:53.210Z] syscall: 'open',
+[2026-08-19T19:34:53.210Z] path: '/home/ubuntu/orchids-blindy/.next/static/development/_buildManifest.js.tmp.yubn69i3zyo'
+[2026-08-19T19:34:53.210Z] }
+[2026-08-19T19:34:54.076Z] ⨯ [Error: ENOENT: no such file or directory, open '/home/ubuntu/orchids-blindy/.next/server/app/page/app-build-manifest.json'] {
+[2026-08-19T19:34:54.076Z] errno: -2,
+[2026-08-19T19:34:54.076Z] code: 'ENOENT',
+[2026-08-19T19:34:54.076Z] syscall: 'open',
+[2026-08-19T19:34:54.076Z] path: '/home/ubuntu/orchids-blindy/.next/server/app/page/app-build-manifest.json'
+[2026-08-19T19:34:54.076Z] }
+[2026-08-19T19:34:54.115Z] ⨯ [Error: ENOENT: no such file or directory, open '/home/ubuntu/orchids-blindy/.next/static/development/_buildManifest.js.tmp.rtp27of1zu'] {
+[2026-08-19T19:34:54.115Z] errno: -2,
+[2026-08-19T19:34:54.115Z] code: 'ENOENT',
+[2026-08-19T19:34:54.115Z] syscall: 'open',
+[2026-08-19T19:34:54.115Z] path: '/home/ubuntu/orchids-blindy/.next/static/development/_buildManifest.js.tmp.rtp27of1zu'
+[2026-08-19T19:34:54.115Z] }
+[2026-08-19T19:34:54.153Z] [Error: ENOENT: no such file or directory, open '/home/ubuntu/orchids-blindy/.next/server/app/page/app-build-manifest.json'] {
+[2026-08-19T19:34:54.153Z] errno: -2,
+[2026-08-19T19:34:54.153Z] code: 'ENOENT',
+[2026-08-19T19:34:54.153Z] syscall: 'open',
+[2026-08-19T19:34:54.153Z] path: '/home/ubuntu/orchids-blindy/.next/server/app/page/app-build-manifest.json'
+[2026-08-19T19:34:54.153Z] }
+[2026-08-19T19:34:54.182Z] ⨯ [Error: ENOENT: no such file or directory, open '/home/ubuntu/orchids-blindy/.next/static/development/_buildManifest.js.tmp.47ybibpus82'] {
+[2026-08-19T19:34:54.182Z] errno: -2,
+[2026-08-19T19:34:54.182Z] code: 'ENOENT',
+[2026-08-19T19:34:54.182Z] syscall: 'open',
+[2026-08-19T19:34:54.182Z] path: '/home/ubuntu/orchids-blindy/.next/static/development/_buildManifest.js.tmp.47ybibpus82'
+[2026-08-19T19:34:54.182Z] }
+[2026-08-19T19:34:54.214Z] [Error: ENOENT: no such file or directory, open '/home/ubuntu/orchids-blindy/.next/static/development/_buildManifest.js.tmp.cqacin5tutl'] {
+[2026-08-19T19:34:54.214Z] errno: -2,
+[2026-08-19T19:34:54.214Z] code: 'ENOENT',
+[2026-08-19T19:34:54.214Z] syscall: 'open',
+[2026-08-19T19:34:54.214Z] path: '/home/ubuntu/orchids-blindy/.next/static/development/_buildManifest.js.tmp.cqacin5tutl'
+[2026-08-19T19:34:54.214Z] }
+[2026-08-19T19:34:55.063Z] ⨯ [Error: ENOENT: no such file or directory, open '/home/ubuntu/orchids-blindy/.next/server/app/page/app-build-manifest.json'] {
+[2026-08-19T19:34:55.063Z] errno: -2,
+[2026-08-19T19:34:55.063Z] code: 'ENOENT',
+[2026-08-19T19:34:55.063Z] syscall: 'open',
+[2026-08-19T19:34:55.063Z] path: '/home/ubuntu/orchids-blindy/.next/server/app/page/app-build-manifest.json'
+[2026-08-19T19:34:55.063Z] }
+[2026-08-19T19:34:55.100Z] ⨯ [Error: ENOENT: no such file or directory, open '/home/ubuntu/orchids-blindy/.next/static/development/_buildManifest.js.tmp.q53beetgss'] {
+[2026-08-19T19:34:55.100Z] errno: -2,
+[2026-08-19T19:34:55.100Z] code: 'ENOENT',
+[2026-08-19T19:34:55.100Z] syscall: 'open',
+[2026-08-19T19:34:55.100Z] path: '/home/ubuntu/orchids-blindy/.next/static/development/_buildManifest.js.tmp.q53beetgss'
+[2026-08-19T19:34:55.100Z] }
+[2026-08-19T19:34:55.138Z] [Error: ENOENT: no such file or directory, open '/home/ubuntu/orchids-blindy/.next/server/app/page/app-build-manifest.json'] {
+[2026-08-19T19:34:55.138Z] errno: -2,
+[2026-08-19T19:34:55.138Z] code: 'ENOENT',
+[2026-08-19T19:34:55.138Z] syscall: 'open',
+[2026-08-19T19:34:55.138Z] path: '/home/ubuntu/orchids-blindy/.next/server/app/page/app-build-manifest.json'
+[2026-08-19T19:34:55.138Z] }
+[2026-08-19T19:34:55.165Z] ⨯ [Error: ENOENT: no such file or directory, open '/home/ubuntu/orchids-blindy/.next/static/development/_buildManifest.js.tmp.7hhzgv9xc25'] {
+[2026-08-19T19:34:55.165Z] errno: -2,
+[2026-08-19T19:34:55.165Z] code: 'ENOENT',
+[2026-08-19T19:34:55.165Z] syscall: 'open',
+[2026-08-19T19:34:55.165Z] path: '/home/ubuntu/orchids-blindy/.next/static/development/_buildManifest.js.tmp.7hhzgv9xc25'
+[2026-08-19T19:34:55.165Z] }
+[2026-08-19T19:34:55.194Z] [Error: ENOENT: no such file or directory, open '/home/ubuntu/orchids-blindy/.next/static/development/_buildManifest.js.tmp.6s69ycmdzz6'] {
+[2026-08-19T19:34:55.194Z] errno: -2,
+[2026-08-19T19:34:55.194Z] code: 'ENOENT',
+[2026-08-19T19:34:55.194Z] syscall: 'open',
+[2026-08-19T19:34:55.194Z] path: '/home/ubuntu/orchids-blindy/.next/static/development/_buildManifest.js.tmp.6s69ycmdzz6'
+[2026-08-19T19:34:55.194Z] }
+[2026-08-19T19:34:56.164Z] ⨯ [Error: ENOENT: no such file or directory, open '/home/ubuntu/orchids-blindy/.next/server/app/page/app-build-manifest.json'] {
+[2026-08-19T19:34:56.164Z] errno: -2,
+[2026-08-19T19:34:56.164Z] code: 'ENOENT',
+[2026-08-19T19:34:56.164Z] syscall: 'open',
+[2026-08-19T19:34:56.164Z] path: '/home/ubuntu/orchids-blindy/.next/server/app/page/app-build-manifest.json'
+[2026-08-19T19:34:56.164Z] }
+[2026-08-19T19:34:56.205Z] ⨯ [Error: ENOENT: no such file or directory, open '/home/ubuntu/orchids-blindy/.next/static/development/_buildManifest.js.tmp.hmpyjlvva3j'] {
+[2026-08-19T19:34:56.205Z] errno: -2,
+[2026-08-19T19:34:56.205Z] code: 'ENOENT',
+[2026-08-19T19:34:56.205Z] syscall: 'open',
+[2026-08-19T19:34:56.205Z] path: '/home/ubuntu/orchids-blindy/.next/static/development/_buildManifest.js.tmp.hmpyjlvva3j'
+[2026-08-19T19:34:56.205Z] }
+[2026-08-19T19:34:56.243Z] [Error: ENOENT: no such file or directory, open '/home/ubuntu/orchids-blindy/.next/server/app/page/app-build-manifest.json'] {
+[2026-08-19T19:34:56.243Z] errno: -2,
+[2026-08-19T19:34:56.243Z] code: 'ENOENT',
+[2026-08-19T19:34:56.243Z] syscall: 'open',
+[2026-08-19T19:34:56.243Z] path: '/home/ubuntu/orchids-blindy/.next/server/app/page/app-build-manifest.json'
+[2026-08-19T19:34:56.243Z] }
+[2026-08-19T19:34:56.270Z] ⨯ [Error: ENOENT: no such file or directory, open '/home/ubuntu/orchids-blindy/.next/static/development/_buildManifest.js.tmp.1m942t9z0xv'] {
+[2026-08-19T19:34:56.270Z] errno: -2,
+[2026-08-19T19:34:56.270Z] code: 'ENOENT',
+[2026-08-19T19:34:56.270Z] syscall: 'open',
+[2026-08-19T19:34:56.270Z] path: '/home/ubuntu/orchids-blindy/.next/static/development/_buildManifest.js.tmp.1m942t9z0xv'
+[2026-08-19T19:34:56.270Z] }
+[2026-08-19T19:34:56.302Z] [Error: ENOENT: no such file or directory, open '/home/ubuntu/orchids-blindy/.next/static/development/_buildManifest.js.tmp.4n2jqalyhr'] {
+[2026-08-19T19:34:56.303Z] errno: -2,
+[2026-08-19T19:34:56.303Z] code: 'ENOENT',
+[2026-08-19T19:34:56.303Z] syscall: 'open',
+[2026-08-19T19:34:56.303Z] path: '/home/ubuntu/orchids-blindy/.next/static/development/_buildManifest.js.tmp.4n2jqalyhr'
+[2026-08-19T19:34:56.303Z] }
+[2026-08-19T19:34:57.076Z] ⨯ [Error: ENOENT: no such file or directory, open '/home/ubuntu/orchids-blindy/.next/server/app/page/app-build-manifest.json'] {
+[2026-08-19T19:34:57.076Z] errno: -2,
+[2026-08-19T19:34:57.076Z] code: 'ENOENT',
+[2026-08-19T19:34:57.076Z] syscall: 'open',
+[2026-08-19T19:34:57.076Z] path: '/home/ubuntu/orchids-blindy/.next/server/app/page/app-build-manifest.json'
+[2026-08-19T19:34:57.076Z] }
+[2026-08-19T19:34:57.116Z] ⨯ [Error: ENOENT: no such file or directory, open '/home/ubuntu/orchids-blindy/.next/static/development/_buildManifest.js.tmp.ws121yv4txh'] {
+[2026-08-19T19:34:57.116Z] errno: -2,
+[2026-08-19T19:34:57.116Z] code: 'ENOENT',
+[2026-08-19T19:34:57.116Z] syscall: 'open',
+[2026-08-19T19:34:57.116Z] path: '/home/ubuntu/orchids-blindy/.next/static/development/_buildManifest.js.tmp.ws121yv4txh'
+[2026-08-19T19:34:57.116Z] }
+[2026-08-19T19:34:57.153Z] [Error: ENOENT: no such file or directory, open '/home/ubuntu/orchids-blindy/.next/server/app/page/app-build-manifest.json'] {
+[2026-08-19T19:34:57.153Z] errno: -2,
+[2026-08-19T19:34:57.153Z] code: 'ENOENT',
+[2026-08-19T19:34:57.153Z] syscall: 'open',
+[2026-08-19T19:34:57.153Z] path: '/home/ubuntu/orchids-blindy/.next/server/app/page/app-build-manifest.json'
+[2026-08-19T19:34:57.153Z] }
+[2026-08-19T19:34:57.182Z] ⨯ [Error: ENOENT: no such file or directory, open '/home/ubuntu/orchids-blindy/.next/static/development/_buildManifest.js.tmp.e5nvqbxtxpa'] {
+[2026-08-19T19:34:57.183Z] errno: -2,
+[2026-08-19T19:34:57.183Z] code: 'ENOENT',
+[2026-08-19T19:34:57.183Z] syscall: 'open',
+[2026-08-19T19:34:57.183Z] path: '/home/ubuntu/orchids-blindy/.next/static/development/_buildManifest.js.tmp.e5nvqbxtxpa'
+[2026-08-19T19:34:57.183Z] }
+[2026-08-19T19:34:57.212Z] [Error: ENOENT: no such file or directory, open '/home/ubuntu/orchids-blindy/.next/static/development/_buildManifest.js.tmp.xs3nvrlx55f'] {
+[2026-08-19T19:34:57.212Z] errno: -2,
+[2026-08-19T19:34:57.212Z] code: 'ENOENT',
+[2026-08-19T19:34:57.212Z] syscall: 'open',
+[2026-08-19T19:34:57.212Z] path: '/home/ubuntu/orchids-blindy/.next/static/development/_buildManifest.js.tmp.xs3nvrlx55f'
+[2026-08-19T19:34:57.212Z] }
+[2026-08-19T19:35:00.130Z] ⨯ [Error: ENOENT: no such file or directory, open '/home/ubuntu/orchids-blindy/.next/server/app/page/app-build-manifest.json'] {
+[2026-08-19T19:35:00.130Z] errno: -2,
+[2026-08-19T19:35:00.130Z] code: 'ENOENT',
+[2026-08-19T19:35:00.130Z] syscall: 'open',
+[2026-08-19T19:35:00.130Z] path: '/home/ubuntu/orchids-blindy/.next/server/app/page/app-build-manifest.json'
+[2026-08-19T19:35:00.130Z] }
+[2026-08-19T19:35:00.166Z] ⨯ [Error: ENOENT: no such file or directory, open '/home/ubuntu/orchids-blindy/.next/static/development/_buildManifest.js.tmp.3r06dqndzsm'] {
+[2026-08-19T19:35:00.166Z] errno: -2,
+[2026-08-19T19:35:00.166Z] code: 'ENOENT',
+[2026-08-19T19:35:00.166Z] syscall: 'open',
+[2026-08-19T19:35:00.166Z] path: '/home/ubuntu/orchids-blindy/.next/static/development/_buildManifest.js.tmp.3r06dqndzsm'
+[2026-08-19T19:35:00.166Z] }
+[2026-08-19T19:35:00.209Z] [Error: ENOENT: no such file or directory, open '/home/ubuntu/orchids-blindy/.next/server/app/page/app-build-manifest.json'] {
+[2026-08-19T19:35:00.209Z] errno: -2,
+[2026-08-19T19:35:00.209Z] code: 'ENOENT',
+[2026-08-19T19:35:00.209Z] syscall: 'open',
+[2026-08-19T19:35:00.209Z] path: '/home/ubuntu/orchids-blindy/.next/server/app/page/app-build-manifest.json'
+[2026-08-19T19:35:00.209Z] }
+[2026-08-19T19:35:00.239Z] ⨯ [Error: ENOENT: no such file or directory, open '/home/ubuntu/orchids-blindy/.next/static/development/_buildManifest.js.tmp.iok71uhyko'] {
+[2026-08-19T19:35:00.239Z] errno: -2,
+[2026-08-19T19:35:00.239Z] code: 'ENOENT',
+[2026-08-19T19:35:00.239Z] syscall: 'open',
+[2026-08-19T19:35:00.239Z] path: '/home/ubuntu/orchids-blindy/.next/static/development/_buildManifest.js.tmp.iok71uhyko'
+[2026-08-19T19:35:00.239Z] }
+[2026-08-19T19:35:00.270Z] [Error: ENOENT: no such file or directory, open '/home/ubuntu/orchids-blindy/.next/static/development/_buildManifest.js.tmp.n5endrw8ht'] {
+[2026-08-19T19:35:00.270Z] errno: -2,
+[2026-08-19T19:35:00.270Z] code: 'ENOENT',
+[2026-08-19T19:35:00.270Z] syscall: 'open',
+[2026-08-19T19:35:00.270Z] path: '/home/ubuntu/orchids-blindy/.next/static/development/_buildManifest.js.tmp.n5endrw8ht'
+[2026-08-19T19:35:00.270Z] }

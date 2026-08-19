@@ -236,3 +236,11 @@ Os itens abaixo pertenciam ao pedido anterior de reconstrução do zero e foram 
 - [x] Aplicar a correção compatível com o pipeline de publicação sem quebrar o runtime Next.js — build agora força `NODE_ENV=production` e cria/popula `dist/public` após `next build`
 - [x] Validar build, artefatos de publicação, testes e preview — 35 testes aprovados, build aprovado mesmo com shell NODE_ENV=development e cinco arquivos encontrados em `dist/public`
 - [x] Salvar checkpoint corrigido da publicação — checkpoint 2ef68e04
+
+## Correção do runtime de produção 5d1c04bd
+
+- [x] Registrar o erro de runtime `MODULE_NOT_FOUND` para `/usr/src/app/dist/index.js` — container iniciou, mas o entrypoint esperado não existia
+- [x] Inspecionar o contrato de start, os scripts e a estrutura do servidor Next.js — o runtime executa `node dist/index.js`, enquanto o projeto gerava apenas `.next`
+- [x] Gerar `dist/index.js` compatível com o runtime do container e a porta configurada — entrypoint Node inicia Next.js em `0.0.0.0` usando `PORT`
+- [x] Validar build, entrypoint, startup HTTP, testes e preview — 35 testes aprovados, build completo, `dist/index.js` presente e resposta HTTP 200 verificada na porta 3101
+- [ ] Salvar checkpoint publicável do runtime
