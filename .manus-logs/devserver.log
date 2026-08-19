@@ -8144,3 +8144,11 @@
 [2026-08-19T18:45:25.191Z] Read more: https://nextjs.org/docs/app/api-reference/config/next-config-js/allowedDevOrigins
 [2026-08-19T18:45:26.129Z] [PomodoroTimer] Initial categoryDurations from settings: { produtividade: 25, estudos: 50, descanso: 15 }
 [2026-08-19T18:45:26.165Z] GET /?from_webdev=1 200 in 127ms
+[2026-08-19T18:45:40.396Z] [PomodoroTimer] Initial categoryDurations from settings: { produtividade: 25, estudos: 50, descanso: 15 }
+[2026-08-19T18:45:40.441Z] GET / 200 in 139ms
+[2026-08-19T18:46:38.467Z] [PomodoroTimer] Initial categoryDurations from settings: { produtividade: 25, estudos: 50, descanso: 15 }
+[2026-08-19T18:46:38.514Z] GET /?from_webdev=1 200 in 141ms
+[2026-08-19T18:46:49.688Z] [PomodoroTimer] Initial categoryDurations from settings: { produtividade: 25, estudos: 50, descanso: 15 }
+[2026-08-19T18:46:49.720Z] HEAD / 200 in 116ms
+[2026-08-19T18:46:51.123Z] [PomodoroTimer] Initial categoryDurations from settings: { produtividade: 25, estudos: 50, descanso: 15 }
+[2026-08-19T18:46:51.169Z] GET /?from_webdev=1 200 in 124ms

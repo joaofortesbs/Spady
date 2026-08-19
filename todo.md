@@ -235,4 +235,4 @@ Os itens abaixo pertenciam ao pedido anterior de reconstrução do zero e foram 
 - [x] Inspecionar a configuração de saída do projeto e reproduzir a ausência de `dist/public` — o projeto Next.js não criava o diretório esperado pelo uploader do WebDev; também foi reproduzido o efeito de NODE_ENV=development no build local
 - [x] Aplicar a correção compatível com o pipeline de publicação sem quebrar o runtime Next.js — build agora força `NODE_ENV=production` e cria/popula `dist/public` após `next build`
 - [x] Validar build, artefatos de publicação, testes e preview — 35 testes aprovados, build aprovado mesmo com shell NODE_ENV=development e cinco arquivos encontrados em `dist/public`
-- [ ] Salvar checkpoint corrigido da publicação
+- [x] Salvar checkpoint corrigido da publicação — checkpoint 2ef68e04
