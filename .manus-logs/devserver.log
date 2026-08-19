@@ -1,0 +1,114 @@
+[2026-08-19T00:50:40.075Z] Starting dev server with command: pnpm run dev
+[2026-08-19T00:50:41.778Z] > orchids-blindy@1.0.0 dev /home/ubuntu/orchids-blindy
+[2026-08-19T00:50:41.778Z] > NODE_ENV=development tsx watch server/_core/index.ts
+[2026-08-19T00:50:42.980Z] [OAuth] Initialized with baseURL: https://api.manus.im
+[2026-08-19T00:50:43.145Z] Server running on http://localhost:3000/
+[2026-08-19T00:53:25.079Z] 12:53:25 AM [vite] (client) page reload index.html
+[2026-08-19T00:53:25.165Z] 12:53:25 AM [tsx] unlink in ./vite.config.ts Restarting...
+[2026-08-19T00:53:25.216Z] cnode:internal/modules/cjs/loader:1247
+[2026-08-19T00:53:25.216Z] throw err;
+[2026-08-19T00:53:25.216Z] ^
+[2026-08-19T00:53:25.216Z] Error: Cannot find module '/home/ubuntu/orchids-blindy/node_modules/.pnpm/tsx@4.20.6/node_modules/tsx/dist/preflight.cjs'
+[2026-08-19T00:53:25.216Z] Require stack:
+[2026-08-19T00:53:25.216Z] - internal/preload
+[2026-08-19T00:53:25.216Z] at Function._resolveFilename (node:internal/modules/cjs/loader:1244:15)
+[2026-08-19T00:53:25.216Z] at Function._load (node:internal/modules/cjs/loader:1070:27)
+[2026-08-19T00:53:25.216Z] at TracingChannel.traceSync (node:diagnostics_channel:322:14)
+[2026-08-19T00:53:25.216Z] at wrapModuleLoad (node:internal/modules/cjs/loader:217:24)
+[2026-08-19T00:53:25.216Z] at Module.require (node:internal/modules/cjs/loader:1335:12)
+[2026-08-19T00:53:25.216Z] at node:internal/modules/cjs/loader:1834:12
+[2026-08-19T00:53:25.216Z] at loadPreloadModules (node:internal/process/pre_execution:726:5)
+[2026-08-19T00:53:25.216Z] at setupUserModules (node:internal/process/pre_execution:206:5)
+[2026-08-19T00:53:25.216Z] at prepareExecution (node:internal/process/pre_execution:159:5)
+[2026-08-19T00:53:25.216Z] at prepareMainThreadExecution (node:internal/process/pre_execution:54:10) {
+[2026-08-19T00:53:25.216Z] code: 'MODULE_NOT_FOUND',
+[2026-08-19T00:53:25.216Z] requireStack: [ 'internal/preload' ]
+[2026-08-19T00:53:25.216Z] }
+[2026-08-19T00:53:25.216Z] Node.js v22.13.0
+[2026-08-19T00:53:30.189Z] Dev server exited with code 0
+[2026-08-19T00:55:07.027Z] Starting dev server with command: pnpm run dev
+[2026-08-19T00:55:08.013Z] ✓ Lockfile passes supply-chain policies (verified 2s ago)
+[2026-08-19T00:55:08.020Z] Lockfile is up to date, resolution step is skipped
+[2026-08-19T00:55:08.135Z] Already up to date
+[2026-08-19T00:55:08.989Z] [ERR_PNPM_IGNORED_BUILDS] Ignored build scripts: @tsparticles/engine@3.9.1, bcrypt@6.0.0, esbuild@0.18.20, esbuild@0.25.12, esbuild@0.28.2, sharp@0.34.5, unrs-resolver@1.12.2
+[2026-08-19T00:55:08.989Z] Run "pnpm approve-builds" to pick which dependencies should be allowed to run scripts.
+[2026-08-19T00:55:09.209Z] [ERROR] Command failed with exit code 1: pnpm install
+[2026-08-19T00:55:09.209Z] pnpm: Command failed with exit code 1: pnpm install
+[2026-08-19T00:55:09.209Z] at getFinalError (file:///home/ubuntu/.nvm/versions/node/v22.13.0/lib/node_modules/pnpm/dist/pnpm.mjs:89001:14)
+[2026-08-19T00:55:09.209Z] at makeError (file:///home/ubuntu/.nvm/versions/node/v22.13.0/lib/node_modules/pnpm/dist/pnpm.mjs:91308:21)
+[2026-08-19T00:55:09.209Z] at getSyncResult (file:///home/ubuntu/.nvm/versions/node/v22.13.0/lib/node_modules/pnpm/dist/pnpm.mjs:93152:10)
+[2026-08-19T00:55:09.209Z] at spawnSubprocessSync (file:///home/ubuntu/.nvm/versions/node/v22.13.0/lib/node_modules/pnpm/dist/pnpm.mjs:93112:14)
+[2026-08-19T00:55:09.209Z] at execaCoreSync (file:///home/ubuntu/.nvm/versions/node/v22.13.0/lib/node_modules/pnpm/dist/pnpm.mjs:93042:23)
+[2026-08-19T00:55:09.209Z] at callBoundExeca (file:///home/ubuntu/.nvm/versions/node/v22.13.0/lib/node_modules/pnpm/dist/pnpm.mjs:95570:23)
+[2026-08-19T00:55:09.209Z] at boundExeca (file:///home/ubuntu/.nvm/versions/node/v22.13.0/lib/node_modules/pnpm/dist/pnpm.mjs:95547:49)
+[2026-08-19T00:55:09.209Z] at sync2 (file:///home/ubuntu/.nvm/versions/node/v22.13.0/lib/node_modules/pnpm/dist/pnpm.mjs:95702:14)
+[2026-08-19T00:55:09.209Z] at runPnpmCli (file:///home/ubuntu/.nvm/versions/node/v22.13.0/lib/node_modules/pnpm/dist/pnpm.mjs:252538:5)
+[2026-08-19T00:55:09.209Z] at runDepsStatusCheck (file:///home/ubuntu/.nvm/versions/node/v22.13.0/lib/node_modules/pnpm/dist/pnpm.mjs:254302:7)
+[2026-08-19T00:55:09.224Z] Dev server exited with code 1
+[2026-08-19T00:55:59.186Z] Starting dev server with command: pnpm run dev
+[2026-08-19T00:55:59.613Z] $ next dev --turbopack
+[2026-08-19T00:56:00.807Z] ▲ Next.js 15.5.7 (Turbopack)
+[2026-08-19T00:56:00.807Z] - Local:        http://localhost:3000
+[2026-08-19T00:56:00.807Z] - Network:      http://169.254.0.21:3000
+[2026-08-19T00:56:00.807Z] ✓ Starting...
+[2026-08-19T00:56:01.460Z] ✓ Ready in 1043ms
+[2026-08-19T00:56:01.972Z] ○ Compiling / ...
+[2026-08-19T00:56:07.578Z] ✓ Compiled / in 6.1s
+[2026-08-19T00:56:08.226Z] ⨯ Error: @supabase/ssr: Your project's URL and API key are required to create a Supabase client!
+[2026-08-19T00:56:08.226Z] Check your Supabase project's API settings to find these values
+[2026-08-19T00:56:08.226Z] https://supabase.com/dashboard/project/_/settings/api
+[2026-08-19T00:56:08.226Z] at <unknown> (https://supabase.com/dashboard/project/_/settings/api)
+[2026-08-19T00:56:08.226Z] at createBrowserClient (../../src/createBrowserClient.ts:111:11)
+[2026-08-19T00:56:08.226Z] at createClient (src/lib/supabase/client.ts:11:41)
+[2026-08-19T00:56:08.226Z] at AuthProvider (.:52:33)
+[2026-08-19T00:56:08.226Z] 9 |   }
+[2026-08-19T00:56:08.226Z] 10 |
+[2026-08-19T00:56:08.226Z] > 11 |   supabaseInstance = createBrowserClient(
+[2026-08-19T00:56:08.226Z] |                                         ^
+[2026-08-19T00:56:08.226Z] 12 |     process.env.NEXT_PUBLIC_SUPABASE_URL!,
+[2026-08-19T00:56:08.226Z] 13 |     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+[2026-08-19T00:56:08.226Z] 14 |     { {
+[2026-08-19T00:56:08.226Z] digest: '775364743'
+[2026-08-19T00:56:08.226Z] }
+[2026-08-19T00:56:08.300Z] GET / 500 in 6834ms
+[2026-08-19T00:56:08.653Z] ⚠ Blocked cross-origin request from 127.0.0.1 to /_next/* resource. To allow this, configure "allowedDevOrigins" in next.config
+[2026-08-19T00:56:08.653Z] Read more: https://nextjs.org/docs/app/api-reference/config/next-config-js/allowedDevOrigins
+[2026-08-19T00:56:09.275Z] ✓ Compiled /favicon.ico in 247ms
+[2026-08-19T00:56:09.551Z] GET /favicon.ico 200 in 526ms
+[2026-08-19T01:10:37.368Z] [ELIFECYCLE] Command failed.
+[2026-08-19T01:10:37.455Z] [?25h
+[2026-08-19T01:10:37.463Z] Dev server exited with code -1
+[2026-08-19T01:10:38.483Z] Starting dev server with command: pnpm run dev
+[2026-08-19T01:10:38.950Z] $ next dev --turbopack
+[2026-08-19T01:10:40.217Z] ▲ Next.js 15.5.7 (Turbopack)
+[2026-08-19T01:10:40.217Z] - Local:        http://localhost:3000
+[2026-08-19T01:10:40.217Z] - Network:      http://169.254.0.21:3000
+[2026-08-19T01:10:40.217Z] ✓ Starting...
+[2026-08-19T01:10:40.929Z] ✓ Ready in 1127ms
+[2026-08-19T01:13:33.002Z] ○ Compiling / ...
+[2026-08-19T01:13:38.996Z] ✓ Compiled / in 6.5s
+[2026-08-19T01:13:39.645Z] [PomodoroTimer] Initial categoryDurations from settings: { produtividade: 25, estudos: 50, descanso: 15 }
+[2026-08-19T01:13:39.721Z] GET / 200 in 7225ms
+[2026-08-19T01:13:43.162Z] ⚠ Blocked cross-origin request from 3000-ih0lty215c9qdqm3to6te-a91e88fb.us4.manus.computer to /_next/* resource. To allow this, configure "allowedDevOrigins" in next.config
+[2026-08-19T01:13:43.162Z] Read more: https://nextjs.org/docs/app/api-reference/config/next-config-js/allowedDevOrigins
+[2026-08-19T01:13:43.406Z] ✓ Compiled /favicon.ico in 290ms
+[2026-08-19T01:13:43.686Z] GET /favicon.ico?favicon.0b3bf435.ico 200 in 573ms
+[2026-08-19T01:14:57.606Z] [ELIFECYCLE] Command failed.
+[2026-08-19T01:14:57.688Z] [?25h
+[2026-08-19T01:14:57.695Z] Dev server exited with code -1
+[2026-08-19T01:14:58.782Z] Starting dev server with command: pnpm run dev
+[2026-08-19T01:14:59.233Z] $ next dev --turbopack
+[2026-08-19T01:15:00.471Z] ▲ Next.js 15.5.7 (Turbopack)
+[2026-08-19T01:15:00.471Z] - Local:        http://localhost:3000
+[2026-08-19T01:15:00.471Z] - Network:      http://169.254.0.21:3000
+[2026-08-19T01:15:00.471Z] ✓ Starting...
+[2026-08-19T01:15:01.153Z] ✓ Ready in 1079ms
+[2026-08-19T01:15:01.667Z] ○ Compiling / ...
+[2026-08-19T01:15:07.527Z] ✓ Compiled / in 6.4s
+[2026-08-19T01:15:08.178Z] [PomodoroTimer] Initial categoryDurations from settings: { produtividade: 25, estudos: 50, descanso: 15 }
+[2026-08-19T01:15:08.266Z] GET / 200 in 7106ms
+[2026-08-19T01:15:08.764Z] ⚠ Blocked cross-origin request from 127.0.0.1 to /_next/* resource. To allow this, configure "allowedDevOrigins" in next.config
+[2026-08-19T01:15:08.764Z] Read more: https://nextjs.org/docs/app/api-reference/config/next-config-js/allowedDevOrigins
+[2026-08-19T01:15:08.983Z] ✓ Compiled /favicon.ico in 309ms
+[2026-08-19T01:15:09.264Z] GET /favicon.ico?favicon.0b3bf435.ico 200 in 594ms
+[2026-08-19T01:15:16.089Z] ⚠ Found a change in next.config.ts. Restarting the server to apply the changes...

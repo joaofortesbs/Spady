@@ -1,0 +1,6 @@
+allowBuilds:
+  '@tsparticles/engine': true
+  bcrypt: true
+  esbuild: true
+  sharp: true
+  unrs-resolver: true

@@ -1,0 +1,31 @@
+# Project TODO
+
+- [ ] Definir identidade visual elegante, refinada e responsiva para a plataforma
+- [ ] Modelar entidades de projetos, colunas, cards e sessões persistidas
+- [ ] Atualizar o schema Drizzle com projetos, colunas, cards e sessões
+- [ ] Gerar e aplicar migrações de banco para todas as entidades
+- [ ] Implementar consultas e mutações protegidas por usuário
+- [ ] Implementar autenticação OAuth com sessão persistente e logout
+- [ ] Implementar API tRPC para criação, listagem, edição e exclusão de projetos
+- [ ] Implementar API tRPC para operações de Kanban e persistência atômica
+- [ ] Implementar API tRPC para sessões salvas e exibidas na plataforma
+- [ ] Integrar DashboardLayout com sidebar e navegação entre seções
+- [ ] Construir dashboard principal com resumo dos projetos e atividade recente
+- [ ] Construir tela de gerenciamento de projetos
+- [ ] Construir modal ou formulário de criação e edição de projetos
+- [ ] Construir Kanban board com colunas e cards persistidos
+- [ ] Integrar Zustand para estado local otimista do Kanban
+- [ ] Implementar criação, edição, exclusão e movimentação de cards
+- [ ] Implementar tela ou painel de detalhes e edição de card
+- [ ] Implementar estados de carregamento, vazio, erro e confirmação
+- [ ] Garantir acessibilidade, foco visível, navegação por teclado e responsividade
+- [ ] Escrever testes Vitest para autenticação, projetos, cards, sessões e operações atômicas
+- [ ] Executar typecheck, testes e validação visual do projeto
+- [ ] Corrigir problemas encontrados na validação
+- [ ] Salvar checkpoint final do projeto
+- [x] Alteração de escopo: importar literalmente o repositório GitHub existente, sem reconstruir a aplicação do zero
+- [x] Preservar a estrutura, arquivos e lógica existentes do repositório durante a importação
+- [x] Verificar e documentar somente adaptações técnicas inevitáveis para execução no ambiente Manus
+- [x] Documentar as diferenças inevitáveis entre o repositório importado e o ambiente Manus, incluindo scripts, runtime Next.js, variáveis, serviços externos e banco Supabase
+- [x] Instalar as dependências do repositório e validar sua execução no ambiente Manus, registrando adaptações realmente necessárias
+- [ ] Corrigir o erro preexistente de prerenderização de /404 causado por ErrorReporter.tsx, somente se for autorizado modificar o código original
