@@ -1996,3 +1996,17 @@
 [2026-08-19T02:45:46.304Z] [API /pomodoro/get-settings] Sessions response: { count: 19, error: undefined }
 [2026-08-19T02:45:46.304Z] [API /pomodoro/get-settings] Returning settings with 19 sessions
 [2026-08-19T02:45:46.305Z] GET /api/pomodoro/get-settings 200 in 640ms
+[2026-08-19T02:45:59.192Z] [PomodoroTimer] Initial categoryDurations from settings: { produtividade: 25, estudos: 50, descanso: 15 }
+[2026-08-19T02:45:59.234Z] GET / 200 in 127ms
+[2026-08-19T02:46:02.604Z] [PomodoroTimer] Initial categoryDurations from settings: { produtividade: 25, estudos: 50, descanso: 15 }
+[2026-08-19T02:46:02.641Z] GET /?from_webdev=1 200 in 115ms
+[2026-08-19T02:46:07.645Z] [PomodoroTimer] Initial categoryDurations from settings: { produtividade: 25, estudos: 50, descanso: 15 }
+[2026-08-19T02:46:07.680Z] HEAD / 200 in 120ms
+[2026-08-19T02:46:08.713Z] [PomodoroTimer] Initial categoryDurations from settings: { produtividade: 25, estudos: 50, descanso: 15 }
+[2026-08-19T02:46:08.755Z] GET /?from_webdev=1 200 in 115ms
+[2026-08-19T02:46:14.467Z] [PomodoroTimer] Initial categoryDurations from settings: { produtividade: 25, estudos: 50, descanso: 15 }
+[2026-08-19T02:46:14.506Z] GET /?from_webdev=1 200 in 128ms
+[2026-08-19T02:46:18.846Z] [PomodoroTimer] Initial categoryDurations from settings: { produtividade: 25, estudos: 50, descanso: 15 }
+[2026-08-19T02:46:18.876Z] HEAD / 200 in 100ms
+[2026-08-19T02:46:20.714Z] [PomodoroTimer] Initial categoryDurations from settings: { produtividade: 25, estudos: 50, descanso: 15 }
+[2026-08-19T02:46:20.757Z] GET /?from_webdev=1 200 in 115ms

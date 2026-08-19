@@ -84,7 +84,7 @@ Os itens abaixo pertenciam ao pedido anterior de reconstrução do zero e foram 
 - [x] Escrever testes unitários dos novos comportamentos
 - [x] Validar desktop, mobile, teclado, foco, Escape e reduced motion — validação estática e de preview concluídas; fluxo autenticado completo depende de sessão Supabase
 - [x] Revisar logs, corrigir regressões e executar validação final
-- [ ] Salvar checkpoint da versão Spady
+- [x] Salvar checkpoint da versão Spady
 
 ## Correção dos gaps de qualidade antes do checkpoint
 
