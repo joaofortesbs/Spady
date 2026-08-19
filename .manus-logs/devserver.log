@@ -8809,3 +8809,73 @@
 [2026-08-19T19:37:40.190Z] HEAD / 200 in 124ms
 [2026-08-19T19:37:41.131Z] [PomodoroTimer] Initial categoryDurations from settings: { produtividade: 25, estudos: 50, descanso: 15 }
 [2026-08-19T19:37:41.181Z] GET /?from_webdev=1 200 in 137ms
+[2026-08-19T19:37:56.359Z] [PomodoroTimer] Initial categoryDurations from settings: { produtividade: 25, estudos: 50, descanso: 15 }
+[2026-08-19T19:37:56.399Z] GET / 200 in 136ms
+[2026-08-19T20:19:28.809Z] [PomodoroTimer] Initial categoryDurations from settings: { produtividade: 25, estudos: 50, descanso: 15 }
+[2026-08-19T20:19:28.848Z] GET /?from_webdev=1 200 in 156ms
+[2026-08-19T20:19:33.738Z] [PomodoroTimer] Initial categoryDurations from settings: { produtividade: 25, estudos: 50, descanso: 15 }
+[2026-08-19T20:19:33.764Z] HEAD / 200 in 103ms
+[2026-08-19T20:19:35.134Z] [PomodoroTimer] Initial categoryDurations from settings: { produtividade: 25, estudos: 50, descanso: 15 }
+[2026-08-19T20:19:35.173Z] GET /?from_webdev=1 200 in 138ms
+[2026-08-19T20:22:36.409Z] [PomodoroTimer] Initial categoryDurations from settings: { produtividade: 25, estudos: 50, descanso: 15 }
+[2026-08-19T20:22:36.452Z] GET /?from_webdev=1 200 in 152ms
+[2026-08-19T20:22:41.383Z] [PomodoroTimer] Initial categoryDurations from settings: { produtividade: 25, estudos: 50, descanso: 15 }
+[2026-08-19T20:22:41.419Z] HEAD / 200 in 123ms
+[2026-08-19T20:22:42.128Z] [PomodoroTimer] Initial categoryDurations from settings: { produtividade: 25, estudos: 50, descanso: 15 }
+[2026-08-19T20:22:42.173Z] GET /?from_webdev=1 200 in 125ms
+[2026-08-19T20:22:48.074Z] [PomodoroTimer] Initial categoryDurations from settings: { produtividade: 25, estudos: 50, descanso: 15 }
+[2026-08-19T20:22:48.108Z] GET /?from_webdev=1 200 in 124ms
+[2026-08-19T20:22:52.747Z] [PomodoroTimer] Initial categoryDurations from settings: { produtividade: 25, estudos: 50, descanso: 15 }
+[2026-08-19T20:22:52.785Z] HEAD / 200 in 133ms
+[2026-08-19T20:22:54.113Z] [PomodoroTimer] Initial categoryDurations from settings: { produtividade: 25, estudos: 50, descanso: 15 }
+[2026-08-19T20:22:54.152Z] GET /?from_webdev=1 200 in 113ms
+[2026-08-19T20:22:56.073Z] [PomodoroTimer] Initial categoryDurations from settings: { produtividade: 25, estudos: 50, descanso: 15 }
+[2026-08-19T20:22:56.115Z] GET /?from_webdev=1 200 in 120ms
+[2026-08-19T20:23:02.144Z] [PomodoroTimer] Initial categoryDurations from settings: { produtividade: 25, estudos: 50, descanso: 15 }
+[2026-08-19T20:23:02.168Z] HEAD / 200 in 96ms
+[2026-08-19T20:23:03.111Z] [PomodoroTimer] Initial categoryDurations from settings: { produtividade: 25, estudos: 50, descanso: 15 }
+[2026-08-19T20:23:03.149Z] GET /?from_webdev=1 200 in 109ms
+[2026-08-19T20:23:04.939Z] [PomodoroTimer] Initial categoryDurations from settings: { produtividade: 25, estudos: 50, descanso: 15 }
+[2026-08-19T20:23:04.997Z] GET /?from_webdev=1 200 in 892ms
+[2026-08-19T20:23:09.221Z] [PomodoroTimer] Initial categoryDurations from settings: { produtividade: 25, estudos: 50, descanso: 15 }
+[2026-08-19T20:23:09.250Z] HEAD / 200 in 112ms
+[2026-08-19T20:23:10.120Z] [PomodoroTimer] Initial categoryDurations from settings: { produtividade: 25, estudos: 50, descanso: 15 }
+[2026-08-19T20:23:10.166Z] GET /?from_webdev=1 200 in 123ms
+[2026-08-19T20:23:15.864Z] [PomodoroTimer] Initial categoryDurations from settings: { produtividade: 25, estudos: 50, descanso: 15 }
+[2026-08-19T20:23:15.921Z] GET /?from_webdev=1 200 in 740ms
+[2026-08-19T20:23:20.832Z] [PomodoroTimer] Initial categoryDurations from settings: { produtividade: 25, estudos: 50, descanso: 15 }
+[2026-08-19T20:23:20.864Z] HEAD / 200 in 126ms
+[2026-08-19T20:23:22.130Z] [PomodoroTimer] Initial categoryDurations from settings: { produtividade: 25, estudos: 50, descanso: 15 }
+[2026-08-19T20:23:22.172Z] GET /?from_webdev=1 200 in 122ms
+[2026-08-19T20:23:25.018Z] [PomodoroTimer] Initial categoryDurations from settings: { produtividade: 25, estudos: 50, descanso: 15 }
+[2026-08-19T20:23:25.063Z] GET /?from_webdev=1 200 in 143ms
+[2026-08-19T20:23:29.227Z] [PomodoroTimer] Initial categoryDurations from settings: { produtividade: 25, estudos: 50, descanso: 15 }
+[2026-08-19T20:23:29.259Z] HEAD / 200 in 133ms
+[2026-08-19T20:23:30.126Z] [PomodoroTimer] Initial categoryDurations from settings: { produtividade: 25, estudos: 50, descanso: 15 }
+[2026-08-19T20:23:30.168Z] GET /?from_webdev=1 200 in 129ms
+[2026-08-19T20:24:22.658Z] [ELIFECYCLE] Command failed.
+[2026-08-19T20:24:22.737Z] [?25h
+[2026-08-19T20:24:22.745Z] Dev server exited with code -1
+[2026-08-19T20:24:23.847Z] Starting dev server with command: pnpm run dev
+[2026-08-19T20:24:24.350Z] $ next dev --turbopack
+[2026-08-19T20:24:25.794Z] ▲ Next.js 15.5.7 (Turbopack)
+[2026-08-19T20:24:25.794Z] - Local:        http://localhost:3000
+[2026-08-19T20:24:25.794Z] - Network:      http://169.254.0.21:3000
+[2026-08-19T20:24:25.794Z] ✓ Starting...
+[2026-08-19T20:24:26.661Z] ✓ Ready in 1339ms
+[2026-08-19T20:24:27.173Z] ○ Compiling / ...
+[2026-08-19T20:24:34.235Z] ✓ Compiled / in 7.6s
+[2026-08-19T20:24:34.993Z] [PomodoroTimer] Initial categoryDurations from settings: { produtividade: 25, estudos: 50, descanso: 15 }
+[2026-08-19T20:24:35.099Z] GET / 200 in 8430ms
+[2026-08-19T20:24:35.648Z] ⚠ Blocked cross-origin request from 127.0.0.1 to /_next/* resource. To allow this, configure "allowedDevOrigins" in next.config
+[2026-08-19T20:24:35.648Z] Read more: https://nextjs.org/docs/app/api-reference/config/next-config-js/allowedDevOrigins
+[2026-08-19T20:24:44.549Z] [PomodoroTimer] Initial categoryDurations from settings: { produtividade: 25, estudos: 50, descanso: 15 }
+[2026-08-19T20:24:44.594Z] GET / 200 in 145ms
+[2026-08-19T20:25:08.587Z] [PomodoroTimer] Initial categoryDurations from settings: { produtividade: 25, estudos: 50, descanso: 15 }
+[2026-08-19T20:25:08.632Z] GET /?from_webdev=1 200 in 152ms
+[2026-08-19T20:25:13.725Z] ⚠ Blocked cross-origin request from 3000-ih0lty215c9qdqm3to6te-a91e88fb.us4.manus.computer to /_next/* resource. To allow this, configure "allowedDevOrigins" in next.config
+[2026-08-19T20:25:13.725Z] Read more: https://nextjs.org/docs/app/api-reference/config/next-config-js/allowedDevOrigins
+[2026-08-19T20:25:13.806Z] [PomodoroTimer] Initial categoryDurations from settings: { produtividade: 25, estudos: 50, descanso: 15 }
+[2026-08-19T20:25:13.840Z] HEAD / 200 in 126ms
+[2026-08-19T20:25:15.142Z] [PomodoroTimer] Initial categoryDurations from settings: { produtividade: 25, estudos: 50, descanso: 15 }
+[2026-08-19T20:25:15.186Z] GET /?from_webdev=1 200 in 144ms

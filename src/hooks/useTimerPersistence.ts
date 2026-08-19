@@ -6,6 +6,7 @@ import { createClient } from '@/lib/supabase/client';
 import { useAuth } from '@/lib/contexts/AuthContext';
 import { safeStorage } from '@/lib/utils/safeStorage';
 import { STORAGE_KEYS } from '@/lib/utils/storage.constants';
+import { shouldApplyConfiguredDuration } from '@/lib/utils/pomodoroTimer';
 
 export interface TimerState {
   isRunning: boolean;
@@ -289,6 +290,29 @@ export function useTimerPersistence(
       clearAllIntervals();
     };
   }, [timerState.isRunning, isLoaded, tick, clearAllIntervals]);
+
+  useEffect(() => {
+    if (!isLoaded) return;
+    if (!shouldApplyConfiguredDuration(timerState, defaultCategoryId, defaultDurationSeconds)) return;
+
+    const synchronizedState: TimerState = {
+      ...timerState,
+      categoryId: defaultCategoryId,
+      totalDurationSeconds: defaultDurationSeconds,
+      lastUpdated: Date.now(),
+    };
+
+    setTimerState(synchronizedState);
+    setTimeLeft(defaultDurationSeconds);
+    saveTimerState(synchronizedState);
+    syncLiveSession(synchronizedState);
+  }, [
+    defaultCategoryId,
+    defaultDurationSeconds,
+    isLoaded,
+    syncLiveSession,
+    timerState,
+  ]);
 
   useEffect(() => {
     if (!isLoaded || !user) return;

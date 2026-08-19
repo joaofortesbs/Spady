@@ -244,3 +244,13 @@ Os itens abaixo pertenciam ao pedido anterior de reconstrução do zero e foram 
 - [x] Gerar `dist/index.js` compatível com o runtime do container e a porta configurada — entrypoint Node inicia Next.js em `0.0.0.0` usando `PORT`
 - [x] Validar build, entrypoint, startup HTTP, testes e preview — 35 testes aprovados, build completo, `dist/index.js` presente e resposta HTTP 200 verificada na porta 3101
 - [x] Salvar checkpoint publicável do runtime — checkpoint 42bec3e7
+
+## Sincronização do Pomodoro com cronômetro e gráfico ao vivo
+
+- [x] Mapear a origem atual das configurações, do cronômetro e dos dados do gráfico — settings chegam por `useBlindadosData`, timer usa `useTimerPersistence` e o gráfico recebe `liveSession`/`timerSyncManager`
+- [x] Isolar a causa da divergência entre duração configurada e duração exibida — a duração padrão era passada ao hook, mas alterações em settings não reconciliavam o estado persistido do timer quando o timer estava ocioso
+- [x] Sincronizar a categoria/duração configurada com o cronômetro principal sem refresh — novo efeito de reconciliação aplica categoria e segundos configurados ao timer parado/resetado
+- [x] Fazer o gráfico do dashboard refletir a sessão atual em tempo real, com barras/linhas visíveis durante a contagem — overlay de progresso ao vivo e dados Recharts continuam atualizados pelo live session bus
+- [x] Adicionar testes para configuração, reinício/troca de sessão, contagem e gráfico ao vivo — 3 testes puros adicionados; suíte total passou de 35 para 38 testes
+- [x] Validar o fluxo no preview em desktop e viewport móvel — build e preview responderam 200; shell responsivo capturado em 375px; fluxo autenticado interno permanece dependente da sessão conectada
+- [ ] Salvar checkpoint da correção

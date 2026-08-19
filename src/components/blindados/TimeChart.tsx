@@ -9,6 +9,7 @@ import { LiveSession } from '@/hooks/useTimerPersistence';
 import { timerSyncManager, LiveSessionEvent } from '@/lib/utils/timerSync';
 import { format, startOfWeek, endOfWeek, startOfMonth, endOfMonth, startOfYear, endOfYear, eachDayOfInterval, eachWeekOfInterval, eachMonthOfInterval, isWithinInterval, parseISO, subDays, subWeeks, subMonths, subYears } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
+import { calculateLiveProgressPercent } from '@/lib/utils/pomodoroTimer';
 
 interface TimeChartProps {
   sessions: PomodoroSession[];
@@ -73,6 +74,14 @@ export function TimeChart({ sessions, categories, liveSession: propLiveSession }
     }
     return null;
   }, [propLiveSession, syncedSession, forceUpdate]);
+
+  const liveCategory = useMemo(
+    () => categories.find((category) => category.id === effectiveLiveSession?.categoryId) ?? null,
+    [categories, effectiveLiveSession],
+  );
+  const liveProgressPercent = liveCategory && effectiveLiveSession
+    ? calculateLiveProgressPercent(effectiveLiveSession.elapsedSeconds, liveCategory.duration ?? 25)
+    : 0;
 
   useEffect(() => {
     if (previousChartTypeRef.current !== chartType) {
@@ -416,6 +425,33 @@ export function TimeChart({ sessions, categories, liveSession: propLiveSession }
               </div>
             </div>
           </div>
+
+          {effectiveLiveSession && liveCategory && (
+            <div className="mb-4 rounded-xl border border-white/10 bg-white/[0.03] px-3 py-2.5">
+              <div className="mb-2 flex items-center justify-between gap-3 text-[11px]">
+                <span className="flex items-center gap-2 text-white/60">
+                  <span
+                    className={`h-2 w-2 rounded-full ${effectiveLiveSession.isRunning ? 'animate-pulse' : ''}`}
+                    style={{ backgroundColor: effectiveLiveSession.isPaused ? '#f59e0b' : liveCategory.color }}
+                  />
+                  <span>{effectiveLiveSession.isPaused ? 'Sessão pausada' : 'Sessão em andamento'}</span>
+                  <span className="text-white/30">·</span>
+                  <span className="text-white/80">{liveCategory.name}</span>
+                </span>
+                <span className="font-mono tabular-nums text-white/70">
+                  {Math.floor(effectiveLiveSession.elapsedSeconds / 60)}m {effectiveLiveSession.elapsedSeconds % 60}s / {liveCategory.duration ?? 25}m
+                </span>
+              </div>
+              <div className="h-1.5 overflow-hidden rounded-full bg-white/10">
+                <motion.div
+                  className="h-full rounded-full"
+                  animate={{ width: `${liveProgressPercent}%` }}
+                  transition={{ duration: 0.2, ease: 'easeOut' }}
+                  style={{ backgroundColor: effectiveLiveSession.isPaused ? '#f59e0b' : liveCategory.color }}
+                />
+              </div>
+            </div>
+          )}
 
           <div className="flex-1 min-h-0">
             {chartType === 'score' ? (
