@@ -45,7 +45,7 @@ function MainApp() {
     updatePomodoroSettings,
     addProject,
   } = useBlindadosData();
-  const { data: visoesData, addNote, updateNote, pinnedNoteIds, toggleNotePinned } = useVisoesData();
+  const { data: visoesData, addNote, updateNote, removeNote, pinnedNoteIds, toggleNotePinned } = useVisoesData();
 
   const [isQuickCaptureOpen, setIsQuickCaptureOpen] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
@@ -269,8 +269,18 @@ function MainApp() {
   }, [data]);
 
   const handleQuickCaptureSave = useCallback(async (title: string, content: string) => {
-    await addNote(title, content, '#22d3ee');
+    return addNote(title, content, '#22d3ee');
   }, [addNote]);
+
+  const handleUploadNoteImage = useCallback(async (file: File) => {
+    if (!user) throw new Error('Sessão necessária para anexar imagens');
+    const extension = file.name.split('.').pop()?.toLowerCase() || 'png';
+    const path = `${user.id}/notes/${crypto.randomUUID()}.${extension}`;
+    const { error } = await supabase.storage.from('note-attachments').upload(path, file, { contentType: file.type, upsert: false });
+    if (error) throw error;
+    const { data: publicData } = supabase.storage.from('note-attachments').getPublicUrl(path);
+    return publicData.publicUrl;
+  }, [supabase, user]);
 
   const handleSaveProfile = useCallback(async (displayName: string) => {
     if (!user) return;
@@ -359,6 +369,9 @@ function MainApp() {
           pinnedNoteIds={pinnedNoteIds}
           onToggleNotePinned={toggleNotePinned}
           onUpdateNote={updateNote}
+          onRemoveNote={removeNote}
+          userKey={user?.id || "anonymous"}
+          onUploadImage={handleUploadNoteImage}
         />
 
         <ProfileSettingsModal

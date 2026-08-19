@@ -13,6 +13,7 @@ interface MarkdownEditableProps {
   onChange: (markdown: string) => void;
   onKeyDown?: (event: React.KeyboardEvent<HTMLDivElement>) => void;
   onFocus?: () => void;
+  onClick?: (event: React.MouseEvent<HTMLDivElement>) => void;
   id?: string;
   ariaLabel?: string;
   placeholder?: string;
@@ -37,6 +38,7 @@ export function markdownToEditableHtml(markdown: string) {
   return parseMarkdownBlocks(markdown).map((block) => {
     if (block.type === "heading") return `<h${block.level}>${inlineToHtml(block.content)}</h${block.level}>`;
     if (block.type === "paragraph") return `<p>${inlineToHtml(block.content)}</p>`;
+    if (block.type === "image") return `<p><img src="${escapeHtml(block.src)}" alt="${escapeHtml(block.alt)}" data-note-image="true" style="width:${block.width}%;max-width:100%;height:auto;display:block;border-radius:12px;cursor:ew-resize" /></p>`;
     if (block.type === "unordered-list") return `<ul>${block.items.map((item) => `<li>${inlineToHtml(item)}</li>`).join("")}</ul>`;
     if (block.type === "ordered-list") return `<ol>${block.items.map((item) => `<li>${inlineToHtml(item)}</li>`).join("")}</ol>`;
     if (block.type === "checklist") return `<ul data-checklist="true">${block.items.map((item) => `<li data-checked="${item.checked ? "true" : "false"}"><span data-checkbox="true">${item.checked ? "☑" : "☐"}</span> ${inlineToHtml(item.content)}</li>`).join("")}</ul>`;
@@ -55,6 +57,11 @@ function inlineToMarkdown(element: Node): string {
   if (element.tagName === "MARK") return `==${content}==`;
   if (element.tagName === "DEL" || element.tagName === "S") return `~~${content}~~`;
   if (element.tagName === "CODE" && element.parentElement?.tagName !== "PRE") return `\`${content}\``;
+  if (element.tagName === "IMG") {
+    const image = element as HTMLImageElement;
+    const width = Math.round(parseFloat(image.style.width || "100"));
+    return `![${image.alt || "Imagem anexada"}](${image.src}){width=${Math.min(100, Math.max(20, width))}}`;
+  }
   return content;
 }
 
@@ -79,7 +86,7 @@ export function editableHtmlToMarkdown(root: HTMLElement) {
   return blocks.join("\n\n").trim();
 }
 
-export const MarkdownEditable = forwardRef<MarkdownEditableHandle, MarkdownEditableProps>(function MarkdownEditable({ value, onChange, onKeyDown, onFocus, id, ariaLabel, placeholder, className = "" }, ref) {
+export const MarkdownEditable = forwardRef<MarkdownEditableHandle, MarkdownEditableProps>(function MarkdownEditable({ value, onChange, onKeyDown, onFocus, onClick, id, ariaLabel, placeholder, className = "" }, ref) {
   const elementRef = useRef<HTMLDivElement>(null);
   const lastValueRef = useRef(value);
 
@@ -113,6 +120,7 @@ export const MarkdownEditable = forwardRef<MarkdownEditableHandle, MarkdownEdita
       suppressContentEditableWarning
       data-placeholder={placeholder}
       onFocus={onFocus}
+      onClick={onClick}
       onKeyDown={onKeyDown}
       onInput={(event) => {
         const next = editableHtmlToMarkdown(event.currentTarget);

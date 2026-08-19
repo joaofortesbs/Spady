@@ -10,6 +10,7 @@ export type MarkdownBlock =
   | { type: "checklist"; items: Array<{ checked: boolean; content: string }> }
   | { type: "quote"; content: string }
   | { type: "code"; content: string; language?: string }
+  | { type: "image"; alt: string; src: string; width: number }
   | { type: "divider" };
 
 const BLOCK_MARKERS = /^(#{1,6})\s+|^\s*([-*+]\s+|\d+\.\s+|>\s?|```|---\s*$|\*\*\*\s*$|___\s*$)/;
@@ -47,6 +48,13 @@ export function parseMarkdownBlocks(markdown: string): MarkdownBlock[] {
     const heading = line.match(/^\s*(#{1,6})\s+(.+?)\s*#*\s*$/);
     if (heading) {
       blocks.push({ type: "heading", level: heading[1].length, content: heading[2] });
+      index += 1;
+      continue;
+    }
+
+    const image = line.match(/^!\[([^\]]*)\]\(([^)]+)\)\{width=(\d+)\}$/);
+    if (image) {
+      blocks.push({ type: "image", alt: image[1], src: image[2], width: Math.min(100, Math.max(20, Number(image[3]))) });
       index += 1;
       continue;
     }
@@ -158,7 +166,8 @@ export function toggleChecklistItem(markdown: string, blockIndex: number, itemIn
     if (block.type === "ordered-list") return block.items.map((item, index) => `${index + 1}. ${item}`).join("\n");
     if (block.type === "checklist") return block.items.map((item) => `- [${item.checked ? "x" : " "}] ${item.content}`).join("\n");
     if (block.type === "quote") return block.content.split("\n").map((line) => `> ${line}`).join("\n");
-    if (block.type === "code") return `\`\`\`${block.language || ""}\n${block.content}\n\`\`\``;
+    if (block.type === "code") return `\`\`\`\n${block.content}\n\`\`\``;
+    if (block.type === "image") return `![${block.alt}](${block.src}){width=${block.width}}`;
     return "---";
   }).join("\n\n");
 }

@@ -19,6 +19,17 @@ describe("MarkdownEditable", () => {
     expect(editableHtmlToMarkdown(root)).toBe("# Título\n\nTexto com **negrito** e *itálico*.\n\n- [x] Feito");
   });
 
+  it("roundtrips an attached image and its visual width without exposing raw syntax", () => {
+    const markdown = "![Mapa de foco](data:image/png;base64,AAAA){width=64}";
+    const html = markdownToEditableHtml(markdown);
+    expect(html).toContain('data-note-image="true"');
+    expect(html).toContain("width:64%");
+    expect(html).not.toContain("{width=64}");
+    const root = document.createElement("div");
+    root.innerHTML = html;
+    expect(editableHtmlToMarkdown(root)).toBe(markdown);
+  });
+
   it("accepts visual input and emits serialized Markdown through onChange", () => {
     const onChange = vi.fn();
     render(<MarkdownEditable value="" onChange={onChange} ariaLabel="Conteúdo" />);

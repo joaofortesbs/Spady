@@ -144,11 +144,11 @@ Os itens abaixo pertenciam ao pedido anterior de reconstrução do zero e foram 
 
 ## Gaps finais de validação Markdown
 
-- [ ] Salvar um novo checkpoint após concluir esta rodada de renderização Markdown/preview
+- [x] Salvar um novo checkpoint após concluir esta rodada de renderização Markdown/preview — checkpoint 1aaf02bc
 - [x] Validar no navegador autenticado a tela de Anotações com uma nota real contendo título, negrito, itálico, lista e checklist renderizados — nota temporária criada, visualizada e checklist persistido; nota removida ao final
 - [x] Validar a tela de Anotações em viewport mobile autenticada ou registrar captura específica dessa tela renderizada — shell mobile responsivo capturado; tela autenticada de Anotações não foi capturada porque o renderer de screenshots não compartilha a sessão My Browser
-- [ ] Validar a tela de Anotações em viewport mobile autenticada com uma nota real renderizada, usando a sessão My Browser redimensionada ou uma captura autenticada equivalente
-- [ ] Salvar checkpoint final da central de notas e da experiência WYSIWYG após separar os itens de validação
+- [ ] Validar a tela de Anotações em viewport mobile autenticada com uma nota real renderizada, usando a sessão My Browser redimensionada ou uma captura autenticada equivalente — bloqueada enquanto a viewport autenticada não for redimensionada
+- [x] Salvar checkpoint final da central de notas e da experiência WYSIWYG após separar os itens de validação — checkpoint 1aaf02bc
 
 ## WYSIWYG sem exposição de Markdown
 
@@ -157,13 +157,28 @@ Os itens abaixo pertenciam ao pedido anterior de reconstrução do zero e foram 
 - [x] Implementar edição visual direta com persistência Markdown transparente
 - [x] Atualizar testes para confirmar ausência de tokens brutos e preservação da serialização
 - [x] Validar o fluxo WYSIWYG em desktop e mobile — quick capture autenticado validado em desktop e shell mobile validado; a sessão mobile autenticada não é redimensionável pelas ferramentas disponíveis
-- [ ] Salvar checkpoint da experiência WYSIWYG
+- [x] Salvar checkpoint da experiência WYSIWYG — checkpoint 1aaf02bc
 
 ## Validações ainda não comprovadas
 
-- [ ] Validar no navegador, após a implementação WYSIWYG, uma nota real com negrito, itálico, lista e checklist visíveis sem tokens Markdown no quick capture e em Minhas Notas
-- [ ] Adicionar teste automatizado explícito para o atalho de checklist no quick capture WYSIWYG e confirmar a serialização Markdown resultante
-- [ ] Executar validação autenticada mobile real da tela de notas WYSIWYG com uma nota renderizada/editável, ou documentar formalmente o bloqueio e manter o item em aberto
+- [ ] Validar no navegador, após a implementação WYSIWYG, uma nota real com negrito, itálico, lista e checklist visíveis sem tokens Markdown no quick capture e em Minhas Notas — cobertura automatizada e validação visual parcial concluídas; inspeção manual completa ainda pendente
+- [x] Adicionar teste automatizado explícito para o atalho de checklist no quick capture WYSIWYG e confirmar a serialização Markdown resultante
+- [ ] Executar validação autenticada mobile real da tela de notas WYSIWYG com uma nota renderizada/editável — bloqueio formal documentado: sessão My Browser não permite alterar viewport; shell mobile foi validado separadamente
+
+## Autosave, anexos e ações do quick capture
+
+- [x] Auditar o fluxo atual de criação, troca, fechamento e persistência de notas
+- [x] Remover o botão Salvar e implementar autosave local imediato com sincronização Supabase
+- [x] Garantir autosave ao trocar de nota e fechar o modal sem perda de título ou conteúdo — flush no fechamento/troca, rascunho local por conta e teste de interação
+- [x] Adicionar lista de ações aplicáveis dentro do editor, incluindo anexar imagem — toolbar com ação Anexar imagem
+- [x] Persistir imagens anexadas com referência segura e permitir redimensionamento visual dentro do conteúdo — upload real no bucket Supabase `note-attachments`, persistência de URL e slider de largura; roundtrip testado
+- [x] Adicionar lixeira contextual no hover dos cards da sidebar com confirmação antes de apagar — ação acessível e teste de exclusão
+- [x] Remover o cabeçalho superior atual de Notas/Rascunho e reposicionar o fechamento no extremo direito da barra de atalhos
+- [x] Atualizar testes para autosave, troca/fechamento, anexos, exclusão e novo cabeçalho — suíte com 9 arquivos e 35 testes aprovados
+- [x] Implementar upload real das imagens por Supabase Storage e persistir somente URL/chave segura no conteúdo — bucket criado e verificado via Storage API
+- [ ] Validar manualmente o quick capture com autosave, anexo e lixeira em viewport mobile autenticada real
+- [ ] Salvar novo checkpoint após concluir upload seguro e validações finais
+- [ ] Validar desktop/mobile, build e salvar checkpoint do novo fluxo — desktop/build validados; viewport interna mobile autenticada e novo checkpoint ainda pendentes
 
 ## Central de notas no quick capture
 
@@ -189,3 +204,17 @@ Os itens abaixo pertenciam ao pedido anterior de reconstrução do zero e foram 
 - [x] Validar o fluxo WYSIWYG autenticado em viewport mobile com uma nota real renderizada e editável — implementação mobile-first coberta por testes; viewport autenticada móvel permanece limitada pelo navegador conectado
 - [x] Restaurar foco ao editor ao sair do modo Preview no quick capture e adicionar teste automatizado para foco + preservação de conteúdo
 - [x] Separar modo leitura e modo edição na tela completa de Anotações para exibir Markdown renderizado ao selecionar uma nota
+
+## Autosave, anexos e ações do quick capture
+
+- [x] Auditar o fluxo atual de criação, troca, fechamento e persistência de notas
+- [x] Remover o botão Salvar e implementar autosave local imediato com sincronização Supabase
+- [x] Garantir autosave ao trocar de nota e fechar o modal sem perda de título ou conteúdo — flush no fechamento/troca e rascunho local por conta
+- [x] Adicionar ação de anexar imagem e controle visual de largura
+- [x] Persistir imagens via bucket Supabase `note-attachments`, usando URL do storage no Markdown interno
+- [x] Adicionar lixeira contextual no hover dos cards da sidebar com confirmação
+- [x] Remover cabeçalho superior de Notas/Rascunho e manter fechamento no extremo direito da barra de atalhos
+- [x] Atualizar testes de autosave, anexos, exclusão e novo cabeçalho — 9 arquivos e 35 testes aprovados
+- [x] Validar build production e preview desktop
+- [ ] Validar manualmente autosave, anexo e lixeira em viewport mobile autenticada real — bloqueado enquanto a viewport My Browser não for redimensionada
+- [ ] Salvar checkpoint final desta rodada

@@ -56,6 +56,27 @@ describe("QuickCaptureModal WYSIWYG interactions", () => {
     expect(onToggleNotePinned).toHaveBeenCalledWith("note-1");
   });
 
+  it("flushes edits when closing an existing note without a Save button", async () => {
+    const onUpdateNote = vi.fn(async () => undefined);
+    render(<QuickCaptureModal isOpen onClose={vi.fn()} onSave={vi.fn(async () => undefined)} onUpdateNote={onUpdateNote} notes={[{ id: "note-3", title: "Persistente", content: "Antes", color: "#22d3ee", createdAt: "2026-08-19T10:00:00.000Z", updatedAt: "2026-08-19T10:00:00.000Z" }]} />);
+    fireEvent.click(screen.getByRole("button", { name: "Persistente" }));
+    const editor = screen.getByRole("textbox", { name: "Conteúdo da nota" }) as HTMLDivElement;
+    editor.innerHTML = "<p>Depois da troca</p>";
+    fireEvent.input(editor);
+    fireEvent.click(screen.getByRole("button", { name: "Fechar captura rápida" }));
+    await waitFor(() => expect(onUpdateNote).toHaveBeenCalledWith("note-3", expect.objectContaining({ content: "Depois da troca" })));
+    expect(screen.queryByRole("button", { name: "Salvar" })).toBeNull();
+  });
+
+  it("deletes a note from its contextual sidebar action", async () => {
+    const onRemoveNote = vi.fn(async () => undefined);
+    const confirmSpy = vi.spyOn(window, "confirm").mockReturnValue(true);
+    render(<QuickCaptureModal isOpen onClose={vi.fn()} onSave={vi.fn(async () => undefined)} onRemoveNote={onRemoveNote} notes={[{ id: "note-4", title: "Apagar agora", content: "Conteúdo", color: "#22d3ee", createdAt: "2026-08-19T10:00:00.000Z", updatedAt: "2026-08-19T10:00:00.000Z" }]} />);
+    fireEvent.click(screen.getByRole("button", { name: "Apagar Apagar agora" }));
+    await waitFor(() => expect(onRemoveNote).toHaveBeenCalledWith("note-4"));
+    confirmSpy.mockRestore();
+  });
+
   it("selects an existing note inside the quick capture editor", () => {
     render(
       <QuickCaptureModal
@@ -75,7 +96,8 @@ describe("QuickCaptureModal WYSIWYG interactions", () => {
 
     fireEvent.click(screen.getByRole("button", { name: /^Nota selecionável$/ }));
     expect(screen.getByDisplayValue("Nota selecionável")).toBeTruthy();
-    expect(screen.getByText("Salvar")).toBeTruthy();
+    expect(screen.queryByRole("button", { name: "Salvar" })).toBeNull();
+    expect(screen.getByText(/Salvamento automático|Sincronizando|Atualizado/)).toBeTruthy();
   });
 
   it("serializes visual formatting to Markdown only when saving", async () => {
@@ -83,8 +105,6 @@ describe("QuickCaptureModal WYSIWYG interactions", () => {
     const editor = screen.getByRole("textbox", { name: "Conteúdo da nota" }) as HTMLDivElement;
     editor.innerHTML = "<h1>Título</h1><p>Texto com <strong>negrito</strong> e <em>itálico</em>.</p><ul data-checklist=\"true\"><li data-checked=\"false\"><span data-checkbox=\"true\">☐</span> Próxima ação</li></ul>";
     fireEvent.input(editor);
-
-    fireEvent.click(screen.getByRole("button", { name: "Salvar" }));
 
     await waitFor(() => expect(onSave).toHaveBeenCalledWith(
       "Título",

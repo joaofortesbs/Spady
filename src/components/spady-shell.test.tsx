@@ -25,7 +25,8 @@ describe("Spady shell components", () => {
   it("renders the notes quick capture dialog without drag or footer chrome", () => {
     const html = renderToString(<QuickCaptureModal isOpen onClose={noop} onSave={vi.fn(async () => undefined)} />);
     expect(html).toContain("Navegação de notas");
-    expect(html).toContain("Salvar");
+    expect(html).toContain('aria-label="Anexar imagem"');
+    expect(html).not.toContain("Salvar nota");
     expect(html).not.toContain("Formatação visual automática");
     expect(html).not.toContain("Ctrl/Cmd + Enter salva");
     expect(html).toContain("Navegação de notas");

@@ -598,8 +598,8 @@ export function useVisoesData() {
     });
   }, [user]);
 
-  const addNote = useCallback(async (title: string, content: string, color: string) => {
-    if (!user) return;
+  const addNote = useCallback(async (title: string, content: string, color: string): Promise<string | undefined> => {
+    if (!user) return undefined;
 
     const { data: newNote } = await supabase
       .from('notes')
@@ -613,7 +613,9 @@ export function useVisoesData() {
         setCache(updated);
         return updated;
       });
+      return newNote.id as string;
     }
+    return undefined;
   }, [user, supabase]);
 
   const updateNote = useCallback(async (id: string, updates: Partial<Note>) => {

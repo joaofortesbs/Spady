@@ -21,10 +21,11 @@ import {
   PinOff,
   Plus,
   Quote,
-  Save,
+  Paperclip,
   Search,
   Sparkles,
   Strikethrough,
+  Trash2,
   X,
 } from "lucide-react";
 import { buildQuickCaptureNote } from "../../lib/utils/quickCapture";
@@ -35,11 +36,14 @@ import type { Note } from "../../lib/types/visoes";
 interface QuickCaptureModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSave: (title: string, content: string) => Promise<void>;
+  onSave: (title: string, content: string) => Promise<string | void>;
   notes?: Note[];
   pinnedNoteIds?: string[];
   onToggleNotePinned?: (id: string) => void;
   onUpdateNote?: (id: string, updates: Partial<Note>) => Promise<void> | void;
+  onRemoveNote?: (id: string) => Promise<void> | void;
+  userKey?: string;
+  onUploadImage?: (file: File) => Promise<string>;
 }
 
 const toolbarGroups = [
@@ -85,6 +89,9 @@ export function QuickCaptureModal({
   pinnedNoteIds = [],
   onToggleNotePinned = () => undefined,
   onUpdateNote = async () => undefined,
+  onRemoveNote = async () => undefined,
+  userKey = "anonymous",
+  onUploadImage,
 }: QuickCaptureModalProps) {
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
@@ -92,12 +99,17 @@ export function QuickCaptureModal({
   const [searchQuery, setSearchQuery] = useState("");
   const [isSaving, setIsSaving] = useState(false);
   const [saveState, setSaveState] = useState<"idle" | "ready" | "saved">("idle");
+  const [selectedImage, setSelectedImage] = useState<HTMLImageElement | null>(null);
+  const [autosaveError, setAutosaveError] = useState<string | null>(null);
   const [showSlashMenu, setShowSlashMenu] = useState(false);
   const [slashQuery, setSlashQuery] = useState("");
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const prefersReducedMotion = useReducedMotion();
   const titleRef = useRef<HTMLInputElement>(null);
   const editorRef = useRef<MarkdownEditableHandle>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const autosaveTimerRef = useRef<number | null>(null);
+  const activeNoteIdRef = useRef<string | null>(null);
 
   const sortedNotes = useMemo(() => {
     const query = searchQuery.trim().toLowerCase();
@@ -115,9 +127,12 @@ export function QuickCaptureModal({
 
   useEffect(() => {
     if (!isOpen) return;
+    activeNoteIdRef.current = null;
     setActiveNoteId(null);
-    setTitle("");
-    setContent("");
+    let draft: { title?: string; content?: string } | null = null;
+    try { draft = JSON.parse(window.localStorage.getItem(`spady:quick-draft:${userKey}`) || "null"); } catch {}
+    setTitle(draft?.title || "");
+    setContent(draft?.content || "");
     setSearchQuery("");
     setSaveState("idle");
     setShowSlashMenu(false);
@@ -139,11 +154,12 @@ export function QuickCaptureModal({
           setShowSlashMenu(false);
           return;
         }
+        void flushAutosave();
         onClose();
       }
       if ((event.metaKey || event.ctrlKey) && event.key === "Enter") {
         event.preventDefault();
-        void handleSave();
+        void flushAutosave();
       }
     };
     window.addEventListener("keydown", handleKeyDown);
@@ -151,6 +167,8 @@ export function QuickCaptureModal({
   }, [isOpen, onClose, showSlashMenu, title, content, activeNoteId]);
 
   const startNewNote = () => {
+    void flushAutosave();
+    activeNoteIdRef.current = null;
     setActiveNoteId(null);
     setTitle("");
     setContent("");
@@ -160,6 +178,8 @@ export function QuickCaptureModal({
   };
 
   const selectNote = (note: Note) => {
+    void flushAutosave();
+    activeNoteIdRef.current = note.id;
     setActiveNoteId(note.id);
     setTitle(note.title);
     setContent(note.content);
@@ -171,27 +191,44 @@ export function QuickCaptureModal({
     if (isEscapeKey(event)) {
       event.preventDefault();
       if (showSlashMenu) setShowSlashMenu(false);
-      else onClose();
+      else { void flushAutosave(); onClose(); }
     }
     if ((event.metaKey || event.ctrlKey) && event.key === "Enter") {
       event.preventDefault();
-      void handleSave();
+      void flushAutosave();
     }
   };
 
-  const handleSave = async () => {
-    const note = buildQuickCaptureNote(title, content);
-    if (!note) return;
+  const persistNote = async (nextTitle: string, nextContent: string) => {
+    const note = buildQuickCaptureNote(nextTitle, nextContent);
+    if (!note || (!note.title.trim() && !note.content.trim())) return;
     setIsSaving(true);
-    setSaveState("idle");
+    setAutosaveError(null);
     try {
-      if (activeNoteId) await onUpdateNote(activeNoteId, { title: note.title, content: note.content });
-      else await onSave(note.title, note.content);
+      const currentId = activeNoteIdRef.current;
+      if (currentId) await onUpdateNote(currentId, { title: note.title, content: note.content });
+      else {
+        const createdId = await onSave(note.title, note.content);
+        if (createdId) { activeNoteIdRef.current = createdId; setActiveNoteId(createdId); }
+      }
       setSaveState("saved");
-      window.setTimeout(onClose, 180);
-    } finally {
-      setIsSaving(false);
-    }
+      try { window.localStorage.removeItem(`spady:quick-draft:${userKey}`); } catch {}
+    } catch (error) {
+      setAutosaveError(error instanceof Error ? error.message : "Não foi possível sincronizar a nota");
+      try { window.localStorage.setItem(`spady:quick-draft:${userKey}`, JSON.stringify({ title: nextTitle, content: nextContent })); } catch {}
+    } finally { setIsSaving(false); }
+  };
+
+  const scheduleAutosave = (nextTitle: string, nextContent: string) => {
+    setSaveState(nextTitle.trim() || nextContent.trim() ? "ready" : "idle");
+    try { window.localStorage.setItem(`spady:quick-draft:${userKey}`, JSON.stringify({ title: nextTitle, content: nextContent })); } catch {}
+    if (autosaveTimerRef.current) window.clearTimeout(autosaveTimerRef.current);
+    autosaveTimerRef.current = window.setTimeout(() => void persistNote(nextTitle, nextContent), 420);
+  };
+
+  const flushAutosave = () => {
+    if (autosaveTimerRef.current) window.clearTimeout(autosaveTimerRef.current);
+    return persistNote(title, content);
   };
 
   const syncContentFromEditor = () => {
@@ -199,7 +236,39 @@ export function QuickCaptureModal({
     if (!element) return;
     const next = editableHtmlToMarkdown(element);
     setContent(next);
-    setSaveState(next.trim() || title.trim() ? "ready" : "idle");
+    scheduleAutosave(title, next);
+  };
+
+  const handleEditorClick = (event: React.MouseEvent<HTMLDivElement>) => {
+    const target = event.target;
+    setSelectedImage(target instanceof HTMLImageElement ? target : null);
+  };
+
+  const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    event.currentTarget.value = "";
+    if (!file || !file.type.startsWith("image/")) return;
+    if (file.size > 5 * 1024 * 1024) { setAutosaveError("A imagem deve ter no máximo 5 MB."); return; }
+    const safeAlt = file.name.replace(/[<>"']/g, "");
+    const finishInsert = (src: string) => {
+      if (!src) return;
+      editorRef.current?.focus();
+      document.execCommand("insertHTML", false, `<p><img src="${src}" alt="${safeAlt}" data-note-image="true" style="width:100%;max-width:100%;height:auto;display:block;border-radius:12px;cursor:ew-resize" /></p>`);
+      syncContentFromEditor();
+    };
+    if (onUploadImage) {
+      void onUploadImage(file).then(finishInsert).catch((error) => setAutosaveError(error instanceof Error ? error.message : "Não foi possível anexar a imagem"));
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = () => finishInsert(String(reader.result || ""));
+    reader.readAsDataURL(file);
+  };
+
+  const resizeSelectedImage = (width: number) => {
+    if (!selectedImage) return;
+    selectedImage.style.width = `${width}%`;
+    syncContentFromEditor();
   };
 
   const runToolbarAction = (action: string) => {
@@ -279,9 +348,14 @@ export function QuickCaptureModal({
           </div>
           <p className="mt-1 line-clamp-2 pl-4 text-[11px] leading-4 text-white/38">{getMarkdownPreview(note.content) || "Nota vazia"}</p>
         </button>
-        <button type="button" onClick={() => onToggleNotePinned(note.id)} className="mt-0.5 rounded-md p-1 text-white/25 opacity-0 transition hover:bg-white/10 hover:text-cyan-100 group-hover:opacity-100 focus-visible:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-300/70" aria-label={isPinned ? `Desafixar ${note.title}` : `Fixar ${note.title}`}>
-          {isPinned ? <Pin className="h-3.5 w-3.5 text-cyan-200" /> : <PinOff className="h-3.5 w-3.5" />}
-        </button>
+        <div className="mt-0.5 flex items-center gap-0.5 opacity-0 transition group-hover:opacity-100 focus-within:opacity-100">
+          <button type="button" onClick={() => onToggleNotePinned(note.id)} className="rounded-md p-1 text-white/25 transition hover:bg-white/10 hover:text-cyan-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-300/70" aria-label={isPinned ? `Desafixar ${note.title}` : `Fixar ${note.title}`}>
+            {isPinned ? <Pin className="h-3.5 w-3.5 text-cyan-200" /> : <PinOff className="h-3.5 w-3.5" />}
+          </button>
+          <button type="button" onClick={(event) => { event.stopPropagation(); if (window.confirm(`Apagar a nota “${note.title || "Sem título"}”?`)) { void onRemoveNote(note.id); if (activeNoteIdRef.current === note.id) { activeNoteIdRef.current = null; setActiveNoteId(null); setTitle(""); setContent(""); } } }} className="rounded-md p-1 text-white/25 transition hover:bg-rose-400/15 hover:text-rose-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rose-300/70" aria-label={`Apagar ${note.title || "nota"}`} title="Apagar nota">
+            <Trash2 className="h-3.5 w-3.5" />
+          </button>
+        </div>
       </div>
     );
   };
@@ -322,30 +396,23 @@ export function QuickCaptureModal({
             </aside>
 
             <div className="flex min-w-0 flex-1 flex-col">
-              <header className="flex items-center justify-between border-b border-white/10 bg-white/[.025] px-4 py-3 sm:px-5">
-                <div className="flex items-center gap-2">
-                  <button type="button" onClick={() => setIsSidebarOpen((open) => !open)} className="rounded-lg p-2 text-white/45 transition hover:bg-white/10 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-300/70" aria-label={isSidebarOpen ? "Ocultar lista de notas" : "Mostrar lista de notas"}><ChevronLeft className={`h-4 w-4 transition-transform ${isSidebarOpen ? "" : "rotate-180"}`} /></button>
-                  <span className="flex h-8 w-8 items-center justify-center rounded-lg border border-cyan-200/15 bg-cyan-300/10 text-cyan-200"><Sparkles className="h-4 w-4" /></span>
-                  <span className="text-[10px] font-semibold uppercase tracking-[.18em] text-white/35">{activeNoteId ? "Nota" : "Nova nota"}</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <span className="hidden items-center gap-1.5 text-[10px] text-white/35 sm:flex">{saveState === "saved" ? <Check className="h-3.5 w-3.5 text-emerald-300" /> : null}{saveState === "ready" ? "Não salvo" : saveState === "saved" ? "Salvo" : "Rascunho"}</span>
-                  <button type="button" onClick={onClose} className="rounded-lg p-2 text-white/40 transition-colors hover:bg-white/10 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-300/70" aria-label="Fechar captura rápida"><X className="h-4 w-4" /></button>
-                </div>
-              </header>
-
               <div className="flex flex-wrap items-center gap-1 border-b border-white/10 bg-[#0b1628]/90 px-3 py-2.5 sm:px-4">
+                <button type="button" onClick={() => setIsSidebarOpen((open) => !open)} className="rounded-lg p-2 text-white/55 transition hover:bg-white/10 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-300/70" aria-label={isSidebarOpen ? "Ocultar lista de notas" : "Mostrar lista de notas"}><ChevronLeft className={`h-4 w-4 transition-transform ${isSidebarOpen ? "" : "rotate-180"}`} /></button>
                 {toolbarGroups.map((group, groupIndex) => <React.Fragment key={groupIndex}>{groupIndex > 0 ? <span className="mx-1 h-5 w-px bg-white/10" aria-hidden="true" /> : null}{group.map(({ label, icon: Icon, action }) => <button key={action} type="button" onMouseDown={(event) => event.preventDefault()} onClick={() => runToolbarAction(action)} className="rounded-lg p-2 text-white/55 transition-[background,color,transform] duration-150 hover:bg-white/10 hover:text-cyan-100 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-300/70" aria-label={label} title={label}><Icon className="h-4 w-4" /></button>)}</React.Fragment>)}
-                <button type="submit" form="quick-capture-form" disabled={isSaving || (!title.trim() && !content.trim())} className="ml-auto inline-flex items-center gap-1.5 rounded-lg bg-cyan-300 px-3 py-2 text-xs font-semibold text-[#06101c] transition hover:bg-cyan-200 active:scale-[.98] disabled:cursor-not-allowed disabled:opacity-40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-100/80"><Save className="h-3.5 w-3.5" />{isSaving ? "Salvando…" : saveState === "saved" ? "Salvo" : "Salvar"}</button>
+                <button type="button" onClick={() => fileInputRef.current?.click()} className="rounded-lg p-2 text-white/55 transition hover:bg-white/10 hover:text-cyan-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-300/70" aria-label="Anexar imagem" title="Anexar imagem"><Paperclip className="h-4 w-4" /></button>
+                <input ref={fileInputRef} type="file" accept="image/*" onChange={handleImageUpload} className="hidden" aria-label="Selecionar imagem para anexar" />
+                {selectedImage ? <label className="ml-2 flex items-center gap-2 text-[10px] text-white/40" title="Redimensionar imagem"><input type="range" min="20" max="100" value={Math.round(parseFloat(selectedImage.style.width || "100"))} onChange={(event) => resizeSelectedImage(Number(event.target.value))} className="w-20 accent-cyan-300" />{Math.round(parseFloat(selectedImage.style.width || "100"))}%</label> : null}
+                <span className="ml-auto flex items-center gap-2 text-[10px] text-white/35">{autosaveError ? <span className="text-amber-200/80">Falha local — tentando novamente</span> : isSaving ? "Sincronizando…" : saveState === "saved" ? <><Check className="h-3.5 w-3.5 text-emerald-300" />Atualizado</> : title.trim() || content.trim() ? "Salvamento automático" : ""}</span>
+                <button type="button" onClick={() => { void flushAutosave(); onClose(); }} className="rounded-lg p-2 text-white/45 transition hover:bg-white/10 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-300/70" aria-label="Fechar captura rápida"><X className="h-4 w-4" /></button>
               </div>
 
-              <form id="quick-capture-form" className="flex min-h-0 flex-1 flex-col" onSubmit={(event) => { event.preventDefault(); void handleSave(); }}>
+              <form id="quick-capture-form" className="flex min-h-0 flex-1 flex-col" onSubmit={(event) => { event.preventDefault(); void flushAutosave(); }}>
                 <div className="flex min-h-0 flex-1 flex-col px-5 pb-5 pt-5 sm:px-9 sm:pt-7">
                   <label htmlFor="quick-capture-title-input" className="sr-only">Título da nota</label>
-                  <input ref={titleRef} id="quick-capture-title-input" value={title} onChange={(event) => { setTitle(event.target.value); setSaveState(event.target.value.trim() || content.trim() ? "ready" : "idle"); }} placeholder="Título da nota" className="mb-3 w-full border-0 bg-transparent text-2xl font-semibold tracking-[-.03em] text-white outline-none placeholder:text-white/25 sm:text-3xl" />
+                  <input ref={titleRef} id="quick-capture-title-input" value={title} onChange={(event) => { const nextTitle = event.target.value; setTitle(nextTitle); scheduleAutosave(nextTitle, content); }} placeholder="Título da nota" className="mb-3 w-full border-0 bg-transparent text-2xl font-semibold tracking-[-.03em] text-white outline-none placeholder:text-white/25 sm:text-3xl" />
                   <label htmlFor="quick-capture-content" className="sr-only">Conteúdo da nota</label>
                   <div className="relative min-h-0 flex-1">
-                    <MarkdownEditable ref={editorRef} id="quick-capture-content" value={content} onChange={(next) => { setContent(next); setSaveState(next.trim() || title.trim() ? "ready" : "idle"); setShowSlashMenu(false); }} onKeyDown={handleEditorKeyDown} ariaLabel="Conteúdo da nota" placeholder="Comece a escrever…" className="h-full" />
+                    <MarkdownEditable ref={editorRef} id="quick-capture-content" value={content} onChange={(next) => { setContent(next); scheduleAutosave(title, next); setShowSlashMenu(false); }} onClick={handleEditorClick} onKeyDown={handleEditorKeyDown} ariaLabel="Conteúdo da nota" placeholder="Comece a escrever…" className="h-full" />
                     <AnimatePresence>{showSlashMenu && filteredSlashOptions.length > 0 ? <motion.div initial={{ opacity: 0, y: 5 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 5 }} className="absolute bottom-4 left-0 z-10 w-[min(92vw,290px)] overflow-hidden rounded-xl border border-white/10 bg-[#111d31] p-1.5 shadow-2xl"><p className="px-2.5 pb-1.5 pt-1 text-[10px] font-semibold uppercase tracking-[.16em] text-white/35">Blocos</p>{filteredSlashOptions.map((item) => <button key={item.label} type="button" onMouseDown={(event) => event.preventDefault()} onClick={() => insertSlashOption(item.prefix)} className="flex w-full items-center justify-between rounded-lg px-2.5 py-2 text-left transition-colors hover:bg-white/10 focus-visible:bg-white/10 focus-visible:outline-none"><span className="text-sm text-white/80">{item.label}</span><span className="text-[11px] text-white/35">{item.description}</span></button>)}</motion.div> : null}</AnimatePresence>
                   </div>
                 </div>
