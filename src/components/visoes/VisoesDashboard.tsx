@@ -40,6 +40,8 @@ export function VisoesDashboard() {
     addNote,
     updateNote,
     removeNote,
+    pinnedNoteIds,
+    toggleNotePinned,
     addBankAccount,
     updateBankAccount,
     removeBankAccount,
@@ -199,6 +201,8 @@ export function VisoesDashboard() {
             onAddNote={addNote}
             onUpdateNote={updateNote}
             onRemoveNote={removeNote}
+            pinnedNoteIds={pinnedNoteIds}
+            onToggleNotePinned={toggleNotePinned}
             onClose={() => setActivePage('dashboard')}
           />
         )}

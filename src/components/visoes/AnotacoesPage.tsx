@@ -2,14 +2,18 @@
 
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Plus, FileText, Folder, Search, Trash2, Clock, StickyNote } from 'lucide-react';
+import { X, Plus, FileText, Search, Trash2, Clock, StickyNote, Pin, PinOff } from 'lucide-react';
 import { Note } from '@/lib/types/visoes';
+import { getMarkdownPreview, toggleChecklistItem } from './MarkdownNoteContent';
+import { MarkdownEditable } from './MarkdownEditable';
 
 interface AnotacoesPageProps {
   notes: Note[];
   onAddNote: (title: string, content: string, color: string) => void;
   onUpdateNote: (id: string, updates: Partial<Note>) => void;
   onRemoveNote: (id: string) => void;
+  pinnedNoteIds?: string[];
+  onToggleNotePinned?: (id: string) => void;
   onClose: () => void;
 }
 
@@ -28,6 +32,8 @@ export function AnotacoesPage({
   onAddNote,
   onUpdateNote,
   onRemoveNote,
+  pinnedNoteIds = [],
+  onToggleNotePinned = () => undefined,
   onClose,
 }: AnotacoesPageProps) {
   const [selectedNote, setSelectedNote] = useState<Note | null>(null);
@@ -59,9 +65,13 @@ export function AnotacoesPage({
     return true;
   });
 
-  const sortedNotes = [...filteredNotes].sort((a, b) => 
-    new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
-  );
+  const sortedNotes = [...filteredNotes].sort((a, b) => {
+    const pinnedDelta = Number(pinnedNoteIds.includes(b.id)) - Number(pinnedNoteIds.includes(a.id));
+    if (pinnedDelta !== 0) return pinnedDelta;
+    return new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime();
+  });
+  const pinnedNotes = sortedNotes.filter((note) => pinnedNoteIds.includes(note.id));
+  const recentNotes = sortedNotes.filter((note) => !pinnedNoteIds.includes(note.id));
 
   const handleSaveNote = () => {
     if (!editTitle.trim()) return;
@@ -80,6 +90,15 @@ export function AnotacoesPage({
     setIsEditing(false);
     setEditTitle('');
     setEditContent('');
+  };
+
+  const handleToggleChecklist = (blockIndex: number, itemIndex: number, checked: boolean) => {
+    if (!selectedNote) return;
+    const nextContent = toggleChecklistItem(selectedNote.content, blockIndex, itemIndex, checked);
+    const nextNote = { ...selectedNote, content: nextContent, updatedAt: new Date().toISOString() };
+    setSelectedNote(nextNote);
+    setEditContent(nextContent);
+    onUpdateNote(selectedNote.id, { content: nextContent });
   };
 
   const handleDeleteNote = () => {
@@ -115,6 +134,37 @@ export function AnotacoesPage({
       return 'recente';
     }
   };
+
+  const renderNoteGroup = (label: string, groupNotes: Note[]) => (
+    <section aria-label={label}>
+      <h3 className="px-3 pb-2 text-[10px] font-semibold uppercase tracking-[.16em] text-white/30">{label}</h3>
+      <div className="space-y-1">
+        {groupNotes.map((note) => {
+          const isPinned = pinnedNoteIds.includes(note.id);
+          return (
+            <motion.div
+              key={note.id}
+              initial={{ opacity: 0, x: -10 }}
+              animate={{ opacity: 1, x: 0 }}
+              className={`group flex items-start gap-2 rounded-xl border p-3 transition-all ${selectedNote?.id === note.id ? 'border-[#00f6ff]/20 bg-[#00f6ff]/10' : 'border-transparent hover:bg-white/5'}`}
+            >
+              <button type="button" onClick={() => setSelectedNote(note)} className="flex min-w-0 flex-1 items-start gap-3 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#00f6ff]/60">
+                <span className="mt-0.5 h-10 w-1 shrink-0 rounded-full" style={{ backgroundColor: note.color }} />
+                <span className="min-w-0 flex-1">
+                  <span className="block truncate text-sm font-medium text-white">{note.title || 'Sem título'}</span>
+                  <span className="mt-1 block line-clamp-2 text-xs text-white/40">{getMarkdownPreview(note.content) || 'Sem conteúdo'}</span>
+                  <span className="mt-2 flex items-center gap-1 text-white/30"><Clock className="h-3 w-3" /><span className="text-xs">{getTimeAgo(note.updatedAt)}</span></span>
+                </span>
+              </button>
+              <button type="button" onClick={() => onToggleNotePinned(note.id)} className="rounded-lg p-1.5 text-white/25 opacity-0 transition hover:bg-white/10 hover:text-cyan-100 group-hover:opacity-100 focus-visible:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#00f6ff]/60" aria-label={isPinned ? `Desafixar ${note.title}` : `Fixar ${note.title}`}>
+                {isPinned ? <Pin className="h-4 w-4 text-cyan-200" /> : <PinOff className="h-4 w-4" />}
+              </button>
+            </motion.div>
+          );
+        })}
+      </div>
+    </section>
+  );
 
   return (
     <motion.div
@@ -167,37 +217,9 @@ export function AnotacoesPage({
                 <p className="text-white/30 text-xs mt-1">Crie sua primeira anotação</p>
               </div>
             ) : (
-              <div className="space-y-1">
-                {sortedNotes.map((note) => (
-                  <motion.button
-                    key={note.id}
-                    initial={{ opacity: 0, x: -10 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    onClick={() => setSelectedNote(note)}
-                    className={`w-full p-3 rounded-xl text-left transition-all group ${
-                      selectedNote?.id === note.id
-                        ? 'bg-[#00f6ff]/10 border border-[#00f6ff]/20'
-                        : 'hover:bg-white/5 border border-transparent'
-                    }`}
-                  >
-                    <div className="flex items-start gap-3">
-                      <div 
-                        className="w-1 h-12 rounded-full flex-shrink-0"
-                        style={{ backgroundColor: note.color }}
-                      />
-                      <div className="flex-1 min-w-0">
-                        <p className="text-white font-medium text-sm truncate">{note.title}</p>
-                        <p className="text-white/40 text-xs line-clamp-2 mt-1">
-                          {note.content || 'Sem conteúdo'}
-                        </p>
-                        <div className="flex items-center gap-1 mt-2 text-white/30">
-                          <Clock className="w-3 h-3" />
-                          <span className="text-xs">{getTimeAgo(note.updatedAt)}</span>
-                        </div>
-                      </div>
-                    </div>
-                  </motion.button>
-                ))}
+              <div className="space-y-4">
+                {pinnedNotes.length > 0 ? renderNoteGroup('Fixadas', pinnedNotes) : null}
+                {recentNotes.length > 0 ? renderNoteGroup('Recentes', recentNotes) : null}
               </div>
             )}
           </div>
@@ -292,12 +314,13 @@ export function AnotacoesPage({
 
           <div className="flex-1 overflow-y-auto p-6">
             {isEditing ? (
-              <div className="h-full">
-                <textarea
+              <div className="h-full rounded-xl bg-white/5 border border-white/10 p-4 focus-within:border-[#00f6ff]/30">
+                <MarkdownEditable
                   value={editContent}
-                  onChange={(e) => setEditContent(e.target.value)}
+                  onChange={setEditContent}
+                  ariaLabel="Conteúdo da nota"
                   placeholder="Comece a escrever sua nota..."
-                  className="w-full h-full p-4 rounded-xl bg-white/5 border border-white/10 focus:border-[#00f6ff]/30 outline-none text-white text-sm resize-none leading-relaxed placeholder:text-white/30"
+                  className="h-full min-h-[420px] text-base leading-8"
                 />
               </div>
             ) : !selectedNote ? (
@@ -320,16 +343,7 @@ export function AnotacoesPage({
                   Criar Nova Nota
                 </motion.button>
               </div>
-            ) : (
-              <div 
-                className="p-6 rounded-xl bg-white/5 border-l-4 min-h-[200px]"
-                style={{ borderColor: selectedNote.color }}
-              >
-                <p className="text-white/80 whitespace-pre-wrap leading-relaxed">
-                  {selectedNote.content || 'Sem conteúdo'}
-                </p>
-              </div>
-            )}
+            ) : null}
           </div>
         </main>
       </div>

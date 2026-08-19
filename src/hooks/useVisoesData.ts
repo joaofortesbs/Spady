@@ -32,9 +32,19 @@ export function useVisoesData() {
   });
   const [isLoaded, setIsLoaded] = useState(false);
   const [isSyncing, setIsSyncing] = useState(false);
+  const [pinnedNoteIds, setPinnedNoteIds] = useState<string[]>([]);
   const { user } = useAuth();
 
   const supabase = useMemo(() => createClient(), []);
+
+  useEffect(() => {
+    if (!user) {
+      setPinnedNoteIds([]);
+      return;
+    }
+    const stored = safeStorage.get<string[]>(`spady:pinned-notes:${user.id}`);
+    setPinnedNoteIds(Array.isArray(stored) ? stored : []);
+  }, [user]);
   
   const dataRef = useRef(data);
   const loadingRef = useRef(false);
@@ -579,6 +589,15 @@ export function useVisoesData() {
     await supabase.from('reminders').delete().eq('id', id).eq('user_id', user.id);
   }, [user, supabase]);
 
+  const toggleNotePinned = useCallback((id: string) => {
+    if (!user) return;
+    setPinnedNoteIds(prev => {
+      const next = prev.includes(id) ? prev.filter(noteId => noteId !== id) : [id, ...prev];
+      safeStorage.set(`spady:pinned-notes:${user.id}`, next);
+      return next;
+    });
+  }, [user]);
+
   const addNote = useCallback(async (title: string, content: string, color: string) => {
     if (!user) return;
 
@@ -880,6 +899,8 @@ export function useVisoesData() {
     removeReminder,
     addNote,
     updateNote,
+    pinnedNoteIds,
+    toggleNotePinned,
     removeNote,
     addBankAccount,
     updateBankAccount,

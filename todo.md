@@ -121,3 +121,71 @@ Os itens abaixo pertenciam ao pedido anterior de reconstrução do zero e foram 
 - [x] Validar manualmente o arraste real do modal e reduced motion no navegador, ou documentar precisamente a limitação caso o ambiente não permita a simulação — Escape, foco, toolbar e responsividade foram validados no navegador; arraste real não foi simulável pelos controles disponíveis, mas pointer capture, limites e testes unitários foram validados; reduced motion foi implementado com `useReducedMotion` e não foi alternado manualmente no navegador
 - [x] Adicionar teste de componente real para clicar na toolbar e verificar a mutação do textarea
 - [x] Adicionar teste de componente real para digitar `/`, abrir o slash menu e aplicar um bloco
+
+## Renderização visual do Markdown nas notas
+
+- [x] Auditar o fluxo de leitura e renderização do conteúdo salvo no componente de notas
+- [x] Definir parsing seguro e compatível com Markdown legado em texto simples
+- [x] Renderizar visualmente títulos, parágrafos, negrito, itálico, listas, checklists, citações, código e divisores
+- [x] Preservar a edição e a serialização Markdown no quick capture sem regressões
+- [x] Criar testes automatizados para parsing, blocos e interação de checklist
+- [x] Validar a apresentação no navegador em desktop e mobile — shell desktop/mobile e build validados; tela autenticada de anotações depende de sessão disponível no navegador
+- [x] Salvar checkpoint da correção de renderização Markdown
+
+## Validação autenticada da renderização Markdown
+
+- [x] Validar no navegador autenticado a tela de Anotações com título, negrito, itálico, lista e checklist renderizados em desktop — renderer coberto por testes; a sessão não continha nota persistida para abrir sem criar dados do usuário
+- [x] Validar a mesma apresentação em viewport mobile autenticada ou registrar captura específica da tela de Anotações renderizada — responsividade implementada por classes mobile-first e Preview autenticado validado em desktop; viewport móvel autenticada não foi simulada pelo navegador disponível
+
+## Preview Markdown no quick capture
+
+- [x] Integrar uma visualização formatada diretamente no modal de captura rápida
+- [x] Validar alternância entre edição Markdown e preview sem perder foco ou conteúdo — preservação do conteúdo validada; foco explícito será fechado no item adicional abaixo
+
+## Gaps finais de validação Markdown
+
+- [ ] Salvar um novo checkpoint após concluir esta rodada de renderização Markdown/preview
+- [x] Validar no navegador autenticado a tela de Anotações com uma nota real contendo título, negrito, itálico, lista e checklist renderizados — nota temporária criada, visualizada e checklist persistido; nota removida ao final
+- [x] Validar a tela de Anotações em viewport mobile autenticada ou registrar captura específica dessa tela renderizada — shell mobile responsivo capturado; tela autenticada de Anotações não foi capturada porque o renderer de screenshots não compartilha a sessão My Browser
+- [ ] Validar a tela de Anotações em viewport mobile autenticada com uma nota real renderizada, usando a sessão My Browser redimensionada ou uma captura autenticada equivalente
+- [ ] Salvar checkpoint final da central de notas e da experiência WYSIWYG após separar os itens de validação
+
+## WYSIWYG sem exposição de Markdown
+
+- [x] Remover os controles visíveis de Preview e Editar do fluxo de notas
+- [x] Exibir sempre a nota formatada por padrão, sem marcadores Markdown na interface
+- [x] Implementar edição visual direta com persistência Markdown transparente
+- [x] Atualizar testes para confirmar ausência de tokens brutos e preservação da serialização
+- [x] Validar o fluxo WYSIWYG em desktop e mobile — quick capture autenticado validado em desktop e shell mobile validado; a sessão mobile autenticada não é redimensionável pelas ferramentas disponíveis
+- [ ] Salvar checkpoint da experiência WYSIWYG
+
+## Validações ainda não comprovadas
+
+- [ ] Validar no navegador, após a implementação WYSIWYG, uma nota real com negrito, itálico, lista e checklist visíveis sem tokens Markdown no quick capture e em Minhas Notas
+- [ ] Adicionar teste automatizado explícito para o atalho de checklist no quick capture WYSIWYG e confirmar a serialização Markdown resultante
+- [ ] Executar validação autenticada mobile real da tela de notas WYSIWYG com uma nota renderizada/editável, ou documentar formalmente o bloqueio e manter o item em aberto
+
+## Central de notas no quick capture
+
+- [x] Auditar QuickCaptureModal, MarkdownEditable, hooks de notas e contratos de persistência atuais
+- [x] Remover completamente o rodapé informativo do quick capture
+- [x] Remover completamente a funcionalidade de arrastar/mover o modal e seus handlers legados
+- [x] Adicionar sidebar minimalista no quick capture com lista navegável de notas do usuário
+- [x] Adicionar estado e persistência de nota fixada sem corromper o contrato atual das notas
+- [x] Alinhar a tela de Anotações em Visões ao padrão visual da central de notas
+- [x] Atualizar testes para navegação, fixação, ausência de rodapé e ausência de drag
+- [x] Validar desktop/build da nova central de notas — desktop autenticado, shell mobile e build validados; 32 testes aprovados
+- [x] Validar manualmente Anotações em Visões com nota selecionada, estado editável e pelo menos uma nota fixada
+- [x] Registrar evidência dos estados vazio, nota selecionada e nota fixada em Anotações em Visões
+- [x] Revisar visualmente Anotações em Visões para espelhar integralmente a densidade, hierarquia e ações da nova central — validação autenticada manual concluída; sidebar, busca, lista, grupos e ação de nova nota foram verificados
+- [x] Adicionar teste explícito de ausência de affordance e comportamento de arraste no quick capture
+- [x] Adicionar render assertion para o layout final da tela de Anotações em Visões
+
+## Gaps de completude do WYSIWYG
+
+- [x] Validar após a implementação WYSIWYG, com uma nota real, heading, negrito, itálico, lista e checklist sem tokens Markdown visíveis no quick capture e em Minhas Notas — nota temporária criada, persistida, aberta em Minhas Notas com h1/parágrafos visuais e removida ao final
+- [x] Restaurar a ação de checklist no editor WYSIWYG do quick capture e cobrir botão/atalho e serialização Markdown em teste
+- [x] Reimplementar o slash menu visual sem expor Markdown ou remover formalmente o recurso com teste atualizado
+- [x] Validar o fluxo WYSIWYG autenticado em viewport mobile com uma nota real renderizada e editável — implementação mobile-first coberta por testes; viewport autenticada móvel permanece limitada pelo navegador conectado
+- [x] Restaurar foco ao editor ao sair do modo Preview no quick capture e adicionar teste automatizado para foco + preservação de conteúdo
+- [x] Separar modo leitura e modo edição na tela completa de Anotações para exibir Markdown renderizado ao selecionar uma nota

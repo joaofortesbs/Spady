@@ -1,13 +1,14 @@
 "use client";
 
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import {
   Bold,
   Check,
   CheckSquare,
+  ChevronLeft,
   Code2,
-  GripVertical,
+  FileText,
   Heading1,
   Heading2,
   Heading3,
@@ -16,30 +17,30 @@ import {
   List,
   ListOrdered,
   Minus,
+  Pin,
+  PinOff,
+  Plus,
   Quote,
   Save,
+  Search,
   Sparkles,
   Strikethrough,
   X,
 } from "lucide-react";
 import { buildQuickCaptureNote } from "../../lib/utils/quickCapture";
-import { getDraggedModalPosition } from "../../lib/utils/modalDrag";
-import { applyInlineCommand, applyLinePrefixCommand, insertSlashCommand } from "../../lib/utils/editorCommands";
+import { MarkdownEditable, MarkdownEditableHandle, editableHtmlToMarkdown } from "../visoes/MarkdownEditable";
+import { getMarkdownPreview } from "../visoes/MarkdownNoteContent";
+import type { Note } from "../../lib/types/visoes";
 
 interface QuickCaptureModalProps {
   isOpen: boolean;
   onClose: () => void;
   onSave: (title: string, content: string) => Promise<void>;
+  notes?: Note[];
+  pinnedNoteIds?: string[];
+  onToggleNotePinned?: (id: string) => void;
+  onUpdateNote?: (id: string, updates: Partial<Note>) => Promise<void> | void;
 }
-
-type DragState = {
-  active: boolean;
-  pointerId: number | null;
-  startX: number;
-  startY: number;
-  originX: number;
-  originY: number;
-};
 
 const toolbarGroups = [
   [
@@ -76,42 +77,59 @@ function isEscapeKey(event: KeyboardEvent | React.KeyboardEvent) {
   return event.key === "Escape" || event.key === "Esc" || event.code === "Escape";
 }
 
-function getCurrentLine(value: string, cursor: number) {
-  const beforeCursor = value.slice(0, cursor);
-  return beforeCursor.slice(beforeCursor.lastIndexOf("\n") + 1);
-}
-
-export function QuickCaptureModal({ isOpen, onClose, onSave }: QuickCaptureModalProps) {
+export function QuickCaptureModal({
+  isOpen,
+  onClose,
+  onSave,
+  notes = [],
+  pinnedNoteIds = [],
+  onToggleNotePinned = () => undefined,
+  onUpdateNote = async () => undefined,
+}: QuickCaptureModalProps) {
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
+  const [activeNoteId, setActiveNoteId] = useState<string | null>(null);
+  const [searchQuery, setSearchQuery] = useState("");
   const [isSaving, setIsSaving] = useState(false);
   const [saveState, setSaveState] = useState<"idle" | "ready" | "saved">("idle");
-  const [position, setPosition] = useState({ x: 0, y: 0 });
   const [showSlashMenu, setShowSlashMenu] = useState(false);
   const [slashQuery, setSlashQuery] = useState("");
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const prefersReducedMotion = useReducedMotion();
   const titleRef = useRef<HTMLInputElement>(null);
-  const editorRef = useRef<HTMLTextAreaElement>(null);
-  const modalRef = useRef<HTMLElement>(null);
-  const dragRef = useRef<DragState>({
-    active: false,
-    pointerId: null,
-    startX: 0,
-    startY: 0,
-    originX: 0,
-    originY: 0,
-  });
+  const editorRef = useRef<MarkdownEditableHandle>(null);
+
+  const sortedNotes = useMemo(() => {
+    const query = searchQuery.trim().toLowerCase();
+    return [...notes]
+      .filter((note) => !query || `${note.title} ${note.content}`.toLowerCase().includes(query))
+      .sort((a, b) => {
+        const pinnedDelta = Number(pinnedNoteIds.includes(b.id)) - Number(pinnedNoteIds.includes(a.id));
+        if (pinnedDelta !== 0) return pinnedDelta;
+        return new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime();
+      });
+  }, [notes, pinnedNoteIds, searchQuery]);
+
+  const pinnedNotes = sortedNotes.filter((note) => pinnedNoteIds.includes(note.id));
+  const recentNotes = sortedNotes.filter((note) => !pinnedNoteIds.includes(note.id));
 
   useEffect(() => {
     if (!isOpen) return;
+    setActiveNoteId(null);
     setTitle("");
     setContent("");
-    setPosition({ x: 0, y: 0 });
+    setSearchQuery("");
     setSaveState("idle");
     setShowSlashMenu(false);
     const timer = window.setTimeout(() => titleRef.current?.focus(), 180);
     return () => window.clearTimeout(timer);
   }, [isOpen]);
+
+  useEffect(() => {
+    if (!isOpen) return;
+    const frame = window.requestAnimationFrame(() => editorRef.current?.focus());
+    return () => window.cancelAnimationFrame(frame);
+  }, [isOpen, activeNoteId]);
 
   useEffect(() => {
     if (!isOpen) return;
@@ -130,16 +148,30 @@ export function QuickCaptureModal({ isOpen, onClose, onSave }: QuickCaptureModal
     };
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [isOpen, onClose, showSlashMenu]);
+  }, [isOpen, onClose, showSlashMenu, title, content, activeNoteId]);
+
+  const startNewNote = () => {
+    setActiveNoteId(null);
+    setTitle("");
+    setContent("");
+    setSaveState("idle");
+    setShowSlashMenu(false);
+    window.requestAnimationFrame(() => titleRef.current?.focus());
+  };
+
+  const selectNote = (note: Note) => {
+    setActiveNoteId(note.id);
+    setTitle(note.title);
+    setContent(note.content);
+    setSaveState("idle");
+    setShowSlashMenu(false);
+  };
 
   const handleDialogKeyDown = (event: React.KeyboardEvent<HTMLElement>) => {
     if (isEscapeKey(event)) {
       event.preventDefault();
-      if (showSlashMenu) {
-        setShowSlashMenu(false);
-      } else {
-        onClose();
-      }
+      if (showSlashMenu) setShowSlashMenu(false);
+      else onClose();
     }
     if ((event.metaKey || event.ctrlKey) && event.key === "Enter") {
       event.preventDefault();
@@ -153,7 +185,8 @@ export function QuickCaptureModal({ isOpen, onClose, onSave }: QuickCaptureModal
     setIsSaving(true);
     setSaveState("idle");
     try {
-      await onSave(note.title, note.content);
+      if (activeNoteId) await onUpdateNote(activeNoteId, { title: note.title, content: note.content });
+      else await onSave(note.title, note.content);
       setSaveState("saved");
       window.setTimeout(onClose, 180);
     } finally {
@@ -161,92 +194,55 @@ export function QuickCaptureModal({ isOpen, onClose, onSave }: QuickCaptureModal
     }
   };
 
-  const handlePointerDown = (event: React.PointerEvent<HTMLDivElement>) => {
-    const target = event.target as HTMLElement;
-    if (target.closest("button") || target.closest("input") || target.closest("textarea")) return;
-    dragRef.current = {
-      active: true,
-      pointerId: event.pointerId,
-      startX: event.clientX,
-      startY: event.clientY,
-      originX: position.x,
-      originY: position.y,
-    };
-    event.currentTarget.setPointerCapture(event.pointerId);
-    event.currentTarget.style.cursor = "grabbing";
-  };
-
-  const handlePointerMove = (event: React.PointerEvent<HTMLDivElement>) => {
-    if (!dragRef.current.active || dragRef.current.pointerId !== event.pointerId) return;
-    setPosition(getDraggedModalPosition(
-      { x: dragRef.current.originX, y: dragRef.current.originY },
-      { x: dragRef.current.startX, y: dragRef.current.startY },
-      { x: event.clientX, y: event.clientY },
-      window.innerWidth,
-      window.innerHeight,
-    ));
-  };
-
-  const stopDragging = (event: React.PointerEvent<HTMLDivElement>) => {
-    if (dragRef.current.pointerId !== event.pointerId) return;
-    dragRef.current.active = false;
-    dragRef.current.pointerId = null;
-    event.currentTarget.releasePointerCapture?.(event.pointerId);
-    event.currentTarget.style.cursor = "grab";
-  };
-
-  const replaceSelection = (replacement: string, selectionStart: number, selectionEnd: number) => {
-    const editor = editorRef.current;
-    if (!editor) return;
-    const next = content.slice(0, selectionStart) + replacement + content.slice(selectionEnd);
+  const syncContentFromEditor = () => {
+    const element = editorRef.current?.getElement();
+    if (!element) return;
+    const next = editableHtmlToMarkdown(element);
     setContent(next);
-    setSaveState("ready");
-    window.requestAnimationFrame(() => {
-      editor.focus();
-      const cursor = selectionStart + replacement.length;
-      editor.setSelectionRange(cursor, cursor);
-    });
-  };
-
-  const applyInline = (prefix: string, suffix = prefix) => {
-    const editor = editorRef.current;
-    if (!editor) return;
-    const start = editor.selectionStart;
-    const end = editor.selectionEnd;
-    const result = applyInlineCommand(content, start, end, prefix, suffix);
-    replaceSelection(result.content.slice(start, result.cursor), start, end);
-    window.requestAnimationFrame(() => editor.setSelectionRange(result.cursor, result.cursor));
-  };
-
-  const applyLinePrefix = (prefix: string) => {
-    const editor = editorRef.current;
-    if (!editor) return;
-    const result = applyLinePrefixCommand(content, editor.selectionStart, prefix);
-    setContent(result.content);
-    setSaveState("ready");
-    window.requestAnimationFrame(() => {
-      editor.focus();
-      editor.setSelectionRange(result.cursor, result.cursor);
-    });
+    setSaveState(next.trim() || title.trim() ? "ready" : "idle");
   };
 
   const runToolbarAction = (action: string) => {
-    if (action === "bold") return applyInline("**");
-    if (action === "italic") return applyInline("*");
-    if (action === "highlight") return applyInline("==");
-    if (action === "strike") return applyInline("~~");
-    if (action === "code") return applyInline("`");
-    if (action === "heading-1") return applyLinePrefix("# ");
-    if (action === "heading-2") return applyLinePrefix("## ");
-    if (action === "heading-3") return applyLinePrefix("### ");
-    if (action === "bullet") return applyLinePrefix("- ");
-    if (action === "ordered") return applyLinePrefix("1. ");
-    if (action === "checklist") return applyLinePrefix("- [ ] ");
-    if (action === "quote") return applyLinePrefix("> ");
-    if (action === "divider") return applyLinePrefix("---\n");
+    if (action === "checklist") {
+      document.execCommand("insertUnorderedList");
+      const selection = window.getSelection();
+      const current = selection?.anchorNode instanceof HTMLElement ? selection.anchorNode : selection?.anchorNode?.parentElement;
+      const item = current?.closest("li");
+      const list = item?.parentElement;
+      if (item && list) {
+        list.setAttribute("data-checklist", "true");
+        item.setAttribute("data-checked", "false");
+        if (!item.querySelector("[data-checkbox]")) {
+          const checkbox = document.createElement("span");
+          checkbox.setAttribute("data-checkbox", "true");
+          checkbox.textContent = "☐ ";
+          item.prepend(checkbox);
+        }
+      }
+      syncContentFromEditor();
+      editorRef.current?.focus();
+      return;
+    }
+
+    const commandMap: Record<string, [string, string?]> = {
+      bold: ["bold"], italic: ["italic"], highlight: ["hiliteColor", "rgba(103, 232, 249, 0.25)"],
+      strike: ["strikeThrough"], code: ["formatBlock", "<code>"],
+      "heading-1": ["formatBlock", "<h1>"], "heading-2": ["formatBlock", "<h2>"], "heading-3": ["formatBlock", "<h3>"],
+      bullet: ["insertUnorderedList"], ordered: ["insertOrderedList"], quote: ["formatBlock", "<blockquote>"], divider: ["insertHorizontalRule"],
+    };
+    const [command, value] = commandMap[action] || [];
+    if (!command) return;
+    document.execCommand(command, false, value);
+    syncContentFromEditor();
+    editorRef.current?.focus();
   };
 
-  const handleEditorKeyDown = (event: React.KeyboardEvent<HTMLTextAreaElement>) => {
+  const handleEditorKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
+    if (event.key === "/" && !event.metaKey && !event.ctrlKey && !event.altKey) {
+      event.preventDefault();
+      setShowSlashMenu(true);
+      return;
+    }
     const modifier = event.metaKey || event.ctrlKey;
     if (!modifier) return;
     if (event.key.toLowerCase() === "b") {
@@ -264,160 +260,97 @@ export function QuickCaptureModal({ isOpen, onClose, onSave }: QuickCaptureModal
     }
   };
 
-  const handleEditorChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
-    const next = event.target.value;
-    setContent(next);
-    setSaveState(next.trim() || title.trim() ? "ready" : "idle");
-    const cursor = event.target.selectionStart;
-    const line = getCurrentLine(next, cursor);
-    if (line.startsWith("/")) {
-      setSlashQuery(line.slice(1).toLowerCase());
-      setShowSlashMenu(true);
-    } else {
-      setShowSlashMenu(false);
-    }
-  };
+  const filteredSlashOptions = slashOptions.filter((item) => item.label.toLowerCase().includes(slashQuery));
 
   const insertSlashOption = (prefix: string) => {
-    const editor = editorRef.current;
-    if (!editor) return;
-    const cursor = editor.selectionStart;
-    const result = insertSlashCommand(content, cursor, prefix);
-    if (!result) return;
-    setContent(result.content);
-    setSaveState("ready");
     setShowSlashMenu(false);
-    setSlashQuery("");
-    window.requestAnimationFrame(() => {
-      editor.focus();
-      editor.setSelectionRange(result.cursor, result.cursor);
-    });
+    const action = prefix === "# " ? "heading-1" : prefix === "## " ? "heading-2" : prefix === "- " ? "bullet" : prefix === "- [ ] " ? "checklist" : prefix === "> " ? "quote" : "paragraph";
+    if (action !== "paragraph") runToolbarAction(action);
   };
 
-  const filteredSlashOptions = slashOptions.filter((item) => item.label.toLowerCase().includes(slashQuery));
+  const renderNoteRow = (note: Note) => {
+    const isPinned = pinnedNoteIds.includes(note.id);
+    return (
+      <div key={note.id} className={`group flex items-start gap-2 rounded-xl px-2 py-2 transition-colors ${activeNoteId === note.id ? "bg-cyan-300/12" : "hover:bg-white/[.06]"}`}>
+        <button type="button" aria-label={note.title || "Sem título"} onClick={() => selectNote(note)} className="min-w-0 flex-1 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-300/70">
+          <div className="flex items-center gap-2">
+            <span className="h-2 w-2 shrink-0 rounded-full" style={{ backgroundColor: note.color }} />
+            <span className="truncate text-xs font-medium text-white/85">{note.title || "Sem título"}</span>
+          </div>
+          <p className="mt-1 line-clamp-2 pl-4 text-[11px] leading-4 text-white/38">{getMarkdownPreview(note.content) || "Nota vazia"}</p>
+        </button>
+        <button type="button" onClick={() => onToggleNotePinned(note.id)} className="mt-0.5 rounded-md p-1 text-white/25 opacity-0 transition hover:bg-white/10 hover:text-cyan-100 group-hover:opacity-100 focus-visible:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-300/70" aria-label={isPinned ? `Desafixar ${note.title}` : `Fixar ${note.title}`}>
+          {isPinned ? <Pin className="h-3.5 w-3.5 text-cyan-200" /> : <PinOff className="h-3.5 w-3.5" />}
+        </button>
+      </div>
+    );
+  };
 
   return (
     <AnimatePresence>
       {isOpen && (
         <motion.div
-          className="fixed inset-0 z-[70] bg-black/45 backdrop-blur-[3px]"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
+          className="fixed inset-0 z-[70] bg-black/45 p-3 backdrop-blur-[3px] sm:p-6"
+          initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
           onKeyDownCapture={handleDialogKeyDown}
-          onMouseDown={(event) => {
-            if (event.target === event.currentTarget) onClose();
-          }}
+          onMouseDown={(event) => { if (event.target === event.currentTarget) onClose(); }}
         >
           <motion.section
-            ref={modalRef}
-            role="dialog"
-            tabIndex={-1}
-            onKeyDown={handleDialogKeyDown}
-            onKeyUp={handleDialogKeyDown}
-            aria-modal="true"
-            aria-labelledby="quick-capture-title"
-            className="absolute left-1/2 top-1/2 flex max-h-[min(86vh,760px)] w-[min(94vw,820px)] -translate-x-1/2 -translate-y-1/2 flex-col overflow-hidden rounded-[22px] border border-cyan-200/20 bg-[#081020]/[.98] shadow-[0_28px_110px_rgba(0,0,0,.62)] backdrop-blur-2xl"
-            style={{ transform: `translate3d(calc(-50% + ${position.x}px), calc(-50% + ${position.y}px), 0)` }}
-            initial={{ opacity: 0, scale: 0.97, y: 12 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.97, y: 12 }}
+            role="dialog" tabIndex={-1} aria-modal="true" aria-labelledby="quick-capture-title"
+            className="absolute left-1/2 top-1/2 flex max-h-[min(90vh,800px)] w-[min(96vw,1120px)] -translate-x-1/2 -translate-y-1/2 overflow-hidden rounded-[22px] border border-cyan-200/20 bg-[#081020]/[.98] shadow-[0_28px_110px_rgba(0,0,0,.62)] backdrop-blur-2xl"
+            initial={{ opacity: 0, scale: 0.97, y: 12 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.97, y: 12 }}
             transition={{ duration: prefersReducedMotion ? 0 : 0.2, ease: [0.23, 1, 0.32, 1] }}
           >
-            <div
-              onPointerDown={handlePointerDown}
-              onPointerMove={handlePointerMove}
-              onPointerUp={stopDragging}
-              onPointerCancel={stopDragging}
-              className="flex touch-none select-none items-center justify-between border-b border-white/10 bg-white/[.025] px-5 py-3.5"
-            >
-              <div className="flex min-w-0 items-center gap-3">
-                <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-cyan-200/15 bg-cyan-300/10 text-cyan-200">
-                  <Sparkles className="h-4 w-4" />
-                </span>
-                <div className="min-w-0">
-                  <div className="flex items-center gap-2">
-                    <h2 id="quick-capture-title" className="truncate text-sm font-semibold text-white">Nova nota</h2>
-                    <span className="rounded-full border border-white/10 px-2 py-0.5 text-[9px] uppercase tracking-[.18em] text-white/35">Captura rápida</span>
+            <aside className={`${isSidebarOpen ? "w-[260px]" : "w-0"} hidden shrink-0 overflow-hidden border-r border-white/10 bg-[#07101e]/90 transition-[width] duration-200 sm:block`} aria-label="Navegação de notas">
+              <div className="flex h-full min-w-[260px] flex-col">
+                <div className="border-b border-white/10 px-4 py-4">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-sm font-semibold text-white">Notas</p>
+                      <p className="mt-0.5 text-[11px] text-white/35">{notes.length} {notes.length === 1 ? "nota" : "notas"}</p>
+                    </div>
+                    <button type="button" onClick={startNewNote} className="rounded-lg p-2 text-cyan-200/70 transition hover:bg-cyan-200/10 hover:text-cyan-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-300/70" aria-label="Nova nota"><Plus className="h-4 w-4" /></button>
                   </div>
-                  <p className="text-xs text-white/40">Escreva livremente. Organize quando estiver pronto.</p>
+                  <label className="relative mt-3 block"><Search className="pointer-events-none absolute left-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-white/30" /><input value={searchQuery} onChange={(event) => setSearchQuery(event.target.value)} placeholder="Buscar notas" className="w-full rounded-lg border border-white/10 bg-white/[.04] py-2 pl-8 pr-2 text-xs text-white outline-none placeholder:text-white/28 focus:border-cyan-200/35" /></label>
                 </div>
+                <div className="min-h-0 flex-1 overflow-y-auto px-2 py-3">
+                  {pinnedNotes.length > 0 ? <><p className="px-2 pb-1.5 text-[10px] font-semibold uppercase tracking-[.16em] text-white/30">Fixadas</p>{pinnedNotes.map(renderNoteRow)}</> : null}
+                  {recentNotes.length > 0 ? <><p className="px-2 pb-1.5 pt-4 text-[10px] font-semibold uppercase tracking-[.16em] text-white/30">Recentes</p>{recentNotes.map(renderNoteRow)}</> : <div className="flex flex-col items-center px-5 py-16 text-center"><FileText className="h-7 w-7 text-cyan-200/30" /><p className="mt-3 text-xs text-white/40">Nenhuma nota encontrada</p></div>}
+                </div>
+                <button type="button" onClick={startNewNote} className="m-3 inline-flex items-center justify-center gap-2 rounded-xl border border-cyan-200/20 bg-cyan-300/10 px-3 py-2.5 text-xs font-semibold text-cyan-100 transition hover:bg-cyan-300/15 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-300/70"><Plus className="h-3.5 w-3.5" />Nova nota</button>
               </div>
-              <div className="flex shrink-0 items-center gap-2">
-                <span className="hidden items-center gap-1.5 text-[10px] text-white/35 sm:flex">
-                  {saveState === "saved" ? <Check className="h-3.5 w-3.5 text-emerald-300" /> : null}
-                  {saveState === "ready" ? "Não salvo" : saveState === "saved" ? "Salvo" : "Rascunho"}
-                </span>
-                <GripVertical className="h-4 w-4 text-white/25" aria-hidden="true" />
-                <button type="button" onClick={onClose} className="rounded-lg p-2 text-white/40 transition-colors hover:bg-white/10 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-300/70" aria-label="Fechar captura rápida">
-                  <X className="h-4 w-4" />
-                </button>
-              </div>
-            </div>
+            </aside>
 
-            <div className="flex flex-wrap items-center gap-1 border-b border-white/10 bg-[#0b1628]/90 px-4 py-2.5">
-              {toolbarGroups.map((group, groupIndex) => (
-                <React.Fragment key={groupIndex}>
-                  {groupIndex > 0 ? <span className="mx-1 h-5 w-px bg-white/10" aria-hidden="true" /> : null}
-                  {group.map(({ label, icon: Icon, action }) => (
-                    <button key={action} type="button" onMouseDown={(event) => event.preventDefault()} onClick={() => runToolbarAction(action)} className="rounded-lg p-2 text-white/55 transition-[background,color,transform] duration-150 hover:bg-white/10 hover:text-cyan-100 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-300/70" aria-label={label} title={label}>
-                      <Icon className="h-4 w-4" />
-                    </button>
-                  ))}
-                </React.Fragment>
-              ))}
-            </div>
+            <div className="flex min-w-0 flex-1 flex-col">
+              <header className="flex items-center justify-between border-b border-white/10 bg-white/[.025] px-4 py-3 sm:px-5">
+                <div className="flex items-center gap-2">
+                  <button type="button" onClick={() => setIsSidebarOpen((open) => !open)} className="rounded-lg p-2 text-white/45 transition hover:bg-white/10 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-300/70" aria-label={isSidebarOpen ? "Ocultar lista de notas" : "Mostrar lista de notas"}><ChevronLeft className={`h-4 w-4 transition-transform ${isSidebarOpen ? "" : "rotate-180"}`} /></button>
+                  <span className="flex h-8 w-8 items-center justify-center rounded-lg border border-cyan-200/15 bg-cyan-300/10 text-cyan-200"><Sparkles className="h-4 w-4" /></span>
+                  <span className="text-[10px] font-semibold uppercase tracking-[.18em] text-white/35">{activeNoteId ? "Nota" : "Nova nota"}</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="hidden items-center gap-1.5 text-[10px] text-white/35 sm:flex">{saveState === "saved" ? <Check className="h-3.5 w-3.5 text-emerald-300" /> : null}{saveState === "ready" ? "Não salvo" : saveState === "saved" ? "Salvo" : "Rascunho"}</span>
+                  <button type="button" onClick={onClose} className="rounded-lg p-2 text-white/40 transition-colors hover:bg-white/10 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-300/70" aria-label="Fechar captura rápida"><X className="h-4 w-4" /></button>
+                </div>
+              </header>
 
-            <form className="flex min-h-0 flex-1 flex-col" onSubmit={(event) => { event.preventDefault(); void handleSave(); }}>
-              <div className="flex min-h-0 flex-1 flex-col px-6 pb-4 pt-5 sm:px-9 sm:pt-7">
-                <label htmlFor="quick-capture-title-input" className="sr-only">Título da nota</label>
-                <input
-                  ref={titleRef}
-                  id="quick-capture-title-input"
-                  value={title}
-                  onChange={(event) => { setTitle(event.target.value); setSaveState(event.target.value.trim() ? "ready" : content.trim() ? "ready" : "idle"); }}
-                  placeholder="Título da nota"
-                  className="mb-3 w-full border-0 bg-transparent text-2xl font-semibold tracking-[-.03em] text-white outline-none placeholder:text-white/25 sm:text-3xl"
-                />
-                <label htmlFor="quick-capture-content" className="sr-only">Conteúdo da nota</label>
-                <div className="relative min-h-0 flex-1">
-                  <textarea
-                    ref={editorRef}
-                    id="quick-capture-content"
-                    value={content}
-                    onChange={handleEditorChange}
-                    onKeyDown={handleEditorKeyDown}
-                    placeholder="Comece a escrever… Use / para inserir um bloco, ou os atalhos da barra acima."
-                    className="h-full min-h-[300px] w-full resize-none border-0 bg-transparent text-[15px] leading-7 text-white/80 outline-none placeholder:text-white/25 sm:min-h-[360px]"
-                    spellCheck
-                  />
-                  <AnimatePresence>
-                    {showSlashMenu && filteredSlashOptions.length > 0 ? (
-                      <motion.div initial={{ opacity: 0, y: 5 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 5 }} className="absolute bottom-4 left-0 z-10 w-[min(92vw,290px)] overflow-hidden rounded-xl border border-white/10 bg-[#111d31] p-1.5 shadow-2xl">
-                        <p className="px-2.5 pb-1.5 pt-1 text-[10px] font-semibold uppercase tracking-[.16em] text-white/35">Blocos</p>
-                        {filteredSlashOptions.map((item) => (
-                          <button key={item.label} type="button" onMouseDown={(event) => event.preventDefault()} onClick={() => insertSlashOption(item.prefix)} className="flex w-full items-center justify-between rounded-lg px-2.5 py-2 text-left transition-colors hover:bg-white/10 focus-visible:bg-white/10 focus-visible:outline-none">
-                            <span className="text-sm text-white/80">{item.label}</span>
-                            <span className="text-[11px] text-white/35">{item.description}</span>
-                          </button>
-                        ))}
-                      </motion.div>
-                    ) : null}
-                  </AnimatePresence>
-                </div>
+              <div className="flex flex-wrap items-center gap-1 border-b border-white/10 bg-[#0b1628]/90 px-3 py-2.5 sm:px-4">
+                {toolbarGroups.map((group, groupIndex) => <React.Fragment key={groupIndex}>{groupIndex > 0 ? <span className="mx-1 h-5 w-px bg-white/10" aria-hidden="true" /> : null}{group.map(({ label, icon: Icon, action }) => <button key={action} type="button" onMouseDown={(event) => event.preventDefault()} onClick={() => runToolbarAction(action)} className="rounded-lg p-2 text-white/55 transition-[background,color,transform] duration-150 hover:bg-white/10 hover:text-cyan-100 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-300/70" aria-label={label} title={label}><Icon className="h-4 w-4" /></button>)}</React.Fragment>)}
+                <button type="submit" form="quick-capture-form" disabled={isSaving || (!title.trim() && !content.trim())} className="ml-auto inline-flex items-center gap-1.5 rounded-lg bg-cyan-300 px-3 py-2 text-xs font-semibold text-[#06101c] transition hover:bg-cyan-200 active:scale-[.98] disabled:cursor-not-allowed disabled:opacity-40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-100/80"><Save className="h-3.5 w-3.5" />{isSaving ? "Salvando…" : saveState === "saved" ? "Salvo" : "Salvar"}</button>
               </div>
-              <div className="flex flex-wrap items-center justify-between gap-3 border-t border-white/10 bg-white/[.02] px-5 py-3.5 sm:px-7">
-                <div className="flex items-center gap-3 text-[11px] text-white/35">
-                  <span>Markdown e blocos rápidos</span>
-                  <span className="hidden text-white/20 sm:inline">•</span>
-                  <span className="hidden sm:inline">Ctrl/Cmd + Enter salva</span>
+
+              <form id="quick-capture-form" className="flex min-h-0 flex-1 flex-col" onSubmit={(event) => { event.preventDefault(); void handleSave(); }}>
+                <div className="flex min-h-0 flex-1 flex-col px-5 pb-5 pt-5 sm:px-9 sm:pt-7">
+                  <label htmlFor="quick-capture-title-input" className="sr-only">Título da nota</label>
+                  <input ref={titleRef} id="quick-capture-title-input" value={title} onChange={(event) => { setTitle(event.target.value); setSaveState(event.target.value.trim() || content.trim() ? "ready" : "idle"); }} placeholder="Título da nota" className="mb-3 w-full border-0 bg-transparent text-2xl font-semibold tracking-[-.03em] text-white outline-none placeholder:text-white/25 sm:text-3xl" />
+                  <label htmlFor="quick-capture-content" className="sr-only">Conteúdo da nota</label>
+                  <div className="relative min-h-0 flex-1">
+                    <MarkdownEditable ref={editorRef} id="quick-capture-content" value={content} onChange={(next) => { setContent(next); setSaveState(next.trim() || title.trim() ? "ready" : "idle"); setShowSlashMenu(false); }} onKeyDown={handleEditorKeyDown} ariaLabel="Conteúdo da nota" placeholder="Comece a escrever…" className="h-full" />
+                    <AnimatePresence>{showSlashMenu && filteredSlashOptions.length > 0 ? <motion.div initial={{ opacity: 0, y: 5 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 5 }} className="absolute bottom-4 left-0 z-10 w-[min(92vw,290px)] overflow-hidden rounded-xl border border-white/10 bg-[#111d31] p-1.5 shadow-2xl"><p className="px-2.5 pb-1.5 pt-1 text-[10px] font-semibold uppercase tracking-[.16em] text-white/35">Blocos</p>{filteredSlashOptions.map((item) => <button key={item.label} type="button" onMouseDown={(event) => event.preventDefault()} onClick={() => insertSlashOption(item.prefix)} className="flex w-full items-center justify-between rounded-lg px-2.5 py-2 text-left transition-colors hover:bg-white/10 focus-visible:bg-white/10 focus-visible:outline-none"><span className="text-sm text-white/80">{item.label}</span><span className="text-[11px] text-white/35">{item.description}</span></button>)}</motion.div> : null}</AnimatePresence>
+                  </div>
                 </div>
-                <button type="submit" disabled={isSaving || (!title.trim() && !content.trim())} className="inline-flex items-center gap-2 rounded-xl bg-cyan-300 px-4 py-2.5 text-sm font-semibold text-[#06101c] transition-[background,transform,box-shadow] duration-150 hover:bg-cyan-200 hover:shadow-[0_8px_28px_rgba(103,232,249,.18)] active:scale-[.98] disabled:cursor-not-allowed disabled:opacity-40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-100/80">
-                  <Save className="h-4 w-4" />
-                  {isSaving ? "Salvando…" : saveState === "saved" ? "Salvo" : "Salvar nota"}
-                </button>
-              </div>
-            </form>
+              </form>
+            </div>
           </motion.section>
         </motion.div>
       )}

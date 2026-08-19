@@ -45,7 +45,7 @@ function MainApp() {
     updatePomodoroSettings,
     addProject,
   } = useBlindadosData();
-  const { addNote } = useVisoesData();
+  const { data: visoesData, addNote, updateNote, pinnedNoteIds, toggleNotePinned } = useVisoesData();
 
   const [isQuickCaptureOpen, setIsQuickCaptureOpen] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
@@ -355,6 +355,10 @@ function MainApp() {
           isOpen={isQuickCaptureOpen}
           onClose={() => setIsQuickCaptureOpen(false)}
           onSave={handleQuickCaptureSave}
+          notes={visoesData.notes}
+          pinnedNoteIds={pinnedNoteIds}
+          onToggleNotePinned={toggleNotePinned}
+          onUpdateNote={updateNote}
         />
 
         <ProfileSettingsModal
