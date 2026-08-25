@@ -2,6 +2,14 @@
 
 This is a Next.js 15 web application with a Supabase backend, designed to be a Portuguese language application. It includes robust authentication features and focuses on productivity tools like a Pomodoro timer and a Kanban board. The project aims to provide a comprehensive, integrated environment for personal and team productivity, with features such as detailed session tracking, task management, team collaboration, and goal setting.
 
+## Replit Setup
+
+- Development workflow: `npm run dev -- -p 5000 -H 0.0.0.0`
+- Production build: `npm run build`
+- Tests: `npm test`
+- Required Replit Secrets: `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, and `SUPABASE_SERVICE_ROLE_KEY`
+- The Supabase service role key is used only by server-side API routes and must never be exposed to the browser.
+
 # User Preferences
 
 I prefer detailed explanations. I want iterative development. Ask before making major changes. Do not make changes to the folder `visual-edits/`.

@@ -1,0 +1,1 @@
+- [Instalação no Replit](replit-package-install.md) — dependências importadas podem exigir Node 22 e `npm install --legacy-peer-deps` por bloqueios do firewall e conflito de peers.
