@@ -1,1 +1,2 @@
 - [Instalação no Replit](replit-package-install.md) — dependências importadas podem exigir Node 22 e `npm install --legacy-peer-deps` por bloqueios do firewall e conflito de peers.
+- [Netlify e variáveis públicas](netlify-public-env-scan.md) — o scanner pode bloquear valores `NEXT_PUBLIC_*` intencionalmente expostos no bundle Next.js.
