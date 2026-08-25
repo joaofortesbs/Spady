@@ -1,0 +1,97 @@
+The Netlify deploy errored, with the following guidance provided:
+
+The build is failing due to Netlify's secrets scanning detecting the value of the `NEXT_PUBLIC_SUPABASE_URL` environment variable in the build output (see [lines 264–266](#L264-L266)).
+
+The root cause is that `NEXT_PUBLIC_*` variables in Next.js are **inlined into the client-side bundle at build time**, which means their values appear in plain text in the compiled output. Netlify's secrets scanner flags this as a potential secret exposure.
+
+**Solution**
+
+Since `NEXT_PUBLIC_SUPABASE_URL` is intentionally a public-facing value (it's a Supabase project URL meant to be exposed to the browser), you can tell Netlify's secrets scanner to ignore this key. Add the following environment variable to your Netlify site settings or `netlify.toml`:
+
+```toml
+[build.environment]
+  SECRETS_SCAN_OMIT_KEYS = "NEXT_PUBLIC_SUPABASE_URL"
+```
+
+If you also want to omit multiple keys, separate them with commas:
+
+```toml
+[build.environment]
+  SECRETS_SCAN_OMIT_KEYS = "NEXT_PUBLIC_SUPABASE_URL,NEXT_PUBLIC_SUPABASE_ANON_KEY"
+```
+
+Alternatively, you can configure this via the Netlify UI under **Site configuration → Environment variables**, or disable secrets scanning entirely with `SECRETS_SCAN_ENABLED = "false"` (not recommended unless necessary).
+
+For more details, refer to the [Netlify secrets scanning documentation](https://ntl.fyi/configure-secrets-scanning).
+
+The relevant error logs are:
+
+Line 0: build-image version: 969defd95f3977f8de9cb1f48802a7e6f3d8c0b3 (noble-new-builds)
+Line 1: buildbot version: 48146f152f089bcec17ca7abe6d27be778fbaed1
+Line 2: Fetching cached dependencies
+Line 3: Failed to fetch cache, continuing with build
+Line 4: Starting to prepare the repo for build
+Line 5: No cached dependencies found. Cloning fresh repo
+Line 6: git clone --filter=blob:none https://github.com/joaofortesbs/Spady
+Line 7: Preparing Git Reference refs/heads/main
+Line 8: Installing dependencies
+Line 9: mise ~/.config/mise/config.toml tools: python@3.14.3
+Line 10: mise ~/.config/mise/config.toml tools: ruby@3.4.8
+Line 11: mise ~/.config/mise/config.toml tools: go@1.26.2
+Line 12: Downloading and installing node v24.19.0...
+Line 13: Downloading https://nodejs.org/dist/v24.19.0/node-v24.19.0-linux-x64.tar.xz...
+Line 246: Next.js cache saved
+Line 247: ​
+Line 248: Functions bundling                                            
+Line 249: ────────────────────────────────────────────────────────────────
+Line 250: ​
+Line 251: Packaging Functions from .netlify/functions-internal directory:
+Line 252:  - ___netlify-server-handler/___netlify-server-handler.mjs
+Line 253: ​
+Line 254: ​
+Line 255: (Functions bundling completed in 1.6s)
+Line 256: Failed during stage 'building site': Build script returned non-zero exit code: 2
+Line 257: ​
+Line 258: Scanning for secrets in code and build output.                
+Line 259: ────────────────────────────────────────────────────────────────
+Line 260: ​
+Line 261: ​
+Line 262: ❯ Scanning complete. 4591 file(s) scanned. Secrets scanning found 2 instance(s) of secrets in build output or repo code
+Line 263: ​
+Line 264: Secret env var "NEXT_PUBLIC_SUPABASE_URL"'s value detected:
+Line 265:   found value at line 24046 in .netlify/.next/cache/webpack/client-production/0.pack
+Line 266:   found value at line 251641 in .netlify/.next/cache/webpack/client-production/0.pack
+Line 684: ​
+Line 685: To prevent exposing secrets, the build will fail until these secret values are not found in build output or repo files.
+Line 686: ​
+Line 687: If these are expected, use SECRETS_SCAN_OMIT_PATHS, SECRETS_SCAN_OMIT_KEYS, or SECRETS_SCAN_ENABLED to prevent detecting.[
+Line 688: ​
+Line 689: For more information on secrets scanning, see the Netlify Docs: https://ntl.fyi/configure-secrets-scanning
+Line 690: ​
+Line 691: Secrets scanning detected secrets in files during build.      
+Line 692: ────────────────────────────────────────────────────────────────
+Line 693: ​
+Line 694:   Error message
+Line 695:   Secrets scanning found secrets in build.
+Line 696: ​
+Line 697:   Resolved config
+Line 698:   build:
+Line 699:     command: bun run build
+Line 700:     commandOrigin: ui
+Line 701:     environment:
+Line 702:       - NEXT_PUBLIC_SUPABASE_ANON_KEY
+Line 703:       - NEXT_PUBLIC_SUPABASE_URL
+Line 704:       - SESSION_SECRET
+Line 726:       query:
+Line 727:         q: :quality
+Line 728:         url: :url
+Line 729:         w: :width
+Line 730:       status: 200
+Line 731:       to: /.netlify/images?url=:url&w=:width&q=:quality
+Line 732:     - from: /_next/image
+Line 733:       status: 200
+Line 734:       to: /.netlify/images
+Line 735:   redirectsOrigin: inline
+Line 736: Build failed due to a user error: Build script returned non-zero exit code: 2
+Line 737: Failing build: Failed to build site
+Line 738: Finished processing build request in 1m12.348s
