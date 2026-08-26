@@ -1,3 +1,4 @@
 - [Instalação no Replit](replit-package-install.md) — o publish usa resolução estrita; alinhe peers diretos após upgrades de segurança em vez de depender de `legacy-peer-deps`.
 - [Netlify e variáveis públicas](netlify-public-env-scan.md) — o scanner pode bloquear valores `NEXT_PUBLIC_*` intencionalmente expostos no bundle Next.js.
 - [Lockfiles alternativos no publish](publish-stale-lockfiles.md) — o scanner pode bloquear vulnerabilidades de lockfiles antigos, mesmo quando o npm usa um lockfile seguro.
+- [Compilador de produção no Replit](replit-next-build-compiler.md) — use Turbopack neste app; o webpack falhou intermitentemente no hash WASM durante builds limpos do publish.

@@ -4,7 +4,7 @@
     "private": true,
     "scripts": {
         "dev": "next dev --turbopack",
-        "build": "NODE_ENV=production next build && mkdir -p dist/public && cp -R public/. dist/public/ && cp scripts/start-server.cjs dist/index.js",
+        "build": "rm -rf .next && NODE_ENV=production next build --turbopack && mkdir -p dist/public && cp -R public/. dist/public/ && cp scripts/start-server.cjs dist/index.js",
         "start": "next start",
         "lint": "next lint",
         "test": "vitest run"
