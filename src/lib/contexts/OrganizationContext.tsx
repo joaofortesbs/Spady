@@ -5,6 +5,21 @@ import { Organization, CreateOrganizationData } from '@/lib/types/organization';
 import { createClient } from '@/lib/supabase/client';
 import { useAuth } from '@/lib/contexts/AuthContext';
 
+interface OrganizationMembershipRow {
+  organization_id: string;
+}
+
+interface OrganizationRow {
+  id: string;
+  name: string;
+  slug: string;
+  business_model: string | null;
+  is_private: boolean | null;
+  owner_id: string;
+  created_at: string;
+  updated_at: string;
+}
+
 interface OrganizationContextType {
   organizations: Organization[];
   selectedOrganization: Organization | null;
@@ -44,7 +59,9 @@ export function OrganizationProvider({ children }: { children: ReactNode }) {
         return;
       }
 
-      const orgIds = membershipData.map(m => m.organization_id);
+      const orgIds = membershipData.map(
+        (membership: OrganizationMembershipRow) => membership.organization_id,
+      );
       
       const { data: orgsData } = await supabase
         .from('organizations')
@@ -52,15 +69,15 @@ export function OrganizationProvider({ children }: { children: ReactNode }) {
         .in('id', orgIds)
         .order('created_at', { ascending: false });
 
-      const orgs: Organization[] = (orgsData || []).map(o => ({
-        id: o.id,
-        name: o.name,
-        slug: o.slug,
-        businessModel: o.business_model,
-        isPrivate: o.is_private,
-        ownerId: o.owner_id,
-        createdAt: o.created_at,
-        updatedAt: o.updated_at,
+      const orgs: Organization[] = (orgsData || []).map((organization: OrganizationRow) => ({
+        id: organization.id,
+        name: organization.name,
+        slug: organization.slug,
+        businessModel: organization.business_model ?? '',
+        isPrivate: organization.is_private ?? false,
+        ownerId: organization.owner_id,
+        createdAt: organization.created_at,
+        updatedAt: organization.updated_at,
       }));
 
       setOrganizations(orgs);

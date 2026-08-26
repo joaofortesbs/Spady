@@ -1,0 +1,3 @@
+{
+  "/api/pomodoro/add-session/route": "app/api/pomodoro/add-session/route.js"
+}

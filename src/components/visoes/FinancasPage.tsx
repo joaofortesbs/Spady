@@ -4,7 +4,7 @@ import { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Plus, X, Calendar, ChevronLeft, ChevronRight, MoreVertical, Check, Pencil, Trash2, DollarSign, Copy } from 'lucide-react';
 import { BankAccount, Transaction, FinancePeriod, EXPENSE_CATEGORIES, INCOME_CATEGORIES, PaymentMethod, TransactionType } from '@/lib/types/visoes';
-import { format, startOfMonth, endOfMonth, eachMonthOfInterval, startOfYear, endOfYear, addMonths, subMonths, isWithinInterval, parseISO } from 'date-fns';
+import { format, startOfMonth, endOfMonth, eachMonthOfInterval, startOfYear, endOfYear, addMonths, subMonths, subDays, isWithinInterval, parseISO } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from 'recharts';
 
@@ -53,7 +53,7 @@ export function FinancasPage({
   const [showAddAccountModal, setShowAddAccountModal] = useState(false);
   const [showAddTransactionModal, setShowAddTransactionModal] = useState<TransactionType | null>(null);
   const [showDatePicker, setShowDatePicker] = useState(false);
-  const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
+  const [selectedYear, setSelectedYear] = useState(() => new Date().getFullYear());
   const [menuOpenFor, setMenuOpenFor] = useState<string | null>(null);
 
   const periodStart = parseISO(financePeriod.startDate);
@@ -224,7 +224,13 @@ export function FinancasPage({
               </div>
 
               <div className="h-[200px]">
-                <ResponsiveContainer width="100%" height="100%">
+                <ResponsiveContainer
+                  width="100%"
+                  height="100%"
+                  minWidth={0}
+                  minHeight={1}
+                  initialDimension={{ width: 1, height: 1 }}
+                >
                   <BarChart data={chartData}>
                     <CartesianGrid strokeDasharray="3 3" stroke="#ffffff10" vertical={false} />
                     <XAxis dataKey="name" stroke="#ffffff40" fontSize={11} tickLine={false} axisLine={false} />
@@ -804,7 +810,7 @@ function AddTransactionModal({
   const [title, setTitle] = useState('');
   const [category, setCategory] = useState('');
   const [amount, setAmount] = useState('');
-  const [date, setDate] = useState(format(new Date(), 'yyyy-MM-dd'));
+  const [date, setDate] = useState(() => format(new Date(), 'yyyy-MM-dd'));
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>('pix');
   const [notes, setNotes] = useState('');
   const [status, setStatus] = useState<'pending' | 'confirmed'>('pending');
@@ -982,16 +988,17 @@ function DatePickerModal({
   onSelect: (period: FinancePeriod) => void;
   onClose: () => void;
 }) {
-  const [viewDate, setViewDate] = useState(new Date());
+  const [today] = useState(() => new Date());
+  const [viewDate, setViewDate] = useState(() => new Date(today.getTime()));
   const [startDate, setStartDate] = useState<Date | null>(parseISO(currentPeriod.startDate));
   const [endDate, setEndDate] = useState<Date | null>(parseISO(currentPeriod.endDate));
 
   const quickSelections = [
-    { label: 'Este ano', period: { start: startOfYear(new Date()), end: endOfYear(new Date()) } },
-    { label: 'Este mês', period: { start: startOfMonth(new Date()), end: endOfMonth(new Date()) } },
-    { label: 'Últimos 60 dias', period: { start: subMonths(new Date(), 2), end: new Date() } },
-    { label: 'Últimos 30 dias', period: { start: subMonths(new Date(), 1), end: new Date() } },
-    { label: 'Últimos 7 dias', period: { start: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000), end: new Date() } },
+    { label: 'Este ano', period: { start: startOfYear(today), end: endOfYear(today) } },
+    { label: 'Este mês', period: { start: startOfMonth(today), end: endOfMonth(today) } },
+    { label: 'Últimos 60 dias', period: { start: subMonths(today, 2), end: today } },
+    { label: 'Últimos 30 dias', period: { start: subMonths(today, 1), end: today } },
+    { label: 'Últimos 7 dias', period: { start: subDays(today, 7), end: today } },
   ];
 
   const handleApply = () => {

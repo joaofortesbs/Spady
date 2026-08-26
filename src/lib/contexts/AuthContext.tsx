@@ -1,7 +1,7 @@
 "use client";
 
 import { createContext, useContext, useEffect, useState, ReactNode, useRef, useCallback } from 'react';
-import { User, Session, AuthChangeEvent } from '@supabase/supabase-js';
+import type { User, Session, AuthChangeEvent } from '@supabase/supabase-js';
 import { createClient } from '@/lib/supabase/client';
 import { safeStorage } from '@/lib/utils/safeStorage';
 import { STORAGE_KEYS, AUTH_CACHE_EXPIRY, OLD_CACHE_KEYS } from '@/lib/utils/storage.constants';
@@ -130,8 +130,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, [supabase]);
 
   useEffect(() => {
-    setIsMounted(true);
     cleanupOldCaches();
+    let isActive = true;
+    queueMicrotask(() => {
+      if (isActive) {
+        setIsMounted(true);
+      }
+    });
+
+    return () => {
+      isActive = false;
+    };
   }, [cleanupOldCaches]);
 
   useEffect(() => {
@@ -140,9 +149,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     const cached = getCachedAuth();
     if (cached?.user && cached?.session) {
-      setUser(cached.user);
-      setSession(cached.session);
-      setIsLoading(false);
+      queueMicrotask(() => {
+        setUser(cached.user);
+        setSession(cached.session);
+        setIsLoading(false);
+      });
       
       supabase.auth.getSession().then(({ data }: { data: { session: Session | null } }) => {
         const freshSession = data.session;

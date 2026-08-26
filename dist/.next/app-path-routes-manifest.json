@@ -1,0 +1,16 @@
+{
+  "/_not-found/page": "/_not-found",
+  "/api/health/route": "/api/health",
+  "/api/kanban/add-card/route": "/api/kanban/add-card",
+  "/api/kanban/delete-card/route": "/api/kanban/delete-card",
+  "/api/kanban/move-card/route": "/api/kanban/move-card",
+  "/api/kanban/projects/route": "/api/kanban/projects",
+  "/api/kanban/reorder-cards/route": "/api/kanban/reorder-cards",
+  "/api/kanban/update-card/route": "/api/kanban/update-card",
+  "/api/pomodoro/add-session/route": "/api/pomodoro/add-session",
+  "/api/pomodoro/get-settings/route": "/api/pomodoro/get-settings",
+  "/api/pomodoro/update-settings/route": "/api/pomodoro/update-settings",
+  "/favicon.ico/route": "/favicon.ico",
+  "/page": "/",
+  "/reset-password/page": "/reset-password"
+}

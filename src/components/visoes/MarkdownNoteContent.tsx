@@ -191,6 +191,8 @@ export interface MarkdownNoteContentProps {
   onToggleChecklist?: (blockIndex: number, itemIndex: number, checked: boolean) => void;
 }
 
+const HEADING_TAGS = ["h1", "h2", "h3", "h4", "h5", "h6"] as const;
+
 export function MarkdownNoteContent({ content, className = "", onToggleChecklist }: MarkdownNoteContentProps) {
   const blocks = parseMarkdownBlocks(content);
 
@@ -201,7 +203,7 @@ export function MarkdownNoteContent({ content, className = "", onToggleChecklist
       {blocks.map((block, blockIndex) => {
         const render = (value: string, key: string) => renderInline(value, key);
         if (block.type === "heading") {
-          const Tag = `h${Math.min(block.level, 6)}` as keyof JSX.IntrinsicElements;
+          const Tag = HEADING_TAGS[Math.min(Math.max(block.level, 1), 6) - 1];
           const styles = ["", "text-2xl", "text-xl", "text-lg", "text-base", "text-sm", "text-sm"][block.level];
           return <Tag key={blockIndex} className={`${styles} font-semibold tracking-[-.02em] text-white`}>{render(block.content, `heading-${blockIndex}`)}</Tag>;
         }
@@ -211,6 +213,7 @@ export function MarkdownNoteContent({ content, className = "", onToggleChecklist
         if (block.type === "quote") return <blockquote key={blockIndex} className="border-l-2 border-cyan-300/60 pl-4 italic text-white/60">{render(block.content, `quote-${blockIndex}`)}</blockquote>;
         if (block.type === "divider") return <hr key={blockIndex} className="border-white/10" />;
         if (block.type === "code") return <pre key={blockIndex} className="overflow-x-auto rounded-xl border border-white/10 bg-black/25 p-4 font-mono text-xs leading-6 text-cyan-100"><code>{block.content}</code></pre>;
+        if (block.type === "image") return <img key={blockIndex} src={block.src} alt={block.alt} style={{ width: `${block.width}%` }} />;
         return <ul key={blockIndex} className="space-y-2">{block.items.map((item, itemIndex) => <li key={itemIndex} className="flex items-start gap-3"><input type="checkbox" checked={item.checked} aria-label={`Marcar item ${itemIndex + 1}`} onChange={(event) => onToggleChecklist?.(blockIndex, itemIndex, event.target.checked)} className="mt-1.5 h-4 w-4 accent-cyan-300" /><span className={item.checked ? "text-white/40 line-through" : "text-white/80"}>{render(item.content, `check-${blockIndex}-${itemIndex}`)}</span></li>)}</ul>;
       })}
     </div>

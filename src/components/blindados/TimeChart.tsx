@@ -17,12 +17,109 @@ interface TimeChartProps {
   liveSession?: LiveSession | null;
 }
 
+interface EffectiveLiveSession {
+  categoryId: string;
+  elapsedMinutes: number;
+  elapsedSeconds: number;
+  isRunning: boolean;
+  isPaused: boolean;
+}
+
+interface ChartTooltipProps {
+  active?: boolean;
+  payload?: Array<{ name: string; value: number; color: string }>;
+  label?: string;
+  categories: PomodoroCategory[];
+  effectiveLiveSession: EffectiveLiveSession | null;
+}
+
+function CustomTooltip({
+  active,
+  payload,
+  label,
+  categories,
+  effectiveLiveSession,
+}: ChartTooltipProps) {
+  if (!active || !payload) return null;
+
+  return (
+    <div className="bg-[#0a0f1f] border border-[#00f6ff]/20 rounded-xl p-3 shadow-xl">
+      <p className="text-white/60 text-xs mb-2">{label}</p>
+      {payload.map((entry, index) => {
+        const category = categories.find(c => c.id === entry.name);
+        const isLive = effectiveLiveSession?.categoryId === entry.name && effectiveLiveSession?.isRunning;
+        const isPaused = effectiveLiveSession?.categoryId === entry.name && effectiveLiveSession?.isPaused;
+        const minutes = Math.floor(entry.value);
+        const seconds = Math.round((entry.value - minutes) * 60);
+        return (
+          <div key={index} className="flex items-center gap-2 text-sm">
+            <div
+              className={`w-2 h-2 rounded-full ${isLive ? 'animate-pulse' : ''}`}
+              style={{ backgroundColor: category?.color || entry.color }}
+            />
+            <span className="text-white">
+              {category?.name}: {minutes}m {seconds}s
+              {isLive && <span className="text-[#00f6ff] ml-1 text-xs">(ao vivo)</span>}
+              {isPaused && <span className="text-amber-400 ml-1 text-xs">(pausado)</span>}
+            </span>
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
+interface CustomLegendProps {
+  categories: PomodoroCategory[];
+  hiddenCategories: Set<string>;
+  effectiveLiveSession: EffectiveLiveSession | null;
+  onToggleCategory: (categoryId: string) => void;
+}
+
+function CustomLegend({
+  categories,
+  hiddenCategories,
+  effectiveLiveSession,
+  onToggleCategory,
+}: CustomLegendProps) {
+  return (
+    <div className="flex items-center gap-3 flex-wrap">
+      {categories.map((cat) => {
+        const isHidden = hiddenCategories.has(cat.id);
+        const isLive = effectiveLiveSession?.categoryId === cat.id && effectiveLiveSession?.isRunning;
+        const isPaused = effectiveLiveSession?.categoryId === cat.id && effectiveLiveSession?.isPaused;
+
+        return (
+          <button
+            key={cat.id}
+            onClick={() => onToggleCategory(cat.id)}
+            className={`flex items-center gap-2 px-2 py-1 rounded-lg transition-all ${
+              isHidden ? 'opacity-30 hover:opacity-50' : 'opacity-100'
+            }`}
+          >
+            <div
+              className={`w-3 h-3 rounded-full transition-all ${isLive ? 'animate-pulse ring-2 ring-offset-1 ring-offset-[#0a0f1f]' : ''}`}
+              style={{
+                backgroundColor: cat.color,
+                ...(isLive && { boxShadow: `0 0 0 2px ${cat.color}` }),
+              }}
+            />
+            <span className={`text-xs text-white ${isHidden ? 'line-through' : ''}`}>{cat.name}</span>
+            {isLive && <Zap className="w-3 h-3 text-[#00f6ff] animate-pulse" />}
+            {isPaused && <Pause className="w-3 h-3 text-amber-400" />}
+          </button>
+        );
+      })}
+    </div>
+  );
+}
+
 export function TimeChart({ sessions, categories, liveSession: propLiveSession }: TimeChartProps) {
   const [chartType, setChartType] = useState<ChartViewType>('bar');
   const [period, setPeriod] = useState<ChartPeriod>('daily');
   const [hiddenCategories, setHiddenCategories] = useState<Set<string>>(new Set());
   const [isAnimationEnabled, setIsAnimationEnabled] = useState(true);
-  const previousChartTypeRef = useRef<ChartViewType>(chartType);
+  const hasMountedRef = useRef(false);
   const [syncedSession, setSyncedSession] = useState<LiveSessionEvent | null>(null);
   const [forceUpdate, setForceUpdate] = useState(0);
   const updateIntervalRef = useRef<NodeJS.Timeout | null>(null);
@@ -84,22 +181,13 @@ export function TimeChart({ sessions, categories, liveSession: propLiveSession }
     : 0;
 
   useEffect(() => {
-    if (previousChartTypeRef.current !== chartType) {
-      setIsAnimationEnabled(true);
-      previousChartTypeRef.current = chartType;
-      const timeout = setTimeout(() => {
-        setIsAnimationEnabled(false);
-      }, 1000);
-      return () => clearTimeout(timeout);
-    }
-  }, [chartType]);
-
-  useEffect(() => {
+    const animationDuration = hasMountedRef.current ? 1000 : 1500;
+    hasMountedRef.current = true;
     const timeout = setTimeout(() => {
       setIsAnimationEnabled(false);
-    }, 1500);
+    }, animationDuration);
     return () => clearTimeout(timeout);
-  }, []);
+  }, [chartType]);
 
   const chartData = useMemo(() => {
     const now = new Date();
@@ -195,36 +283,6 @@ export function TimeChart({ sessions, categories, liveSession: propLiveSession }
     [categories, hiddenCategories]
   );
 
-  const CustomTooltip = ({ active, payload, label }: { active?: boolean; payload?: Array<{ name: string; value: number; color: string }>; label?: string }) => {
-    if (!active || !payload) return null;
-
-    return (
-      <div className="bg-[#0a0f1f] border border-[#00f6ff]/20 rounded-xl p-3 shadow-xl">
-        <p className="text-white/60 text-xs mb-2">{label}</p>
-        {payload.map((entry, index) => {
-          const category = categories.find(c => c.id === entry.name);
-          const isLive = effectiveLiveSession?.categoryId === entry.name && effectiveLiveSession?.isRunning;
-          const isPaused = effectiveLiveSession?.categoryId === entry.name && effectiveLiveSession?.isPaused;
-          const minutes = Math.floor(entry.value);
-          const seconds = Math.round((entry.value - minutes) * 60);
-          return (
-            <div key={index} className="flex items-center gap-2 text-sm">
-              <div 
-                className={`w-2 h-2 rounded-full ${isLive ? 'animate-pulse' : ''}`}
-                style={{ backgroundColor: category?.color || entry.color }}
-              />
-              <span className="text-white">
-                {category?.name}: {minutes}m {seconds}s
-                {isLive && <span className="text-[#00f6ff] ml-1 text-xs">(ao vivo)</span>}
-                {isPaused && <span className="text-amber-400 ml-1 text-xs">(pausado)</span>}
-              </span>
-            </div>
-          );
-        })}
-      </div>
-    );
-  };
-
   const totalTodayMinutes = useMemo(() => {
     const today = format(new Date(), 'yyyy-MM-dd');
     let total = sessions
@@ -312,41 +370,6 @@ export function TimeChart({ sessions, categories, liveSession: propLiveSession }
     return `${mins}m ${secs}s`;
   };
 
-  const CustomLegend = () => (
-    <div className="flex items-center gap-3 flex-wrap">
-      {categories.map((cat) => {
-        const isHidden = hiddenCategories.has(cat.id);
-        const isLive = effectiveLiveSession?.categoryId === cat.id && effectiveLiveSession?.isRunning;
-        const isPaused = effectiveLiveSession?.categoryId === cat.id && effectiveLiveSession?.isPaused;
-        
-        return (
-          <button
-            key={cat.id}
-            onClick={() => toggleCategory(cat.id)}
-            className={`flex items-center gap-2 px-2 py-1 rounded-lg transition-all ${
-              isHidden ? 'opacity-30 hover:opacity-50' : 'opacity-100'
-            }`}
-          >
-            <div 
-              className={`w-3 h-3 rounded-full transition-all ${isLive ? 'animate-pulse ring-2 ring-offset-1 ring-offset-[#0a0f1f]' : ''}`}
-              style={{ 
-                backgroundColor: cat.color,
-                ...(isLive && { boxShadow: `0 0 0 2px ${cat.color}` }),
-              }}
-            />
-            <span className={`text-xs text-white ${isHidden ? 'line-through' : ''}`}>{cat.name}</span>
-            {isLive && (
-              <Zap className="w-3 h-3 text-[#00f6ff] animate-pulse" />
-            )}
-            {isPaused && (
-              <Pause className="w-3 h-3 text-amber-400" />
-            )}
-          </button>
-        );
-      })}
-    </div>
-  );
-
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -363,7 +386,12 @@ export function TimeChart({ sessions, categories, liveSession: propLiveSession }
 
         <div className="relative z-10 h-full flex flex-col">
           <div className="flex items-center justify-between mb-4">
-            <CustomLegend />
+            <CustomLegend
+              categories={categories}
+              hiddenCategories={hiddenCategories}
+              effectiveLiveSession={effectiveLiveSession}
+              onToggleCategory={toggleCategory}
+            />
 
             <div className="flex items-center gap-3">
               {effectiveLiveSession && (
@@ -395,7 +423,12 @@ export function TimeChart({ sessions, categories, liveSession: propLiveSession }
                 <motion.button
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
-                  onClick={() => setChartType('bar')}
+                  onClick={() => {
+                    if (chartType !== 'bar') {
+                      setIsAnimationEnabled(true);
+                      setChartType('bar');
+                    }
+                  }}
                   className={`p-2 rounded-lg transition-colors ${
                     chartType === 'bar' ? 'bg-[#00f6ff]/20 text-[#00f6ff]' : 'bg-white/5 text-white/40'
                   }`}
@@ -405,7 +438,12 @@ export function TimeChart({ sessions, categories, liveSession: propLiveSession }
                 <motion.button
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
-                  onClick={() => setChartType('line')}
+                  onClick={() => {
+                    if (chartType !== 'line') {
+                      setIsAnimationEnabled(true);
+                      setChartType('line');
+                    }
+                  }}
                   className={`p-2 rounded-lg transition-colors ${
                     chartType === 'line' ? 'bg-[#00f6ff]/20 text-[#00f6ff]' : 'bg-white/5 text-white/40'
                   }`}
@@ -415,7 +453,13 @@ export function TimeChart({ sessions, categories, liveSession: propLiveSession }
                 <motion.button
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
-                  onClick={() => { setChartType('score'); setSelectedSessionIndex(null); }}
+                  onClick={() => {
+                    if (chartType !== 'score') {
+                      setIsAnimationEnabled(true);
+                      setChartType('score');
+                    }
+                    setSelectedSessionIndex(null);
+                  }}
                   className={`p-2 rounded-lg transition-colors ${
                     chartType === 'score' ? 'bg-[#00f6ff]/20 text-[#00f6ff]' : 'bg-white/5 text-white/40'
                   }`}
@@ -456,9 +500,15 @@ export function TimeChart({ sessions, categories, liveSession: propLiveSession }
           <div className="flex-1 min-h-0">
             {chartType === 'score' ? (
               <div className="flex h-full gap-4">
-                <div className="flex-1 flex items-center justify-center relative">
+                <div className="flex-1 min-h-[240px] flex items-center justify-center relative">
                   <div className="relative w-full h-full flex items-center justify-center">
-                    <ResponsiveContainer width="100%" height="100%">
+                    <ResponsiveContainer
+                      width="100%"
+                      height="100%"
+                      minWidth={0}
+                      minHeight={1}
+                      initialDimension={{ width: 1, height: 1 }}
+                    >
                       <PieChart>
                         <Pie
                           data={scoreData.pieData}
@@ -629,7 +679,13 @@ export function TimeChart({ sessions, categories, liveSession: propLiveSession }
                 </div>
               </div>
             ) : (
-              <ResponsiveContainer width="100%" height="100%">
+              <ResponsiveContainer
+                width="100%"
+                height="100%"
+                minWidth={0}
+                minHeight={1}
+                initialDimension={{ width: 1, height: 1 }}
+              >
                 {chartType === 'bar' ? (
                   <BarChart data={chartData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
                     <CartesianGrid strokeDasharray="3 3" stroke="#ffffff10" vertical={false} />
@@ -647,7 +703,14 @@ export function TimeChart({ sessions, categories, liveSession: propLiveSession }
                       axisLine={false}
                       tickFormatter={(value) => `${Math.floor(value)}m`}
                     />
-                    <Tooltip content={<CustomTooltip />} />
+                    <Tooltip
+                      content={
+                        <CustomTooltip
+                          categories={categories}
+                          effectiveLiveSession={effectiveLiveSession}
+                        />
+                      }
+                    />
                     {visibleCategories.map((cat) => (
                       <Bar 
                         key={cat.id}
@@ -694,7 +757,14 @@ export function TimeChart({ sessions, categories, liveSession: propLiveSession }
                       axisLine={false}
                       tickFormatter={(value) => `${Math.floor(value)}m`}
                     />
-                    <Tooltip content={<CustomTooltip />} />
+                    <Tooltip
+                      content={
+                        <CustomTooltip
+                          categories={categories}
+                          effectiveLiveSession={effectiveLiveSession}
+                        />
+                      }
+                    />
                     {visibleCategories.map((cat) => (
                       <Line 
                         key={cat.id}

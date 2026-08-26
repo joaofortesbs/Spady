@@ -1,5 +1,6 @@
 import type { NextConfig } from "next";
 const nextConfig: NextConfig = {
+  output: 'standalone',
   images: {
     remotePatterns: [
       {
@@ -12,16 +13,10 @@ const nextConfig: NextConfig = {
       },
     ],
   },
-  typescript: {
-    ignoreBuildErrors: true,
-  },
-  eslint: {
-    ignoreDuringBuilds: true,
-  },
   allowedDevOrigins: [
-    '.replit.dev',
-    '.replit.app',
-    '.spock.replit.dev',
+    '*.replit.dev',
+    '*.replit.app',
+    '*.spock.replit.dev',
     'localhost:5000',
   ],
 };

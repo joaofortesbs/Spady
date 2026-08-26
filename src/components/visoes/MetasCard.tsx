@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Target } from 'lucide-react';
 import { MainGoal } from '@/lib/types/visoes';
@@ -14,12 +14,14 @@ interface MetasCardProps {
 export function MetasCard({ mainGoal, onSetGoal, onOpenMetas }: MetasCardProps) {
   const [isEditing, setIsEditing] = useState(false);
   const [goalText, setGoalText] = useState(mainGoal?.text || '');
+  const [syncedGoalText, setSyncedGoalText] = useState(mainGoal?.text);
 
-  useEffect(() => {
+  if (mainGoal?.text !== syncedGoalText) {
+    setSyncedGoalText(mainGoal?.text);
     if (mainGoal?.text) {
       setGoalText(mainGoal.text);
     }
-  }, [mainGoal?.text]);
+  }
 
   const handleSave = () => {
     if (goalText.trim()) {

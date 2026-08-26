@@ -21,23 +21,29 @@ export function PomodoroTimer({
   onSessionComplete,
   onLiveSessionUpdate 
 }: PomodoroTimerProps) {
-  const [selectedCategory, setSelectedCategory] = useState<PomodoroCategory>(() => {
+  const [selectedCategoryId, setSelectedCategoryId] = useState(() => {
     if (settings.categories.length > 0) {
       const savedId = safeStorage.getString(STORAGE_KEYS.SELECTED_CATEGORY);
       const found = settings.categories.find(c => c.id === savedId);
-      if (found) return found;
+      if (found) return found.id;
     }
-    return settings.categories[0] || { id: 'default', name: 'Foco', color: '#00f6ff', duration: 25 };
+    return settings.categories[0]?.id || 'default';
   });
-  
-  const [categoryDurations, setCategoryDurations] = useState<Record<string, number>>(() => {
+
+  const selectedCategory = useMemo(
+    () => settings.categories.find(category => category.id === selectedCategoryId)
+      || settings.categories[0]
+      || { id: 'default', name: 'Foco', color: '#00f6ff', duration: 25 },
+    [settings.categories, selectedCategoryId],
+  );
+
+  const categoryDurations = useMemo(() => {
     const durations: Record<string, number> = {};
     settings.categories.forEach((cat) => {
       durations[cat.id] = cat.duration || 25;
     });
-    console.log('[PomodoroTimer] Initial categoryDurations from settings:', durations);
     return durations;
-  });
+  }, [settings.categories]);
   
   const [showSettings, setShowSettings] = useState(false);
   const [showCategoryDropdown, setShowCategoryDropdown] = useState(false);
@@ -65,24 +71,6 @@ export function PomodoroTimer({
   useEffect(() => {
     safeStorage.setString(STORAGE_KEYS.SOUND_ENABLED, String(soundEnabled));
   }, [soundEnabled]);
-
-  useEffect(() => {
-    if (settings.categories.length > 0) {
-      const durations: Record<string, number> = {};
-      settings.categories.forEach((cat) => {
-        durations[cat.id] = cat.duration || 25;
-      });
-      console.log('[PomodoroTimer] Syncing categoryDurations from settings.categories:', durations);
-      setCategoryDurations(durations);
-      
-      const currentCatExists = settings.categories.find(c => c.id === selectedCategory.id);
-      if (!currentCatExists) {
-        setSelectedCategory(settings.categories[0]);
-      } else if (currentCatExists.name !== selectedCategory.name || currentCatExists.color !== selectedCategory.color || currentCatExists.duration !== selectedCategory.duration) {
-        setSelectedCategory(currentCatExists);
-      }
-    }
-  }, [settings.categories]);
 
   const handleSessionComplete = useCallback((categoryId: string, durationMinutes: number) => {
     console.log('[PomodoroTimer] handleSessionComplete called:', { categoryId, durationMinutes });
@@ -157,7 +145,7 @@ export function PomodoroTimer({
       console.log('[PomodoroTimer] Category change blocked - timer active or paused');
       return;
     }
-    setSelectedCategory(cat);
+    setSelectedCategoryId(cat.id);
     setCategory(cat.id, (categoryDurations[cat.id] || 25) * 60);
     setShowCategoryDropdown(false);
   }, [isRunning, isPaused, categoryDurations, setCategory]);
@@ -181,7 +169,6 @@ export function PomodoroTimer({
       categories: [...settings.categories, newCategory],
     };
     onSettingsChange(newSettings);
-    setCategoryDurations(prev => ({ ...prev, [newId]: 25 }));
   }, [settings, onSettingsChange]);
 
   const handleUpdateCategory = useCallback((id: string, updates: Partial<PomodoroCategory>) => {
@@ -192,10 +179,7 @@ export function PomodoroTimer({
       ),
     };
     onSettingsChange(newSettings);
-    if (selectedCategory.id === id) {
-      setSelectedCategory(prev => ({ ...prev, ...updates }));
-    }
-  }, [settings, onSettingsChange, selectedCategory.id]);
+  }, [settings, onSettingsChange]);
 
   const handleDeleteCategory = useCallback((id: string) => {
     if (settings.categories.length <= 1) return;
@@ -205,12 +189,11 @@ export function PomodoroTimer({
     };
     onSettingsChange(newSettings);
     if (selectedCategory.id === id) {
-      setSelectedCategory(newSettings.categories[0]);
+      setSelectedCategoryId(newSettings.categories[0].id);
     }
   }, [settings, onSettingsChange, selectedCategory.id]);
 
   const handleDurationChange = useCallback((catId: string, duration: number) => {
-    setCategoryDurations(prev => ({ ...prev, [catId]: duration }));
     const newSettings: PomodoroSettings = {
       ...settings,
       categories: settings.categories.map(cat =>

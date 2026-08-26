@@ -11,7 +11,46 @@ import {
   FutureLetter,
   BankAccount,
   Transaction,
+  PaymentMethod,
+  TransactionStatus,
+  TransactionType,
 } from '@/lib/types/visoes';
+
+type BookType = Book['type'];
+type BankAccountType = BankAccount['type'];
+
+const BOOK_TYPES: readonly BookType[] = ['book', 'podcast', 'video', 'course'];
+const BANK_ACCOUNT_TYPES: readonly BankAccountType[] = ['fiduciary', 'crypto'];
+const TRANSACTION_TYPES: readonly TransactionType[] = ['income', 'expense'];
+const TRANSACTION_STATUSES: readonly TransactionStatus[] = ['pending', 'confirmed'];
+const PAYMENT_METHODS: readonly PaymentMethod[] = [
+  'pix',
+  'credit_card',
+  'debit_card',
+  'cash',
+  'transfer',
+  'boleto',
+];
+
+function isBookType(value: string): value is BookType {
+  return BOOK_TYPES.some(type => type === value);
+}
+
+function isBankAccountType(value: string): value is BankAccountType {
+  return BANK_ACCOUNT_TYPES.some(type => type === value);
+}
+
+function isTransactionType(value: string): value is TransactionType {
+  return TRANSACTION_TYPES.some(type => type === value);
+}
+
+function isTransactionStatus(value: string): value is TransactionStatus {
+  return TRANSACTION_STATUSES.some(status => status === value);
+}
+
+function isPaymentMethod(value: string): value is PaymentMethod {
+  return PAYMENT_METHODS.some(method => method === value);
+}
 
 export class VisoesService {
   constructor(private supabase: SupabaseClient, private userId: string) {}
@@ -39,7 +78,7 @@ export class VisoesService {
       return defaultValue;
     };
 
-    const vbData = getValue(results[0], []) as Array<{ id: string; image_url: string; created_at: string }>;
+    const vbData = getValue(results[0], []) as Array<{ id: string; image_url: string; created_at: string; position?: number }>;
     const mgData = getValue(results[1], []) as Array<{ id: string; text: string; year: number; created_at: string }>;
     const gaData = getValue(results[2], []) as Array<{ id: string; text: string; completed: boolean }>;
     const gcData = getValue(results[3], []) as Array<{ id: string; name: string; icon: string }>;
@@ -48,15 +87,15 @@ export class VisoesService {
     const rData = getValue(results[6], []) as Array<{ id: string; text: string; due_date: string | null; completed: boolean; created_at: string }>;
     const nData = getValue(results[7], []) as Array<{ id: string; title: string; content: string; color: string; created_at: string; updated_at: string }>;
     const flData = getValue(results[8], []) as Array<{ id: string; title: string; content: string; open_date: string; is_opened: boolean; created_at: string }>;
-    const baData = getValue(results[9], []) as Array<{ id: string; name: string; type: string; balance: number }>;
-    const tData = getValue(results[10], []) as Array<{ id: string; bank_account_id: string; title: string; type: string; amount: number; date: string; status: string }>;
+    const baData = getValue(results[9], []) as Array<{ id: string; name: string; type: string; account_type?: string; person_type?: string; balance: number; notes?: string }>;
+    const tData = getValue(results[10], []) as Array<{ id: string; bank_account_id: string | null; title: string; type: string; category?: string; amount: number; date: string; status: string; payment_method?: string; notes?: string }>;
     
     let usData: { finance_start_date?: string; finance_end_date?: string; selected_year?: number } | null = null;
     if (results[11].status === 'fulfilled' && results[11].value.data) {
       usData = results[11].value.data as { finance_start_date?: string; finance_end_date?: string; selected_year?: number };
     }
 
-    const goalsMap = new Map();
+    const goalsMap = new Map<string, GoalCategory['goals']>();
     gData.forEach(item => {
       const list = goalsMap.get(item.category_id) || [];
       list.push({ id: item.id, text: item.text, completed: item.completed, categoryId: item.category_id });
@@ -64,16 +103,35 @@ export class VisoesService {
     });
 
     return {
-      visionBoard: vbData.map(v => ({ id: v.id, imageUrl: v.image_url, createdAt: v.created_at })),
+      visionBoard: vbData.map((v, index) => ({ id: v.id, imageUrl: v.image_url, createdAt: v.created_at, position: v.position ?? index })),
       mainGoal: mgData[0] ? { id: mgData[0].id, text: mgData[0].text, year: mgData[0].year, createdAt: mgData[0].created_at } : null,
       goalActions: gaData.map(a => ({ id: a.id, text: a.text, completed: a.completed })),
       goalCategories: gcData.map(c => ({ id: c.id, name: c.name, icon: c.icon, goals: goalsMap.get(c.id) || [] })),
-      books: bData.map(item => ({ id: item.id, title: item.title, author: item.author, coverUrl: item.cover_url || '', progress: item.progress, type: item.type })),
+      books: bData.map(item => ({ id: item.id, title: item.title, author: item.author, coverUrl: item.cover_url || '', progress: item.progress, type: isBookType(item.type) ? item.type : 'book' })),
       reminders: rData.map(item => ({ id: item.id, text: item.text, dueDate: item.due_date, completed: item.completed, createdAt: item.created_at })),
       notes: nData.map(item => ({ id: item.id, title: item.title, content: item.content || '', color: item.color, createdAt: item.created_at, updatedAt: item.updated_at })),
       futureLetters: flData.map(item => ({ id: item.id, title: item.title, content: item.content, openDate: item.open_date, isOpened: item.is_opened, createdAt: item.created_at })),
-      bankAccounts: baData.map(item => ({ id: item.id, name: item.name, type: item.type, balance: Number(item.balance) || 0 })),
-      transactions: tData.map(item => ({ id: item.id, bankAccountId: item.bank_account_id, title: item.title, type: item.type, amount: Number(item.amount), date: item.date, status: item.status })),
+      bankAccounts: baData.map(item => ({
+        id: item.id,
+        name: item.name,
+        type: isBankAccountType(item.type) ? item.type : 'fiduciary',
+        accountType: item.account_type || '',
+        personType: item.person_type || '',
+        balance: Number(item.balance) || 0,
+        notes: item.notes || '',
+      })),
+      transactions: tData.map(item => ({
+        id: item.id,
+        bankAccountId: item.bank_account_id,
+        title: item.title,
+        type: isTransactionType(item.type) ? item.type : 'expense',
+        category: item.category || 'OUTROS',
+        amount: Number(item.amount),
+        date: item.date,
+        status: isTransactionStatus(item.status) ? item.status : 'pending',
+        paymentMethod: item.payment_method && isPaymentMethod(item.payment_method) ? item.payment_method : 'pix',
+        notes: item.notes || '',
+      })),
       financePeriod: usData?.finance_start_date ? { startDate: usData.finance_start_date, endDate: usData.finance_end_date || '' } : DEFAULT_VISOES_DATA.financePeriod,
       selectedYear: usData?.selected_year || new Date().getFullYear(),
     };
@@ -91,7 +149,12 @@ export class VisoesService {
       return null;
     }
 
-    return { id: data.id, imageUrl: data.image_url, createdAt: data.created_at };
+    return {
+      id: data.id,
+      imageUrl: data.image_url,
+      createdAt: data.created_at,
+      position: typeof data.position === 'number' ? data.position : position,
+    };
   }
 
   async removeVisionImage(id: string): Promise<boolean> {

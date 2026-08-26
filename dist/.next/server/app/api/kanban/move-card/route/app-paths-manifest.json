@@ -1,0 +1,3 @@
+{
+  "/api/kanban/move-card/route": "app/api/kanban/move-card/route.js"
+}

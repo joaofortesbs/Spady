@@ -1,0 +1,12 @@
+{
+  "pages": {
+    "/api/kanban/delete-card/route": [
+      "static/chunks/6e2393c5e2fc78a7.js",
+      "static/chunks/29c05026f5b7b995.js",
+      "static/chunks/0a0c0e9d3a741250.js",
+      "static/chunks/16e596392db8ded1.js",
+      "static/chunks/a808d3022a4846bd.js",
+      "static/chunks/turbopack-9119cdb3fe08338b.js"
+    ]
+  }
+}

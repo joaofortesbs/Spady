@@ -1,0 +1,3 @@
+{
+  "/api/pomodoro/update-settings/route": "app/api/pomodoro/update-settings/route.js"
+}

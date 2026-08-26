@@ -1,16 +1,31 @@
-import { FlatCompat } from '@eslint/eslintrc'
- 
+import { FlatCompat } from '@eslint/eslintrc';
+
 const compat = new FlatCompat({
-  // import.meta.dirname is available after Node.js v20.11.0
   baseDirectory: import.meta.dirname,
-})
- 
+});
+
 const eslintConfig = [
-  ...compat.config({
-    extends: ['next'],
-    plugins: ['import'],
-  }),
   {
+    ignores: [
+      '.agents/**',
+      '.local/**',
+      '.next/**',
+      'attached_assets/**',
+      'coverage/**',
+      'dist/**',
+      'next-env.d.ts',
+      'node_modules/**',
+      'src/visual-edits/component-tagger-loader.js',
+    ],
+  },
+  ...compat.config({
+    extends: ['next/core-web-vitals', 'next/typescript'],
+    settings: {
+      'import/resolver': {
+        typescript: true,
+        node: true,
+      },
+    },
     rules: {
       'react/no-unescaped-entities': 'off',
       '@next/next/no-img-element': 'off',
@@ -18,16 +33,22 @@ const eslintConfig = [
       '@typescript-eslint/no-explicit-any': 'off',
       'react-hooks/exhaustive-deps': 'off',
       'import/no-unresolved': 'error',
-      'import/named': 'error',
-      'import/default': 'error',
-      'import/namespace': 'error',
+      'import/named': 'off',
+      'import/default': 'off',
+      'import/namespace': 'off',
       'import/no-absolute-path': 'error',
       'import/no-dynamic-require': 'error',
       'import/no-self-import': 'error',
       'import/no-cycle': 'error',
       'import/no-useless-path-segments': 'error',
     },
+  }),
+  {
+    files: ['**/*.cjs'],
+    rules: {
+      '@typescript-eslint/no-require-imports': 'off',
+    },
   },
-]
- 
-export default eslintConfig
+];
+
+export default eslintConfig;

@@ -2,6 +2,7 @@
 
 import { motion } from 'framer-motion';
 import { FileText, StickyNote } from 'lucide-react';
+import { useState } from 'react';
 import { Note } from '@/lib/types/visoes';
 
 interface AnotacoesCardProps {
@@ -19,12 +20,13 @@ export function AnotacoesCard({
   onRemoveNote,
   onOpenNotes,
 }: AnotacoesCardProps) {
+  const [referenceTime] = useState(() => Date.now());
   const displayNotes = notes.slice(0, 3);
   const hasNotes = notes.length > 0;
 
   const getTimeAgo = (date: string) => {
     try {
-      const diff = Date.now() - new Date(date).getTime();
+      const diff = referenceTime - new Date(date).getTime();
       const minutes = Math.floor(diff / (1000 * 60));
       const hours = Math.floor(diff / (1000 * 60 * 60));
       const days = Math.floor(diff / (1000 * 60 * 60 * 24));

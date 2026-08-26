@@ -77,7 +77,7 @@ export function useTimerPersistence(
   const supabaseSyncRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const mountedRef = useRef(true);
   const isProcessingRef = useRef(false);
-  const lastTickRef = useRef(Date.now());
+  const lastTickRef = useRef(0);
 
   useEffect(() => {
     mountedRef.current = true;
@@ -302,10 +302,14 @@ export function useTimerPersistence(
       lastUpdated: Date.now(),
     };
 
-    setTimerState(synchronizedState);
-    setTimeLeft(defaultDurationSeconds);
-    saveTimerState(synchronizedState);
-    syncLiveSession(synchronizedState);
+    const synchronizationTimeout = setTimeout(() => {
+      setTimerState(synchronizedState);
+      setTimeLeft(defaultDurationSeconds);
+      saveTimerState(synchronizedState);
+      syncLiveSession(synchronizedState);
+    }, 0);
+
+    return () => clearTimeout(synchronizationTimeout);
   }, [
     defaultCategoryId,
     defaultDurationSeconds,
@@ -451,7 +455,7 @@ export function useTimerPersistence(
     setTimeLeft(durationSeconds);
     saveTimerState(newState);
     syncLiveSession(newState);
-  }, [timerState.isRunning, syncLiveSession]);
+  }, [timerState.isRunning, timerState.accumulatedSeconds, syncLiveSession]);
 
   return {
     timeLeft,

@@ -1,0 +1,16 @@
+{
+  "/_not-found/page": "app/_not-found/page.js",
+  "/api/health/route": "app/api/health/route.js",
+  "/api/kanban/add-card/route": "app/api/kanban/add-card/route.js",
+  "/api/kanban/delete-card/route": "app/api/kanban/delete-card/route.js",
+  "/api/kanban/move-card/route": "app/api/kanban/move-card/route.js",
+  "/api/kanban/projects/route": "app/api/kanban/projects/route.js",
+  "/api/kanban/reorder-cards/route": "app/api/kanban/reorder-cards/route.js",
+  "/api/kanban/update-card/route": "app/api/kanban/update-card/route.js",
+  "/api/pomodoro/add-session/route": "app/api/pomodoro/add-session/route.js",
+  "/api/pomodoro/get-settings/route": "app/api/pomodoro/get-settings/route.js",
+  "/api/pomodoro/update-settings/route": "app/api/pomodoro/update-settings/route.js",
+  "/favicon.ico/route": "app/favicon.ico/route.js",
+  "/page": "app/page.js",
+  "/reset-password/page": "app/reset-password/page.js"
+}

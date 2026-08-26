@@ -54,7 +54,6 @@ export function saveData(data: BlindadosData): void {
       data: {
         ...data,
         lastUpdated: new Date().toISOString(),
-        version: STORAGE_VERSION,
       },
       fingerprint,
       expiresAt: getExpiryDate(),

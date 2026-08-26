@@ -11,8 +11,8 @@ import {
   PointerSensor,
   useSensor,
   useSensors,
-  DragEndEvent,
 } from '@dnd-kit/core';
+import type { DragEndEvent } from '@dnd-kit/core';
 import {
   arrayMove,
   SortableContext,
@@ -41,26 +41,32 @@ export function LeiDaAtracaoCard({
 }: LeiDaAtracaoCardProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isUploading, setIsUploading] = useState(false);
-  const [currentIndex, setCurrentIndex] = useState(0);
+  const [carouselState, setCarouselState] = useState({
+    currentIndex: 0,
+    imagesLength: images.length,
+  });
+  let currentIndex = carouselState.currentIndex;
+
+  if (carouselState.imagesLength !== images.length) {
+    currentIndex = images.length <= 1 || currentIndex >= images.length ? 0 : currentIndex;
+    setCarouselState({
+      currentIndex,
+      imagesLength: images.length,
+    });
+  }
 
   useEffect(() => {
-    if (images.length <= 1) {
-      setCurrentIndex(0);
-      return;
-    }
+    if (images.length <= 1) return;
 
     const interval = setInterval(() => {
-      setCurrentIndex((prev) => (prev + 1) % images.length);
+      setCarouselState((prev) => ({
+        currentIndex: (prev.currentIndex + 1) % images.length,
+        imagesLength: images.length,
+      }));
     }, 3000);
 
     return () => clearInterval(interval);
   }, [images.length]);
-
-  useEffect(() => {
-    if (currentIndex >= images.length && images.length > 0) {
-      setCurrentIndex(0);
-    }
-  }, [images.length, currentIndex]);
 
   const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -126,7 +132,13 @@ export function LeiDaAtracaoCard({
                 {images.slice(0, 6).map((img, idx) => (
                   <button
                     key={img.id}
-                    onClick={(e) => { e.stopPropagation(); setCurrentIndex(idx); }}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setCarouselState({
+                        currentIndex: idx,
+                        imagesLength: images.length,
+                      });
+                    }}
                     className={`relative w-12 h-12 rounded-lg overflow-hidden border-2 transition-all flex-shrink-0 ${
                       idx === currentIndex ? 'border-[#00f6ff] ring-1 ring-[#00f6ff]' : 'border-white/20 hover:border-white/40'
                     }`}

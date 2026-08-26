@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Plus, FileText, Search, Trash2, Clock, StickyNote, Pin, PinOff } from 'lucide-react';
 import { Note } from '@/lib/types/visoes';
@@ -36,26 +36,13 @@ export function AnotacoesPage({
   onToggleNotePinned = () => undefined,
   onClose,
 }: AnotacoesPageProps) {
+  const [referenceTime] = useState(() => Date.now());
   const [selectedNote, setSelectedNote] = useState<Note | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [isEditing, setIsEditing] = useState(false);
   const [editTitle, setEditTitle] = useState('');
   const [editContent, setEditContent] = useState('');
   const [editColor, setEditColor] = useState('#00f6ff');
-
-  useEffect(() => {
-    if (selectedNote) {
-      setEditTitle(selectedNote.title);
-      setEditContent(selectedNote.content);
-      setEditColor(selectedNote.color);
-      setIsEditing(true);
-    } else {
-      setEditTitle('');
-      setEditContent('');
-      setEditColor('#00f6ff');
-      setIsEditing(false);
-    }
-  }, [selectedNote]);
 
   const filteredNotes = notes.filter(note => {
     if (searchQuery) {
@@ -117,9 +104,17 @@ export function AnotacoesPage({
     setEditColor('#00f6ff');
   };
 
+  const handleSelectNote = (note: Note) => {
+    setSelectedNote(note);
+    setEditTitle(note.title);
+    setEditContent(note.content);
+    setEditColor(note.color);
+    setIsEditing(true);
+  };
+
   const getTimeAgo = (date: string) => {
     try {
-      const diff = Date.now() - new Date(date).getTime();
+      const diff = referenceTime - new Date(date).getTime();
       const minutes = Math.floor(diff / (1000 * 60));
       const hours = Math.floor(diff / (1000 * 60 * 60));
       const days = Math.floor(diff / (1000 * 60 * 60 * 24));
@@ -148,7 +143,7 @@ export function AnotacoesPage({
               animate={{ opacity: 1, x: 0 }}
               className={`group flex items-start gap-2 rounded-xl border p-3 transition-all ${selectedNote?.id === note.id ? 'border-[#00f6ff]/20 bg-[#00f6ff]/10' : 'border-transparent hover:bg-white/5'}`}
             >
-              <button type="button" onClick={() => setSelectedNote(note)} className="flex min-w-0 flex-1 items-start gap-3 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#00f6ff]/60">
+              <button type="button" onClick={() => handleSelectNote(note)} className="flex min-w-0 flex-1 items-start gap-3 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#00f6ff]/60">
                 <span className="mt-0.5 h-10 w-1 shrink-0 rounded-full" style={{ backgroundColor: note.color }} />
                 <span className="min-w-0 flex-1">
                   <span className="block truncate text-sm font-medium text-white">{note.title || 'Sem título'}</span>

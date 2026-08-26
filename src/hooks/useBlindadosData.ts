@@ -151,11 +151,8 @@ export function useBlindadosData() {
   useEffect(() => {
     const cached = getCache();
     if (cached) {
-      console.log('[useBlindadosData] Loading from cache, categories:', cached.pomodoro?.settings?.categories?.map((c: any) => ({ id: c.id, name: c.name, duration: c.duration })));
       setData(cached);
       setIsLoaded(true);
-    } else {
-      console.log('[useBlindadosData] No cache found');
     }
     
     if (user) {
