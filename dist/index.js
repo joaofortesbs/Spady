@@ -2,7 +2,10 @@ const http = require("node:http");
 const next = require("next");
 
 const port = Number.parseInt(process.env.PORT || "3000", 10);
-const hostname = process.env.HOSTNAME || "0.0.0.0";
+// HOSTNAME is the container's identity in some hosting environments, not
+// necessarily an address assigned to the container. Bind all interfaces so
+// the platform's health check can reach the server.
+const hostname = process.env.BIND_HOST || "0.0.0.0";
 
 const app = next({
   dev: false,
