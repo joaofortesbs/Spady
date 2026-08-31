@@ -26,10 +26,9 @@ function setCache(data: VisoesData) {
 }
 
 export function useVisoesData() {
-  const [data, setData] = useState<VisoesData>(() => {
-    const cached = getCache();
-    return cached || DEFAULT_VISOES_DATA;
-  });
+  // Keep the server render deterministic. Browser storage is restored in the
+  // effect below, after hydration, so cached data cannot change the first HTML.
+  const [data, setData] = useState<VisoesData>(DEFAULT_VISOES_DATA);
   const [isLoaded, setIsLoaded] = useState(false);
   const [isSyncing, setIsSyncing] = useState(false);
   const [pinnedNoteIds, setPinnedNoteIds] = useState<string[]>([]);

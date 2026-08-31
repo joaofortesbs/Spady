@@ -52,15 +52,11 @@ function MainApp() {
 
   useAutoFix();
 
-  const [activeSection, setActiveSection] = useState<Section>(() => {
-    const saved = safeStorage.getString(STORAGE_KEYS.ACTIVE_SECTION);
-    if (saved === 'flows' || saved === 'visoes' || saved === 'painel' || saved === 'equipes') return saved as Section;
-    return 'flows';
-  });
-  
-  const [collapsed, setCollapsed] = useState(() => {
-    return safeStorage.getString(STORAGE_KEYS.SIDEBAR_COLLAPSED) === 'true';
-  });
+  // Read browser preferences after hydration. Reading localStorage in a lazy
+  // initializer makes the server and browser render different HTML.
+  const [activeSection, setActiveSection] = useState<Section>('flows');
+  const [collapsed, setCollapsed] = useState(false);
+  const [storageReady, setStorageReady] = useState(false);
   
   const [liveSession, setLiveSession] = useState<LiveSession | null>(null);
   const [isTransitioning, setIsTransitioning] = useState(false);
@@ -86,8 +82,18 @@ function MainApp() {
   }, []);
 
   useEffect(() => {
+    const savedSection = safeStorage.getString(STORAGE_KEYS.ACTIVE_SECTION);
+    if (savedSection === 'flows' || savedSection === 'visoes' || savedSection === 'painel' || savedSection === 'equipes') {
+      setActiveSection(savedSection);
+    }
+    setCollapsed(safeStorage.getString(STORAGE_KEYS.SIDEBAR_COLLAPSED) === 'true');
+    setStorageReady(true);
+  }, []);
+
+  useEffect(() => {
+    if (!storageReady) return;
     safeStorage.setString(STORAGE_KEYS.ACTIVE_SECTION, activeSection);
-  }, [activeSection]);
+  }, [activeSection, storageReady]);
 
   useEffect(() => {
     const handleQuickCaptureShortcut = (event: KeyboardEvent) => {
@@ -103,8 +109,9 @@ function MainApp() {
   }, []);
 
   useEffect(() => {
+    if (!storageReady) return;
     safeStorage.setString(STORAGE_KEYS.SIDEBAR_COLLAPSED, String(collapsed));
-  }, [collapsed]);
+  }, [collapsed, storageReady]);
 
   useEffect(() => {
     const loadOrganizations = async () => {
