@@ -16,7 +16,20 @@ export async function GET() {
     
     const cookieStore = await cookies();
     const authClient = createServerClient(supabaseUrl, supabaseAnonKey, {
-      cookies: { getAll() { return cookieStore.getAll(); } },
+      cookies: {
+        getAll() {
+          return cookieStore.getAll();
+        },
+        setAll(cookiesToSet) {
+          try {
+            cookiesToSet.forEach(({ name, value, options }) => {
+              cookieStore.set(name, value, options);
+            });
+          } catch {
+            // Cookies can be read but not mutated in some server-only contexts.
+          }
+        },
+      },
     });
     
     const { data: { user }, error: authError } = await authClient.auth.getUser();
@@ -74,7 +87,20 @@ export async function POST(req: NextRequest) {
     
     const cookieStore = await cookies();
     const authClient = createServerClient(supabaseUrl, supabaseAnonKey, {
-      cookies: { getAll() { return cookieStore.getAll(); } },
+      cookies: {
+        getAll() {
+          return cookieStore.getAll();
+        },
+        setAll(cookiesToSet) {
+          try {
+            cookiesToSet.forEach(({ name, value, options }) => {
+              cookieStore.set(name, value, options);
+            });
+          } catch {
+            // Cookies can be read but not mutated in some server-only contexts.
+          }
+        },
+      },
     });
     
     const { data: { user }, error: authError } = await authClient.auth.getUser();
@@ -141,7 +167,20 @@ export async function DELETE(req: NextRequest) {
     
     const cookieStore = await cookies();
     const authClient = createServerClient(supabaseUrl, supabaseAnonKey, {
-      cookies: { getAll() { return cookieStore.getAll(); } },
+      cookies: {
+        getAll() {
+          return cookieStore.getAll();
+        },
+        setAll(cookiesToSet) {
+          try {
+            cookiesToSet.forEach(({ name, value, options }) => {
+              cookieStore.set(name, value, options);
+            });
+          } catch {
+            // Cookies can be read but not mutated in some server-only contexts.
+          }
+        },
+      },
     });
     
     const { data: { user }, error: authError } = await authClient.auth.getUser();

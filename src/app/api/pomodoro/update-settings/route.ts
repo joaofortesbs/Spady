@@ -27,6 +27,15 @@ export async function POST(request: NextRequest) {
           getAll() {
             return cookieStore.getAll();
           },
+          setAll(cookiesToSet) {
+            try {
+              cookiesToSet.forEach(({ name, value, options }) => {
+                cookieStore.set(name, value, options);
+              });
+            } catch {
+              // Cookies can be read but not mutated in some server-only contexts.
+            }
+          },
         },
       }
     );
