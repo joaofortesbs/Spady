@@ -70,11 +70,30 @@ export async function DELETE(req: NextRequest) {
       .eq('id', cardId)
       .single();
     
-    if (cardCheckError || !existingCard) {
-      console.error('[API delete-card] Card not found:', cardCheckError?.message);
+    if (cardCheckError) {
+      if (cardCheckError.code === 'PGRST116') {
+        console.error('[API delete-card] Card not found');
+        return NextResponse.json(
+          { error: 'Card not found' },
+          { status: 404, headers: { 'Cache-Control': 'no-store' } }
+        );
+      }
+
+      console.error('[API delete-card] Card lookup error:', {
+        code: cardCheckError.code,
+        message: cardCheckError.message,
+      });
+      return NextResponse.json(
+        { error: 'Unable to verify card' },
+        { status: 500, headers: { 'Cache-Control': 'no-store' } }
+      );
+    }
+
+    if (!existingCard) {
+      console.error('[API delete-card] Card not found');
       return NextResponse.json(
         { error: 'Card not found' },
-        { status: 404 }
+        { status: 404, headers: { 'Cache-Control': 'no-store' } }
       );
     }
     
@@ -82,17 +101,19 @@ export async function DELETE(req: NextRequest) {
       console.error('[API delete-card] Card not owned by user:', { cardUserId: existingCard.user_id, requestUserId: user.id });
       return NextResponse.json(
         { error: 'Access denied - card not owned by user' },
-        { status: 403 }
+        { status: 403, headers: { 'Cache-Control': 'no-store' } }
       );
     }
     
     console.log('[API delete-card] Card ownership verified:', cardId);
     
-    const { error: deleteError } = await supabase
+    const { data: deletedCard, error: deleteError } = await supabase
       .from('kanban_cards')
       .delete()
       .eq('id', cardId)
       .eq('user_id', user.id);
+      .select('id')
+      .maybeSingle();
     
     if (deleteError) {
       console.error('[API delete-card] Delete error:', {
@@ -102,8 +123,16 @@ export async function DELETE(req: NextRequest) {
         hint: deleteError.hint,
       });
       return NextResponse.json(
-        { error: deleteError.message, details: deleteError },
-        { status: 500 }
+        { error: 'Unable to delete card' },
+        { status: 500, headers: { 'Cache-Control': 'no-store' } }
+      );
+    }
+
+    if (!deletedCard) {
+      console.error('[API delete-card] Delete returned no affected row:', { cardId });
+      return NextResponse.json(
+        { error: 'Card was not deleted' },
+        { status: 404, headers: { 'Cache-Control': 'no-store' } }
       );
     }
     
@@ -117,7 +146,7 @@ export async function DELETE(req: NextRequest) {
     return NextResponse.json({ 
       success: true, 
       timestamp: Date.now(),
-    });
+    }, { headers: { 'Cache-Control': 'no-store' } });
     
   } catch (error) {
     const duration = Date.now() - startTime;
@@ -126,8 +155,8 @@ export async function DELETE(req: NextRequest) {
       duration: `${duration}ms`,
     });
     return NextResponse.json(
-      { error: 'Internal server error', details: String(error) },
-      { status: 500 }
+      { error: 'Internal server error' },
+      { status: 500, headers: { 'Cache-Control': 'no-store' } }
     );
   }
 }

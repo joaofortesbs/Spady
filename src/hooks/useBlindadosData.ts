@@ -550,7 +550,6 @@ export function useBlindadosData() {
           },
           lastUpdated: new Date().toISOString(),
         };
-        setCache(updated);
         return updated;
       });
       return;
@@ -586,6 +585,9 @@ export function useBlindadosData() {
         });
       } else {
         console.log('[useBlindadosData] deleteKanbanCard: SUCCESS');
+        // Do not let a stale local snapshot win over the confirmed database state.
+        safeStorage.remove(STORAGE_KEYS.DATA_CACHE);
+        lastSyncTimeRef.current = 0;
       }
     } catch (e) {
       console.error('[useBlindadosData] deleteKanbanCard error:', e);
@@ -597,7 +599,11 @@ export function useBlindadosData() {
     } finally {
       pendingOperationsRef.current--;
     }
-  }, []);
+
+    if (success) {
+      await loadData(true);
+    }
+  }, [loadData]);
 
   const moveCard = useCallback(async (cardId: string, sourceColId: string, targetColId: string, targetIdx: number) => {
     console.log('[useBlindadosData] moveCard called:', { cardId, sourceColId, targetColId, targetIdx });

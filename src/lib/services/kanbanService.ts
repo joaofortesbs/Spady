@@ -303,29 +303,28 @@ export class KanbanService {
 
   async deleteCard(cardId: string): Promise<boolean> {
     try {
-      console.log('KanbanService.deleteCard: userId=', this.userId, 'cardId=', cardId);
-      
-      const { data, error } = await this.supabase
-        .from('kanban_cards')
-        .delete()
-        .eq('id', cardId)
-        .eq('user_id', this.userId)
-        .select();
+      console.log('KanbanService.deleteCard: cardId=', cardId);
 
-      if (error) {
-        console.error('KanbanService.deleteCard error:', error.message, error.details, error.code);
+      const response = await fetch('/api/kanban/delete-card', {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({ cardId }),
+      });
+
+      const result = await response.json().catch(() => ({
+        success: false,
+        error: 'Invalid response from delete-card endpoint',
+      }));
+
+      if (!response.ok || !result.success) {
+        console.error('KanbanService.deleteCard error:', {
+          status: response.status,
+          error: result.error || 'Delete was not confirmed',
+        });
         return false;
       }
-      
-      const rowsAffected = data?.length || 0;
-      console.log('KanbanService.deleteCard: rowsAffected=', rowsAffected);
-      
-      // If no rows were affected, the delete failed (likely RLS or card not found)
-      if (rowsAffected === 0) {
-        console.error('KanbanService.deleteCard: No rows affected - card not found or RLS denied');
-        return false;
-      }
-      
+
       return true;
     } catch (e) {
       console.error('KanbanService.deleteCard exception:', e);
