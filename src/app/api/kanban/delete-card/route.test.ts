@@ -1,4 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { NextRequest } from 'next/server';
 
 const mocks = vi.hoisted(() => {
   const selectBuilder = {
@@ -56,7 +57,7 @@ vi.mock('@supabase/supabase-js', () => ({
 import { DELETE } from './route';
 
 function request(cardId = 'card-id') {
-  return new Request('http://localhost/api/kanban/delete-card', {
+  return new NextRequest('http://localhost/api/kanban/delete-card', {
     method: 'DELETE',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ cardId }),
@@ -65,6 +66,7 @@ function request(cardId = 'card-id') {
 
 describe('/api/kanban/delete-card', () => {
   beforeEach(() => {
+    vi.clearAllMocks();
     vi.stubEnv('NEXT_PUBLIC_SUPABASE_URL', 'https://example.supabase.co');
     vi.stubEnv('NEXT_PUBLIC_SUPABASE_ANON_KEY', 'anon-key');
     vi.stubEnv('SUPABASE_SERVICE_ROLE_KEY', 'service-key');
