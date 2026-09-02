@@ -550,6 +550,7 @@ export function useBlindadosData() {
           },
           lastUpdated: new Date().toISOString(),
         };
+        setCache(updated);
         return updated;
       });
       return;
@@ -570,12 +571,12 @@ export function useBlindadosData() {
         },
         lastUpdated: new Date().toISOString(),
       };
-      setCache(updated);
       return updated;
     });
     
+    let success = false;
     try {
-      const success = await kanbanService.deleteCard(cardId);
+      success = await kanbanService.deleteCard(cardId);
       if (!success) {
         console.error('[useBlindadosData] deleteKanbanCard: FAILED - restoring card');
         setData(prev => {

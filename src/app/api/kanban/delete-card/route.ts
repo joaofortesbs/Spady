@@ -111,7 +111,7 @@ export async function DELETE(req: NextRequest) {
       .from('kanban_cards')
       .delete()
       .eq('id', cardId)
-      .eq('user_id', user.id);
+      .eq('user_id', user.id)
       .select('id')
       .maybeSingle();
     
