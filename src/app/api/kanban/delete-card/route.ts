@@ -16,7 +16,7 @@ export async function DELETE(req: NextRequest) {
       console.error('[API delete-card] Missing required field: cardId');
       return NextResponse.json(
         { error: 'Missing required field: cardId' },
-        { status: 400 }
+        { status: 400, headers: { 'Cache-Control': 'no-store' } }
       );
     }
     
@@ -28,7 +28,7 @@ export async function DELETE(req: NextRequest) {
       console.error('[API delete-card] Missing Supabase credentials');
       return NextResponse.json(
         { error: 'Server configuration error' },
-        { status: 500 }
+        { status: 500, headers: { 'Cache-Control': 'no-store' } }
       );
     }
     
@@ -56,7 +56,7 @@ export async function DELETE(req: NextRequest) {
       console.error('[API delete-card] Unauthorized:', authError?.message || 'No user');
       return NextResponse.json(
         { error: 'Unauthorized' },
-        { status: 401 }
+        { status: 401, headers: { 'Cache-Control': 'no-store' } }
       );
     }
     
