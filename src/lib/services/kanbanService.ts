@@ -367,16 +367,29 @@ export class KanbanService {
       if (updates.position !== undefined) dbUpdates.position = updates.position;
       if (updates.behavior !== undefined) dbUpdates.behavior = updates.behavior;
 
-      const { error } = await this.supabase
+      const { data, error } = await this.supabase
         .from('kanban_columns')
         .update(dbUpdates)
         .eq('id', columnId)
-        .eq('user_id', this.userId);
+        .eq('user_id', this.userId)
+        .select('id, behavior')
+        .maybeSingle();
 
       if (error) {
-        console.error('KanbanService.updateColumn error:', error.message);
+        console.error('KanbanService.updateColumn error:', {
+          message: error.message,
+          details: error.details,
+          hint: error.hint,
+          code: error.code,
+        });
         return false;
       }
+
+      if (!data) {
+        console.error('KanbanService.updateColumn: no column was updated');
+        return false;
+      }
+
       return true;
     } catch (e) {
       console.error('KanbanService.updateColumn exception:', e);

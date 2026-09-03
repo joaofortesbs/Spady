@@ -38,3 +38,41 @@ describe('KanbanService.deleteCard', () => {
     await expect(service.deleteCard('card-id')).resolves.toBe(false);
   });
 });
+
+describe('KanbanService.updateColumn', () => {
+  it('persists the progressive behavior and confirms the updated column', async () => {
+    const select = vi.fn().mockResolvedValue({
+      data: { id: 'column-id', behavior: 'progressive' },
+      error: null,
+    });
+    const secondEq = vi.fn().mockReturnValue({ select });
+    const firstEq = vi.fn().mockReturnValue({ eq: secondEq });
+    const update = vi.fn().mockReturnValue({ eq: firstEq });
+    const supabase = {
+      from: vi.fn().mockReturnValue({ update }),
+    } as unknown as SupabaseClient;
+
+    const service = new KanbanService(supabase, 'user-id');
+
+    await expect(service.updateColumn('column-id', { behavior: 'progressive' })).resolves.toBe(true);
+    expect(supabase.from).toHaveBeenCalledWith('kanban_columns');
+    expect(update).toHaveBeenCalledWith(expect.objectContaining({
+      behavior: 'progressive',
+    }));
+    expect(select).toHaveBeenCalledWith('id, behavior');
+  });
+
+  it('fails when Supabase does not confirm an updated column', async () => {
+    const select = vi.fn().mockResolvedValue({ data: null, error: null });
+    const secondEq = vi.fn().mockReturnValue({ select });
+    const firstEq = vi.fn().mockReturnValue({ eq: secondEq });
+    const update = vi.fn().mockReturnValue({ eq: firstEq });
+    const supabase = {
+      from: vi.fn().mockReturnValue({ update }),
+    } as unknown as SupabaseClient;
+
+    const service = new KanbanService(supabase, 'user-id');
+
+    await expect(service.updateColumn('column-id', { behavior: 'progressive' })).resolves.toBe(false);
+  });
+});
