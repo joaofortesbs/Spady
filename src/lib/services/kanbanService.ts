@@ -360,7 +360,7 @@ export class KanbanService {
     }
   }
 
-  async updateColumn(columnId: string, updates: { title?: string; position?: number; behavior?: 'active' | 'completion' }): Promise<boolean> {
+  async updateColumn(columnId: string, updates: { title?: string; position?: number; behavior?: ColumnBehavior }): Promise<boolean> {
     try {
       const dbUpdates: Record<string, unknown> = { updated_at: new Date().toISOString() };
       if (updates.title !== undefined) dbUpdates.title = updates.title.toUpperCase();

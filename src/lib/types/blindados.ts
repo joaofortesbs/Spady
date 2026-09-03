@@ -1,5 +1,5 @@
 export type Priority = 'alta' | 'media' | 'baixa';
-export type ColumnBehavior = 'active' | 'completion';
+export type ColumnBehavior = 'active' | 'completion' | 'progressive';
 
 export interface SubTask {
   id: string;

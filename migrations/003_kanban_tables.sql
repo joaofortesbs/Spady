@@ -7,6 +7,7 @@ CREATE TABLE IF NOT EXISTS kanban_columns (
   user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
   title TEXT NOT NULL,
   position INTEGER NOT NULL DEFAULT 0,
+  behavior TEXT NOT NULL DEFAULT 'active' CHECK (behavior IN ('active', 'completion', 'progressive')),
   created_at TIMESTAMPTZ DEFAULT NOW(),
   updated_at TIMESTAMPTZ DEFAULT NOW()
 );

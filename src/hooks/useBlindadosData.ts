@@ -1,13 +1,14 @@
 "use client";
 
 import { useState, useEffect, useCallback, useRef, useMemo } from 'react';
-import { BlindadosData, DEFAULT_DATA, KanbanColumn, KanbanCard, PomodoroSession, PomodoroSettings, DEFAULT_POMODORO_SETTINGS } from '@/lib/types/blindados';
+import { BlindadosData, DEFAULT_DATA, KanbanColumn, KanbanCard, PomodoroSession, PomodoroSettings, DEFAULT_POMODORO_SETTINGS, ColumnBehavior } from '@/lib/types/blindados';
 import { createClient } from '@/lib/supabase/client';
 import { useAuth } from '@/lib/contexts/AuthContext';
 import { KanbanService } from '@/lib/services/kanbanService';
 import { PomodoroService } from '@/lib/services/pomodoroService';
 import { safeStorage } from '@/lib/utils/safeStorage';
 import { STORAGE_KEYS } from '@/lib/utils/storage.constants';
+import { toast } from 'sonner';
 
 function isValidUUID(id: string): boolean {
   return /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id);
@@ -606,7 +607,13 @@ export function useBlindadosData() {
     }
   }, [loadData]);
 
-  const moveCard = useCallback(async (cardId: string, sourceColId: string, targetColId: string, targetIdx: number) => {
+  const moveCard = useCallback(async (
+    cardId: string,
+    sourceColId: string,
+    targetColId: string,
+    targetIdx: number,
+    previousColumns?: KanbanColumn[],
+  ) => {
     console.log('[useBlindadosData] moveCard called:', { cardId, sourceColId, targetColId, targetIdx });
     
     if (targetColId.startsWith('temp-')) {
@@ -663,11 +670,24 @@ export function useBlindadosData() {
     }
     
     console.error('[useBlindadosData] moveCard: All retries failed:', lastError);
-    await loadData(true);
+    if (previousColumns) {
+      setData(prev => {
+        const updated = {
+          ...prev,
+          kanban: { columns: previousColumns, projects: prev.kanban.projects || [] },
+          lastUpdated: new Date().toISOString(),
+        };
+        setCache(updated);
+        return updated;
+      });
+    } else {
+      await loadData(true);
+    }
+    toast.error('Não foi possível mover o card. A ordem anterior foi restaurada.');
     pendingOperationsRef.current--;
   }, [loadData]);
 
-  const updateKanbanColumn = useCallback(async (columnId: string, updates: { title?: string; behavior?: 'active' | 'completion' }) => {
+  const updateKanbanColumn = useCallback(async (columnId: string, updates: { title?: string; behavior?: ColumnBehavior }) => {
     const kanbanService = servicesRef.current.kanban;
     if (!kanbanService) {
       console.error('[useBlindadosData] updateKanbanColumn: service not available');
@@ -711,6 +731,7 @@ export function useBlindadosData() {
           setCache(updated);
           return updated;
         });
+        toast.error('Não foi possível salvar o comportamento da coluna.');
       } else {
         console.log('[useBlindadosData] updateKanbanColumn: SUCCESS');
       }
@@ -721,6 +742,7 @@ export function useBlindadosData() {
         setCache(updated);
         return updated;
       });
+      toast.error('Não foi possível salvar o comportamento da coluna.');
     } finally {
       pendingOperationsRef.current--;
     }
@@ -788,7 +810,11 @@ export function useBlindadosData() {
     }
   }, []);
 
-  const updateCardPositions = useCallback(async (columnId: string, cards: KanbanCard[]) => {
+  const updateCardPositions = useCallback(async (
+    columnId: string,
+    cards: KanbanCard[],
+    previousColumns?: KanbanColumn[],
+  ) => {
     if (columnId.startsWith('temp-')) {
       console.log('[useBlindadosData] updateCardPositions: Skipping - column is temporary');
       return;
@@ -845,7 +871,20 @@ export function useBlindadosData() {
     }
     
     console.error('[useBlindadosData] updateCardPositions: All retries failed:', lastError);
-    await loadData(true);
+    if (previousColumns) {
+      setData(prev => {
+        const updated = {
+          ...prev,
+          kanban: { columns: previousColumns, projects: prev.kanban.projects || [] },
+          lastUpdated: new Date().toISOString(),
+        };
+        setCache(updated);
+        return updated;
+      });
+    } else {
+      await loadData(true);
+    }
+    toast.error('Não foi possível salvar a ordem dos cards. A ordem anterior foi restaurada.');
     pendingOperationsRef.current--;
   }, [loadData]);
 

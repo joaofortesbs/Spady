@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { VisualEditsMessenger } from "orchids-visual-edits";
 import ErrorReporter from "@/components/ErrorReporter";
+import { Toaster } from "@/components/ui/sonner";
 import Script from "next/script";
 
 export const metadata: Metadata = {
@@ -24,6 +25,7 @@ export default function RootLayout({
           data-orchids-project-id="a0f2bb81-9dc2-4d8a-b075-9bb50728749b"
         />
         <ErrorReporter />
+        <Toaster />
         <Script
           src="https://slelguoygbfzlpylpxfs.supabase.co/storage/v1/object/public/scripts//route-messenger.js"
           strategy="afterInteractive"

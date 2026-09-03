@@ -12,6 +12,7 @@ import {
   DragStartEvent,
   DragEndEvent,
   DragOverEvent,
+  DragCancelEvent,
   TouchSensor,
   useDroppable,
   closestCenter,
@@ -30,8 +31,9 @@ import {
   useSortable,
 } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import { Plus, MoreVertical, GripVertical, Trash2, X, Check, Pencil, Move, FolderKanban, Calendar, ChevronDown, Settings2, CheckCircle2, RotateCcw } from 'lucide-react';
+import { Plus, MoreVertical, GripVertical, Trash2, X, Check, Pencil, Move, FolderKanban, Calendar, ChevronDown, Settings2, CheckCircle2, RotateCcw, ListOrdered } from 'lucide-react';
 import { KanbanColumn, KanbanCard, Priority, SubTask, KanbanProject, ColumnBehavior } from '@/lib/types/blindados';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { format, parseISO, isToday, isBefore, startOfDay } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 
@@ -44,8 +46,14 @@ interface KanbanBoardProps {
   onAddCard: (columnId: string, card: Omit<KanbanCard, 'id' | 'createdAt' | 'updatedAt'>) => void;
   onUpdateCard: (columnId: string, cardId: string, updates: Partial<KanbanCard>) => void;
   onDeleteCard: (columnId: string, cardId: string) => void;
-  onMoveCard: (cardId: string, sourceColumnId: string, targetColumnId: string, targetIndex: number) => void;
-  onUpdateCardPositions: (columnId: string, cards: KanbanCard[]) => void;
+  onMoveCard: (
+    cardId: string,
+    sourceColumnId: string,
+    targetColumnId: string,
+    targetIndex: number,
+    previousColumns?: KanbanColumn[],
+  ) => void;
+  onUpdateCardPositions: (columnId: string, cards: KanbanCard[], previousColumns?: KanbanColumn[]) => void;
   isLoaded?: boolean;
   projects?: KanbanProject[];
   onAddProject?: (name: string, color: string) => void;
@@ -72,81 +80,89 @@ function ColumnMenu({
   column, 
   onRename, 
   onDelete, 
-  onClose,
   onChangeBehavior 
 }: { 
   column: KanbanColumn;
   onRename: () => void;
   onDelete: () => void;
-  onClose: () => void;
   onChangeBehavior: (behavior: ColumnBehavior) => void;
 }) {
-  const menuRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    function handleClickOutside(event: MouseEvent) {
-      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
-        onClose();
-      }
-    }
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, [onClose]);
-
   return (
-    <motion.div
-      ref={menuRef}
-      initial={{ opacity: 0, scale: 0.95, y: -5 }}
-      animate={{ opacity: 1, scale: 1, y: 0 }}
-      exit={{ opacity: 0, scale: 0.95, y: -5 }}
-      className="absolute right-0 top-8 z-50 w-56 bg-[#0a0f1f] border border-[#00f6ff]/20 rounded-xl shadow-xl overflow-hidden"
-    >
-      <div className="px-4 py-2 border-b border-white/5">
-        <p className="text-xs text-white/40">Comportamento da coluna</p>
-      </div>
-      <button
-        onClick={() => { onChangeBehavior('active'); onClose(); }}
-        className={`flex items-center gap-3 w-full px-4 py-2.5 text-sm transition-colors ${
-          column.behavior === 'active' ? 'bg-[#00f6ff]/10 text-[#00f6ff]' : 'text-white hover:bg-white/5'
-        }`}
-      >
-        <RotateCcw className="w-4 h-4" />
-        <div className="text-left">
-          <div>Ativada</div>
-          <div className="text-[10px] text-white/40">Tarefas continuam no dia seguinte</div>
-        </div>
-        {column.behavior === 'active' && <Check className="w-4 h-4 ml-auto" />}
-      </button>
-      <button
-        onClick={() => { onChangeBehavior('completion'); onClose(); }}
-        className={`flex items-center gap-3 w-full px-4 py-2.5 text-sm transition-colors ${
-          column.behavior === 'completion' ? 'bg-green-500/10 text-green-400' : 'text-white hover:bg-white/5'
-        }`}
-      >
-        <CheckCircle2 className="w-4 h-4" />
-        <div className="text-left">
-          <div>Conclusão</div>
-          <div className="text-[10px] text-white/40">Tarefas somem no dia seguinte</div>
-        </div>
-        {column.behavior === 'completion' && <Check className="w-4 h-4 ml-auto" />}
-      </button>
-      <div className="border-t border-white/5 mt-1">
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
         <button
-          onClick={() => { onRename(); onClose(); }}
-          className="flex items-center gap-3 w-full px-4 py-2.5 text-sm text-white hover:bg-white/5 transition-colors"
+          type="button"
+          aria-label={`Abrir ações da coluna ${column.title}`}
+          className="rounded p-1 hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#00f6ff] transition-colors"
         >
-          <Pencil className="w-4 h-4 text-[#00f6ff]" />
+          <MoreVertical className="w-4 h-4 text-white/40" aria-hidden="true" />
+        </button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent
+        align="end"
+        sideOffset={8}
+        collisionPadding={12}
+        className="!z-[9999] w-64 overflow-hidden rounded-xl border border-[#00f6ff]/20 bg-[#0a0f1f] p-0 text-white shadow-xl"
+      >
+        <DropdownMenuLabel className="border-b border-white/5 px-4 py-2 text-xs font-normal text-white/40">
+          Comportamento da coluna
+        </DropdownMenuLabel>
+        <DropdownMenuItem
+          onSelect={() => onChangeBehavior('active')}
+          className={`h-auto w-full items-start gap-3 rounded-none px-4 py-3 text-sm focus:bg-[#00f6ff]/10 focus:text-[#00f6ff] ${
+            column.behavior === 'active' ? 'bg-[#00f6ff]/10 text-[#00f6ff]' : 'text-white'
+          }`}
+        >
+          <RotateCcw className="mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" />
+          <span className="min-w-0 text-left">
+            <span className="block">Ativada</span>
+            <span className="mt-0.5 block text-[10px] text-white/40">Tarefas continuam no dia seguinte</span>
+          </span>
+          {column.behavior === 'active' && <Check className="ml-auto mt-0.5 h-4 w-4 shrink-0" aria-label="Selecionada" />}
+        </DropdownMenuItem>
+        <DropdownMenuItem
+          onSelect={() => onChangeBehavior('completion')}
+          className={`h-auto w-full items-start gap-3 rounded-none px-4 py-3 text-sm focus:bg-green-500/10 focus:text-green-400 ${
+            column.behavior === 'completion' ? 'bg-green-500/10 text-green-400' : 'text-white'
+          }`}
+        >
+          <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" />
+          <span className="min-w-0 text-left">
+            <span className="block">Conclusão</span>
+            <span className="mt-0.5 block text-[10px] text-white/40">Tarefas somem no dia seguinte</span>
+          </span>
+          {column.behavior === 'completion' && <Check className="ml-auto mt-0.5 h-4 w-4 shrink-0" aria-label="Selecionada" />}
+        </DropdownMenuItem>
+        <DropdownMenuItem
+          onSelect={() => onChangeBehavior('progressive')}
+          className={`h-auto w-full items-start gap-3 rounded-none px-4 py-3 text-sm focus:bg-violet-500/10 focus:text-violet-300 ${
+            column.behavior === 'progressive' ? 'bg-violet-500/10 text-violet-300' : 'text-white'
+          }`}
+        >
+          <ListOrdered className="mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" />
+          <span className="min-w-0 text-left">
+            <span className="block">Progressivo</span>
+            <span className="mt-0.5 block text-[10px] text-white/40">Cards numerados na ordem de execução</span>
+          </span>
+          {column.behavior === 'progressive' && <Check className="ml-auto mt-0.5 h-4 w-4 shrink-0" aria-label="Selecionada" />}
+        </DropdownMenuItem>
+        <DropdownMenuSeparator className="my-0 bg-white/5" />
+        <DropdownMenuItem
+          onSelect={onRename}
+          className="h-auto w-full gap-3 rounded-none px-4 py-3 text-sm text-white focus:bg-white/5"
+        >
+          <Pencil className="h-4 w-4 text-[#00f6ff]" aria-hidden="true" />
           Renomear coluna
-        </button>
-        <button
-          onClick={() => { onDelete(); onClose(); }}
-          className="flex items-center gap-3 w-full px-4 py-2.5 text-sm text-red-400 hover:bg-red-500/10 transition-colors"
+        </DropdownMenuItem>
+        <DropdownMenuItem
+          onSelect={onDelete}
+          className="h-auto w-full gap-3 rounded-none px-4 py-3 text-sm text-red-400 focus:bg-red-500/10 focus:text-red-300"
         >
-          <Trash2 className="w-4 h-4" />
+          <Trash2 className="h-4 w-4" aria-hidden="true" />
           Excluir coluna
-        </button>
-      </div>
-    </motion.div>
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
 }
 
@@ -179,13 +195,17 @@ function DroppableColumn({
 function SortableColumn({
   column,
   children,
-  onOpenMenu,
+  onRename,
+  onDelete,
+  onChangeBehavior,
   isDraggingColumn,
   filteredCardCount,
 }: {
   column: KanbanColumn;
   children: React.ReactNode;
-  onOpenMenu: () => void;
+  onRename: () => void;
+  onDelete: () => void;
+  onChangeBehavior: (behavior: ColumnBehavior) => void;
   isDraggingColumn: boolean;
   filteredCardCount?: number;
 }) {
@@ -229,6 +249,10 @@ function SortableColumn({
             <div className="flex items-center gap-1 px-1.5 py-0.5 rounded-full bg-green-500/10 border border-green-500/20" title="Tarefas concluídas não aparecem no dia seguinte">
               <CheckCircle2 className="w-3 h-3 text-green-400" />
             </div>
+          ) : column.behavior === 'progressive' ? (
+            <div className="flex items-center gap-1 px-1.5 py-0.5 rounded-full bg-violet-500/10 border border-violet-500/20" title="Cards numerados na ordem de execução">
+              <ListOrdered className="w-3 h-3 text-violet-300" />
+            </div>
           ) : (
             <div className="flex items-center gap-1 px-1.5 py-0.5 rounded-full bg-[#00f6ff]/10 border border-[#00f6ff]/20" title="Tarefas continuam no dia seguinte">
               <RotateCcw className="w-3 h-3 text-[#00f6ff]" />
@@ -237,12 +261,12 @@ function SortableColumn({
         </div>
         <div className="flex items-center gap-1 relative">
           <span className="text-xs text-white/30">{filteredCardCount !== undefined ? filteredCardCount : column.cards.length}</span>
-          <button
-            onClick={(e) => { e.stopPropagation(); onOpenMenu(); }}
-            className="p-1 rounded hover:bg-white/10 transition-colors"
-          >
-            <MoreVertical className="w-4 h-4 text-white/40" />
-          </button>
+          <ColumnMenu
+            column={column}
+            onRename={onRename}
+            onDelete={onDelete}
+            onChangeBehavior={onChangeBehavior}
+          />
         </div>
       </div>
       {children}
@@ -253,12 +277,16 @@ function SortableColumn({
 function SortableCard({ 
   card, 
   columnId, 
+  ordinal,
+  ordinalTotal,
   onEdit, 
   onDelete,
   isDraggingAny,
 }: { 
   card: KanbanCard; 
   columnId: string; 
+  ordinal?: number;
+  ordinalTotal?: number;
   onEdit: () => void; 
   onDelete: () => void;
   isDraggingAny: boolean;
@@ -283,13 +311,15 @@ function SortableCard({
   };
 
   const completedSubtasks = card.subtasks.filter(s => s.completed).length;
+  const positionLabel = ordinal
+    ? `Arrastar ${card.title}, posição ${ordinal} de ${ordinalTotal ?? ordinal}`
+    : `Arrastar ${card.title}`;
 
   return (
     <motion.div
       ref={setNodeRef}
       style={style}
       {...attributes}
-      {...listeners}
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: isDragging ? 0 : 1, y: 0 }}
       exit={{ opacity: 0, y: -10 }}
@@ -300,15 +330,29 @@ function SortableCard({
           : 'border-white/5 hover:border-[#00f6ff]/20'
       }`}
     >
-      <div className="flex items-start justify-between gap-2 mb-2">
+      <div className="flex items-start gap-2 mb-2">
+        {ordinal !== undefined && (
+          <span
+            className="flex h-6 w-6 shrink-0 items-center justify-center rounded-md border border-violet-300/20 bg-violet-300/10 text-xs font-semibold tabular-nums text-violet-200"
+            aria-label={`Posição ${ordinal} de ${ordinalTotal ?? ordinal}`}
+          >
+            {ordinal}
+          </span>
+        )}
         <span className={`px-2 py-0.5 rounded text-[10px] font-semibold ${priorityColors[card.priority].bg} ${priorityColors[card.priority].text}`}>
           {priorityColors[card.priority].label}
         </span>
-        <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-          <div className="p-1 rounded hover:bg-white/10 transition-colors">
-            <GripVertical className="w-3 h-3 text-white/40" />
-          </div>
-        </div>
+        <button
+          type="button"
+          {...attributes}
+          {...listeners}
+          onClick={(event) => event.stopPropagation()}
+          className="ml-auto rounded p-1 cursor-grab active:cursor-grabbing text-white/40 hover:bg-white/10 hover:text-white/70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#00f6ff] transition-colors"
+          aria-label={positionLabel}
+          title="Arrastar card"
+        >
+          <GripVertical className="w-3 h-3" aria-hidden="true" />
+        </button>
       </div>
 
       <p className="text-sm text-white mb-2 pointer-events-none">{card.title}</p>
@@ -336,14 +380,19 @@ function SortableCard({
   );
 }
 
-function CardOverlay({ card }: { card: KanbanCard }) {
+function CardOverlay({ card, ordinal, ordinalTotal }: { card: KanbanCard; ordinal?: number; ordinalTotal?: number }) {
   return (
     <motion.div 
       initial={{ scale: 1.02, rotate: 2 }}
       animate={{ scale: 1.05, rotate: 3 }}
       className="bg-[#0a0f1f] rounded-xl border border-[#00f6ff]/50 p-3 shadow-2xl shadow-[#00f6ff]/30 cursor-grabbing w-[280px]"
     >
-      <div className="flex items-start justify-between gap-2 mb-2">
+      <div className="flex items-start gap-2 mb-2">
+        {ordinal !== undefined && (
+          <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-md border border-violet-300/20 bg-violet-300/10 text-xs font-semibold tabular-nums text-violet-200">
+            {ordinal}
+          </span>
+        )}
         <span className={`px-2 py-0.5 rounded text-[10px] font-semibold ${priorityColors[card.priority].bg} ${priorityColors[card.priority].text}`}>
           {priorityColors[card.priority].label}
         </span>
@@ -412,11 +461,12 @@ export function KanbanBoard({
   const [newCardTitle, setNewCardTitle] = useState('');
   const [newCardPriority, setNewCardPriority] = useState<Priority>('media');
   const [newCardDueDate, setNewCardDueDate] = useState<string>('');
-  const [openMenuColumnId, setOpenMenuColumnId] = useState<string | null>(null);
   const [renamingColumnId, setRenamingColumnId] = useState<string | null>(null);
   const [renameValue, setRenameValue] = useState('');
   const lastOverIdRef = useRef<UniqueIdentifier | null>(null);
   const originalCardPositionRef = useRef<{ cardId: string; columnId: string; index: number } | null>(null);
+  const dragColumnsSnapshotRef = useRef<KanbanColumn[] | null>(null);
+  const activeCardOrdinalRef = useRef<{ ordinal?: number; total?: number } | null>(null);
   
   const [showProjectDropdown, setShowProjectDropdown] = useState(false);
   const [showAddProjectModal, setShowAddProjectModal] = useState(false);
@@ -566,10 +616,18 @@ export function KanbanBoard({
     console.log('[KanbanBoard] Drag started:', { id: active.id, type: activeData?.type });
     
     if (activeData?.type === 'card') {
+      if (String(activeData.card.id).startsWith('temp-')) {
+        console.log('[KanbanBoard] Drag blocked - temporary card is not persisted yet');
+        return;
+      }
+      dragColumnsSnapshotRef.current = columns;
       setActiveCard(activeData.card);
       setActiveColumnId(activeData.columnId);
       const column = columns.find(c => c.id === activeData.columnId);
       const cardIndex = column?.cards.findIndex(c => c.id === activeData.card.id) ?? -1;
+      activeCardOrdinalRef.current = column?.behavior === 'progressive' && cardIndex >= 0
+        ? { ordinal: cardIndex + 1, total: column.cards.length }
+        : null;
       originalCardPositionRef.current = {
         cardId: activeData.card.id,
         columnId: activeData.columnId,
@@ -699,22 +757,24 @@ export function KanbanBoard({
       
       console.log('[KanbanBoard] Card drag end:', { cardId: activeCard.id, originalColumnId: original.columnId, currentColumnId });
       
-      if (currentColumnId && original.columnId !== currentColumnId) {
+      if (over && currentColumnId && original.columnId !== currentColumnId) {
         const targetColumn = columns.find(c => c.id === currentColumnId);
         const targetIndex = targetColumn?.cards.findIndex(c => c.id === activeCard.id) ?? 0;
         console.log('[KanbanBoard] Card moved to different column - calling onMoveCard:', { cardId: activeCard.id, from: original.columnId, to: currentColumnId, targetIndex });
-        onMoveCard(activeCard.id, original.columnId, currentColumnId, targetIndex);
-      } else if (currentColumnId && original.columnId === currentColumnId) {
+        onMoveCard(activeCard.id, original.columnId, currentColumnId, targetIndex, dragColumnsSnapshotRef.current ?? undefined);
+      } else if (over && currentColumnId && original.columnId === currentColumnId) {
         const column = columns.find(c => c.id === currentColumnId);
         if (column) {
           const newIndex = column.cards.findIndex(c => c.id === activeCard.id);
           if (newIndex !== original.index) {
             console.log('[KanbanBoard] Card reordered within column - calling onUpdateCardPositions:', { columnId: currentColumnId, cardCount: column.cards.length, cards: column.cards.map((c, i) => ({ id: c.id, pos: i })) });
-            onUpdateCardPositions(currentColumnId, column.cards);
+            onUpdateCardPositions(currentColumnId, column.cards, dragColumnsSnapshotRef.current ?? undefined);
           } else {
             console.log('[KanbanBoard] Card drag end - no position change');
           }
         }
+      } else if (dragColumnsSnapshotRef.current) {
+        onColumnsChange(dragColumnsSnapshotRef.current);
       }
     }
 
@@ -724,6 +784,22 @@ export function KanbanBoard({
     setOverColumnId(null);
     lastOverIdRef.current = null;
     originalCardPositionRef.current = null;
+    dragColumnsSnapshotRef.current = null;
+    activeCardOrdinalRef.current = null;
+  };
+
+  const handleDragCancel = (_event: DragCancelEvent) => {
+    if (activeCard && dragColumnsSnapshotRef.current) {
+      onColumnsChange(dragColumnsSnapshotRef.current);
+    }
+    setActiveCard(null);
+    setActiveColumn(null);
+    setActiveColumnId(null);
+    setOverColumnId(null);
+    lastOverIdRef.current = null;
+    originalCardPositionRef.current = null;
+    dragColumnsSnapshotRef.current = null;
+    activeCardOrdinalRef.current = null;
   };
 
   const handleAddColumn = () => {
@@ -1003,6 +1079,7 @@ export function KanbanBoard({
         onDragStart={handleDragStart}
         onDragOver={handleDragOver}
         onDragEnd={handleDragEnd}
+        onDragCancel={handleDragCancel}
       >
         <SortableContext items={columnIds} strategy={horizontalListSortingStrategy}>
           <div className="flex gap-4 overflow-x-auto pb-4 h-[calc(100%-4rem)]">
@@ -1010,24 +1087,12 @@ export function KanbanBoard({
               <SortableColumn
                 key={column.id}
                 column={column}
-                onOpenMenu={() => setOpenMenuColumnId(column.id)}
+                onRename={() => handleRenameColumn(column.id)}
+                onDelete={() => onDeleteColumn(column.id)}
+                onChangeBehavior={(behavior) => onUpdateColumn(column.id, { behavior })}
                 isDraggingColumn={activeColumn !== null}
                 filteredCardCount={getFilteredCards(column).length}
               >
-                <div className="relative">
-                  <AnimatePresence>
-                    {openMenuColumnId === column.id && (
-                      <ColumnMenu
-                        column={column}
-                        onRename={() => handleRenameColumn(column.id)}
-                        onDelete={() => onDeleteColumn(column.id)}
-                        onClose={() => setOpenMenuColumnId(null)}
-                        onChangeBehavior={(behavior) => onUpdateColumn(column.id, { behavior })}
-                      />
-                    )}
-                  </AnimatePresence>
-                </div>
-
                 {renamingColumnId === column.id ? (
                   <div className="mb-3 flex gap-2">
                     <input
@@ -1060,10 +1125,14 @@ export function KanbanBoard({
                   >
                     <AnimatePresence>
                       {getFilteredCards(column).map((card) => (
-                        <SortableCard
+                         <SortableCard
                           key={card.id}
                           card={card}
                           columnId={column.id}
+                           ordinal={column.behavior === 'progressive'
+                             ? column.cards.findIndex(c => c.id === card.id) + 1
+                             : undefined}
+                           ordinalTotal={column.behavior === 'progressive' ? column.cards.length : undefined}
                           onEdit={() => setEditingCard({ card, columnId: column.id })}
                           onDelete={() => onDeleteCard(column.id, card.id)}
                           isDraggingAny={activeCard !== null}
@@ -1183,7 +1252,24 @@ export function KanbanBoard({
           duration: 200,
           easing: 'cubic-bezier(0.18, 0.67, 0.6, 1.22)',
         }}>
-          {activeCard && <CardOverlay card={activeCard} />}
+          {activeCard && (
+            <CardOverlay
+              card={activeCard}
+              ordinal={activeColumnId
+                ? (() => {
+                    const column = columns.find(c => c.id === activeColumnId);
+                    if (!column || column.behavior !== 'progressive') return activeCardOrdinalRef.current?.ordinal;
+                    const index = column.cards.findIndex(c => c.id === activeCard.id);
+                    return index >= 0 ? index + 1 : activeCardOrdinalRef.current?.ordinal;
+                  })()
+                : activeCardOrdinalRef.current?.ordinal}
+              ordinalTotal={activeColumnId
+                ? columns.find(c => c.id === activeColumnId)?.behavior === 'progressive'
+                  ? columns.find(c => c.id === activeColumnId)?.cards.length
+                  : activeCardOrdinalRef.current?.total
+                : activeCardOrdinalRef.current?.total}
+            />
+          )}
           {activeColumn && <ColumnOverlay column={activeColumn} />}
         </DragOverlay>
       </DndContext>
