@@ -394,31 +394,6 @@ export function TimeChart({ sessions, categories, liveSession: propLiveSession }
             />
 
             <div className="flex items-center gap-3">
-              {effectiveLiveSession && (
-                <motion.div
-                  key={`live-${forceUpdate}`}
-                  initial={{ opacity: 0, scale: 0.9 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  className={`flex items-center gap-2 px-3 py-1.5 rounded-lg border ${
-                    effectiveLiveSession.isPaused 
-                      ? 'bg-amber-500/10 border-amber-500/30' 
-                      : 'bg-[#00f6ff]/10 border-[#00f6ff]/30'
-                  }`}
-                >
-                  <div className={`w-2 h-2 rounded-full ${
-                    effectiveLiveSession.isRunning 
-                      ? 'bg-[#00f6ff] animate-pulse' 
-                      : 'bg-amber-400'
-                  }`} />
-                  <span className={`text-xs font-medium tabular-nums ${
-                    effectiveLiveSession.isPaused ? 'text-amber-400' : 'text-[#00f6ff]'
-                  }`}>
-                    {Math.floor(effectiveLiveSession.elapsedSeconds / 60)}m {effectiveLiveSession.elapsedSeconds % 60}s
-                    {effectiveLiveSession.isPaused && <span className="ml-1 text-[10px]">(pausado)</span>}
-                  </span>
-                </motion.div>
-              )}
-
               <div className="flex items-center gap-2">
                 <motion.button
                   whileHover={{ scale: 1.05 }}
