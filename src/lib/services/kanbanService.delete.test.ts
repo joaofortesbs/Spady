@@ -41,10 +41,11 @@ describe('KanbanService.deleteCard', () => {
 
 describe('KanbanService.updateColumn', () => {
   it('persists the progressive behavior and confirms the updated column', async () => {
-    const select = vi.fn().mockResolvedValue({
+    const maybeSingle = vi.fn().mockResolvedValue({
       data: { id: 'column-id', behavior: 'progressive' },
       error: null,
     });
+    const select = vi.fn().mockReturnValue({ maybeSingle });
     const secondEq = vi.fn().mockReturnValue({ select });
     const firstEq = vi.fn().mockReturnValue({ eq: secondEq });
     const update = vi.fn().mockReturnValue({ eq: firstEq });
@@ -63,7 +64,8 @@ describe('KanbanService.updateColumn', () => {
   });
 
   it('fails when Supabase does not confirm an updated column', async () => {
-    const select = vi.fn().mockResolvedValue({ data: null, error: null });
+    const maybeSingle = vi.fn().mockResolvedValue({ data: null, error: null });
+    const select = vi.fn().mockReturnValue({ maybeSingle });
     const secondEq = vi.fn().mockReturnValue({ select });
     const firstEq = vi.fn().mockReturnValue({ eq: secondEq });
     const update = vi.fn().mockReturnValue({ eq: firstEq });
