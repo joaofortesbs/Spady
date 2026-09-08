@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Sidebar } from '@/components/blindados/Sidebar';
 import { PomodoroTimer } from '@/components/blindados/PomodoroTimer';
 import { TimeChart } from '@/components/blindados/TimeChart';
-import { KanbanBoard } from '@/components/blindados/KanbanBoard';
+import { KanbanWorkspace } from '@/components/blindados/KanbanWorkspace';
 import { VisoesDashboard } from '@/components/visoes/VisoesDashboard';
 import { AuthPage } from '@/components/auth/AuthPage';
 import { CreateOrganizationModal } from '@/components/blindados/CreateOrganizationModal';
@@ -409,9 +409,9 @@ function MainApp() {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0.15 }}
-              className="h-full p-6 flex flex-col gap-6"
+              className="h-full min-h-0 overflow-y-auto p-4 sm:p-6 flex flex-col gap-6"
             >
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6" style={{ height: '45%', minHeight: '360px' }}>
+              <div className="grid shrink-0 grid-cols-1 gap-6 lg:h-[45%] lg:grid-cols-2" style={{ minHeight: '360px' }}>
                 <PomodoroTimer
                   settings={safeSettings}
                   onSettingsChange={updatePomodoroSettings}
@@ -425,21 +425,8 @@ function MainApp() {
                 />
               </div>
 
-              <div className="flex-1 min-h-0" style={{ height: '55%' }}>
-                {loadError && (
-                  <div className="mb-3 flex items-center justify-between gap-3 rounded-xl border border-red-400/20 bg-red-400/10 px-4 py-3 text-sm text-red-200">
-                    <span>Não foi possível atualizar os projetos e cards.</span>
-                    <button
-                      type="button"
-                      onClick={() => void forceSync()}
-                      disabled={isSyncing}
-                      className="rounded-lg border border-red-300/30 px-3 py-1.5 font-medium text-red-100 transition-colors hover:bg-red-300/10 disabled:cursor-wait disabled:opacity-50"
-                    >
-                      {isSyncing ? 'Tentando...' : 'Tentar novamente'}
-                    </button>
-                  </div>
-                )}
-                <KanbanBoard
+              <div className="flex min-h-[520px] flex-1 lg:min-h-0">
+                <KanbanWorkspace
                   columns={safeColumns}
                   onColumnsChange={updateKanbanColumns}
                   onUpdateColumn={updateKanbanColumn}
@@ -457,6 +444,9 @@ function MainApp() {
                   onAddProject={addProject}
                   selectedDate={selectedDate}
                   onSelectDate={setSelectedDate}
+                  loadError={Boolean(loadError)}
+                  isSyncing={isSyncing}
+                  onRetry={() => void forceSync()}
                 />
               </div>
             </motion.div>
@@ -473,30 +463,41 @@ function MainApp() {
               <VisoesDashboard />
             </motion.div>
           )}
+          {/*
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-[#00f6ff]"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+          )}
+          */}
           {activeSection === 'painel' && (
             <motion.div
-              key="painel"
+              key="painel-kanban"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0.15 }}
-              className="h-full p-6"
+              className="h-full overflow-hidden p-4 sm:p-6"
             >
-              <div className="bg-[#0a0f1f] border border-[#00f6ff]/20 rounded-2xl p-6 h-full">
-                <div className="flex items-center gap-3 mb-6">
-                  <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#00f6ff]/20 to-[#7c3aed]/20 flex items-center justify-center">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-[#00f6ff]"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
-                  </div>
-                  <div>
-                    <h2 className="text-xl font-semibold text-white">Painel</h2>
-                    <p className="text-sm text-white/40">Configurações da organização</p>
-                  </div>
-                </div>
-                <div className="flex flex-col items-center justify-center h-[calc(100%-80px)] text-white/40">
-                  <p className="text-lg mb-2">Configurações da Organização</p>
-                  <p className="text-sm">Em breve: Gerencie as configurações da sua organização</p>
-                </div>
-              </div>
+              <KanbanWorkspace
+                columns={safeColumns}
+                onColumnsChange={updateKanbanColumns}
+                onUpdateColumn={updateKanbanColumn}
+                onAddColumn={addKanbanColumn}
+                onDeleteColumn={deleteKanbanColumn}
+                onAddCard={addKanbanCard}
+                onUpdateCard={updateKanbanCard}
+                onDeleteCard={deleteKanbanCard}
+                onMoveCard={moveCard}
+                onUpdateCardPositions={updateCardPositions}
+                isLoaded={isLoaded}
+                projects={data.kanban.projects || []}
+                selectedProjectId={selectedProjectId}
+                onSelectProject={setSelectedProjectId}
+                onAddProject={addProject}
+                selectedDate={selectedDate}
+                onSelectDate={setSelectedDate}
+                loadError={Boolean(loadError)}
+                isSyncing={isSyncing}
+                onRetry={() => void forceSync()}
+              />
             </motion.div>
           )}
           {activeSection === 'equipes' && (

@@ -31,9 +31,10 @@ import {
   useSortable,
 } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import { Plus, MoreVertical, GripVertical, Trash2, X, Check, Pencil, Move, FolderKanban, Calendar, ChevronDown, Settings2, CheckCircle2, RotateCcw, ListOrdered } from 'lucide-react';
+import { Plus, MoreVertical, GripVertical, Trash2, X, Check, Pencil, Move, FolderKanban, Calendar, ChevronDown, Settings2, CheckCircle2, RotateCcw, ListOrdered, Loader2 } from 'lucide-react';
 import { KanbanColumn, KanbanCard, Priority, SubTask, KanbanProject, KanbanMutationResult, ColumnBehavior } from '@/lib/types/blindados';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { format, parseISO, isToday, isBefore, startOfDay } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 
@@ -324,7 +325,14 @@ function SortableCard({
       animate={{ opacity: isDragging ? 0 : 1, y: 0 }}
       exit={{ opacity: 0, y: -10 }}
       onClick={() => !isDraggingAny && onEdit()}
-      className={`bg-[#0a0f1f] rounded-xl border p-3 group cursor-grab active:cursor-grabbing transition-all duration-200 touch-none select-none ${
+      onKeyDown={(event) => {
+        if (!isDraggingAny && (event.key === 'Enter' || event.key === ' ')) {
+          event.preventDefault();
+          onEdit();
+        }
+      }}
+      aria-label={`Editar tarefa ${card.title}`}
+      className={`bg-[#0a0f1f] rounded-xl border p-3 group cursor-grab active:cursor-grabbing transition-all duration-200 touch-none select-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#00f6ff] ${
         isDragging 
           ? 'border-[#00f6ff]/50 shadow-lg shadow-[#00f6ff]/10' 
           : 'border-white/5 hover:border-[#00f6ff]/20'
@@ -472,9 +480,12 @@ export function KanbanBoard({
   const [showAddProjectModal, setShowAddProjectModal] = useState(false);
   const [newProjectName, setNewProjectName] = useState('');
   const [newProjectColor, setNewProjectColor] = useState(PROJECT_COLORS[0]);
+  const [isCreatingProject, setIsCreatingProject] = useState(false);
+  const [projectCreationError, setProjectCreationError] = useState<string | null>(null);
   const [showDatePicker, setShowDatePicker] = useState(false);
   const projectDropdownRef = useRef<HTMLDivElement>(null);
   const datePickerRef = useRef<HTMLDivElement>(null);
+  const projectNameInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -488,6 +499,25 @@ export function KanbanBoard({
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
+
+  useEffect(() => {
+    if (isLoaded && selectedProjectId && !projects.some(project => project.id === selectedProjectId)) {
+      onSelectProject?.(null);
+    }
+  }, [isLoaded, onSelectProject, projects, selectedProjectId]);
+
+  useEffect(() => {
+    if (!showProjectDropdown && !showDatePicker) return;
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key !== 'Escape') return;
+      setShowProjectDropdown(false);
+      setShowDatePicker(false);
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [showDatePicker, showProjectDropdown]);
 
   const shouldShowCard = useCallback((card: KanbanCard, columnBehavior: ColumnBehavior) => {
     if (selectedProjectId && card.projectId !== selectedProjectId) {
@@ -519,16 +549,43 @@ export function KanbanBoard({
   }, [shouldShowCard]);
 
   const handleAddProject = async () => {
-    if (newProjectName.trim() && onAddProject) {
-      const result = await onAddProject(newProjectName.trim(), newProjectColor);
-      if (!result.success || !result.data) return;
+    const name = newProjectName.trim();
+    if (!name || !onAddProject || isCreatingProject) return;
+
+    setProjectCreationError(null);
+    setIsCreatingProject(true);
+
+    try {
+      const result = await onAddProject(name, newProjectColor);
+      if (!result.success || !result.data) {
+        setProjectCreationError(result.error || 'Não foi possível criar o projeto.');
+        return;
+      }
 
       // Select only the confirmed database ID, never the temporary optimistic ID.
       onSelectProject?.(result.data.id);
       setNewProjectName('');
       setNewProjectColor(PROJECT_COLORS[0]);
       setShowAddProjectModal(false);
+    } catch (error) {
+      setProjectCreationError(error instanceof Error ? error.message : 'Não foi possível criar o projeto.');
+    } finally {
+      setIsCreatingProject(false);
     }
+  };
+
+  const handleOpenAddProject = () => {
+    setProjectCreationError(null);
+    setShowProjectDropdown(false);
+    setShowAddProjectModal(true);
+  };
+
+  const handleCloseAddProject = () => {
+    if (isCreatingProject) return;
+    setShowAddProjectModal(false);
+    setNewProjectName('');
+    setNewProjectColor(PROJECT_COLORS[0]);
+    setProjectCreationError(null);
   };
 
   const selectedProject = projects.find(p => p.id === selectedProjectId);
@@ -865,16 +922,19 @@ export function KanbanBoard({
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: 0.2 }}
-      className="bg-[#0a0f1f] rounded-2xl border border-[#00f6ff]/10 p-6 h-full overflow-hidden"
+      className="bg-[#0a0f1f] rounded-2xl border border-[#00f6ff]/10 p-4 sm:p-6 h-full overflow-hidden"
     >
-      <div className="flex items-center justify-between mb-6">
-        <div className="flex items-center gap-4">
-          <h2 className="text-lg font-semibold text-white">Quadro de tarefas</h2>
+      <div className="flex flex-wrap items-center gap-3 mb-6">
+        <h2 className="text-lg font-semibold text-white">Quadro de tarefas</h2>
+        <div className="ml-auto flex max-w-full flex-wrap items-center justify-end gap-2">
           
           <div className="relative" ref={projectDropdownRef}>
             <button
+              type="button"
               onClick={() => setShowProjectDropdown(!showProjectDropdown)}
-              className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-white/5 border border-white/10 hover:border-[#00f6ff]/30 transition-colors text-sm"
+              aria-expanded={showProjectDropdown}
+              aria-haspopup="menu"
+              className="min-h-11 max-w-full flex items-center gap-2 rounded-lg border border-white/10 bg-white/5 px-3 py-1.5 text-sm transition-colors hover:border-[#00f6ff]/30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#00f6ff]"
             >
               {selectedProject ? (
                 <>
@@ -899,11 +959,14 @@ export function KanbanBoard({
                   initial={{ opacity: 0, y: -5 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -5 }}
-                  className="absolute top-full left-0 mt-2 w-56 bg-[#0a0f1f] border border-[#00f6ff]/20 rounded-xl shadow-xl z-50 overflow-hidden"
+                  role="menu"
+                  className="absolute right-0 top-full z-50 mt-2 w-[min(18rem,calc(100vw-2rem))] overflow-hidden rounded-xl border border-[#00f6ff]/20 bg-[#0a0f1f] shadow-xl"
                 >
                   <button
+                    type="button"
+                    role="menuitem"
                     onClick={() => { onSelectProject?.(null); setShowProjectDropdown(false); }}
-                    className={`flex items-center gap-3 w-full px-4 py-2.5 text-sm transition-colors ${
+                    className={`flex min-h-11 w-full items-center gap-3 px-4 py-2.5 text-left text-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[#00f6ff] ${
                       !selectedProjectId ? 'bg-[#00f6ff]/10 text-[#00f6ff]' : 'text-white hover:bg-white/5'
                     }`}
                   >
@@ -912,13 +975,19 @@ export function KanbanBoard({
                     {!selectedProjectId && <Check className="w-4 h-4 ml-auto" />}
                   </button>
                   
-                  {projects.length > 0 && (
+                  {!isLoaded ? (
+                    <p className="border-t border-white/5 px-4 py-3 text-xs text-white/40">
+                      Carregando projetos...
+                    </p>
+                  ) : projects.length > 0 ? (
                     <div className="border-t border-white/5">
                       {projects.map(project => (
                         <button
                           key={project.id}
+                          type="button"
+                          role="menuitem"
                           onClick={() => { onSelectProject?.(project.id); setShowProjectDropdown(false); }}
-                          className={`flex items-center gap-3 w-full px-4 py-2.5 text-sm transition-colors ${
+                          className={`flex min-h-11 w-full items-center gap-3 px-4 py-2.5 text-left text-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[#00f6ff] ${
                             selectedProjectId === project.id ? 'bg-[#00f6ff]/10 text-[#00f6ff]' : 'text-white hover:bg-white/5'
                           }`}
                         >
@@ -931,12 +1000,18 @@ export function KanbanBoard({
                         </button>
                       ))}
                     </div>
+                  ) : (
+                    <p className="border-t border-white/5 px-4 py-3 text-xs text-white/40">
+                      Nenhum projeto criado ainda.
+                    </p>
                   )}
                   
                   <div className="border-t border-white/5">
                     <button
-                      onClick={() => { setShowAddProjectModal(true); setShowProjectDropdown(false); }}
-                      className="flex items-center gap-3 w-full px-4 py-2.5 text-sm text-[#00f6ff] hover:bg-white/5 transition-colors"
+                      type="button"
+                      role="menuitem"
+                      onClick={handleOpenAddProject}
+                      className="flex min-h-11 w-full items-center gap-3 px-4 py-2.5 text-left text-sm text-[#00f6ff] transition-colors hover:bg-white/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[#00f6ff]"
                     >
                       <Plus className="w-4 h-4" />
                       <span>Novo projeto</span>
@@ -949,12 +1024,15 @@ export function KanbanBoard({
 
           <div className="relative" ref={datePickerRef}>
             <button
+              type="button"
               onClick={() => setShowDatePicker(!showDatePicker)}
+              aria-expanded={showDatePicker}
+              aria-haspopup="dialog"
               className={`flex items-center gap-2 px-3 py-1.5 rounded-lg border transition-colors text-sm ${
                 selectedDate 
                   ? 'bg-[#00f6ff]/10 border-[#00f6ff]/30 text-[#00f6ff]' 
                   : 'bg-white/5 border-white/10 hover:border-[#00f6ff]/30 text-white/60'
-              }`}
+              } min-h-11 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#00f6ff]`}
             >
               <Calendar className="w-4 h-4" />
               {selectedDate ? (
@@ -976,8 +1054,9 @@ export function KanbanBoard({
                     <span className="text-sm text-white/60">Filtrar por data</span>
                     {selectedDate && (
                       <button
+                        type="button"
                         onClick={() => { onSelectDate?.(null); setShowDatePicker(false); }}
-                        className="text-xs text-red-400 hover:text-red-300"
+                        className="min-h-11 px-2 text-xs text-red-400 hover:text-red-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-300"
                       >
                         Limpar
                       </button>
@@ -996,8 +1075,9 @@ export function KanbanBoard({
                   />
                   <div className="flex gap-2 mt-3">
                     <button
+                      type="button"
                       onClick={() => { onSelectDate?.(new Date()); setShowDatePicker(false); }}
-                      className="flex-1 px-3 py-1.5 rounded-lg bg-[#00f6ff]/10 border border-[#00f6ff]/30 text-[#00f6ff] text-xs hover:bg-[#00f6ff]/20 transition-colors"
+                      className="min-h-11 flex-1 rounded-lg border border-[#00f6ff]/30 bg-[#00f6ff]/10 px-3 py-1.5 text-xs text-[#00f6ff] transition-colors hover:bg-[#00f6ff]/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#00f6ff]"
                     >
                       Hoje
                     </button>
@@ -1009,73 +1089,116 @@ export function KanbanBoard({
         </div>
       </div>
 
-      <AnimatePresence>
-        {showAddProjectModal && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black/50 flex items-center justify-center z-50"
-            onClick={() => setShowAddProjectModal(false)}
+      <Dialog
+        open={showAddProjectModal}
+        onOpenChange={(open) => {
+          if (open) {
+            setProjectCreationError(null);
+            setShowAddProjectModal(true);
+          } else {
+            handleCloseAddProject();
+          }
+        }}
+      >
+        <DialogContent
+          showCloseButton={!isCreatingProject}
+          onEscapeKeyDown={(event) => {
+            if (isCreatingProject) event.preventDefault();
+          }}
+          onPointerDownOutside={(event) => {
+            if (isCreatingProject) event.preventDefault();
+          }}
+          className="max-h-[90vh] overflow-y-auto rounded-2xl border-[#00f6ff]/20 bg-[#0a0f1f] p-4 text-white shadow-2xl sm:p-6"
+        >
+          <DialogHeader className="text-left">
+            <DialogTitle className="text-lg font-semibold text-white">Novo Projeto</DialogTitle>
+            <DialogDescription className="text-white/50">
+              Escolha um nome e uma cor para organizar seus cards.
+            </DialogDescription>
+          </DialogHeader>
+
+          <form
+            onSubmit={(event) => {
+              event.preventDefault();
+              void handleAddProject();
+            }}
+            className="space-y-4"
           >
-            <motion.div
-              initial={{ scale: 0.95, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.95, opacity: 0 }}
-              onClick={(e) => e.stopPropagation()}
-              className="bg-[#0a0f1f] border border-[#00f6ff]/20 rounded-2xl p-6 w-full max-w-md shadow-2xl"
-            >
-              <h3 className="text-lg font-semibold text-white mb-4">Novo Projeto</h3>
-              
-              <div className="space-y-4">
-                <div>
-                  <label className="block text-sm text-white/60 mb-2">Nome do projeto</label>
-                  <input
-                    type="text"
-                    value={newProjectName}
-                    onChange={(e) => setNewProjectName(e.target.value)}
-                    placeholder="Ex: Trabalho, Pessoal, Estudos..."
-                    className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white focus:border-[#00f6ff]/50 outline-none"
-                    autoFocus
+            {projectCreationError && (
+              <div role="alert" className="rounded-xl border border-red-400/30 bg-red-400/10 px-3 py-2 text-sm text-red-200">
+                {projectCreationError}
+              </div>
+            )}
+
+            <div>
+              <label htmlFor="new-project-name" className="mb-2 block text-sm text-white/60">
+                Nome do projeto
+              </label>
+              <input
+                ref={projectNameInputRef}
+                id="new-project-name"
+                type="text"
+                value={newProjectName}
+                onChange={(event) => {
+                  setNewProjectName(event.target.value);
+                  if (projectCreationError) setProjectCreationError(null);
+                }}
+                placeholder="Ex: Trabalho, Pessoal, Estudos..."
+                className="min-h-11 w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-white outline-none transition-colors placeholder:text-white/30 focus:border-[#00f6ff]/50 focus-visible:ring-2 focus-visible:ring-[#00f6ff]/50"
+                autoFocus
+                disabled={isCreatingProject}
+                maxLength={80}
+              />
+            </div>
+
+            <fieldset>
+              <legend className="mb-2 block text-sm text-white/60">Cor do projeto</legend>
+              <div className="flex flex-wrap gap-3">
+                {PROJECT_COLORS.map((color, index) => (
+                  <button
+                    key={color}
+                    type="button"
+                    onClick={() => setNewProjectColor(color)}
+                    disabled={isCreatingProject}
+                    aria-label={`Cor ${index + 1}: ${color}`}
+                    aria-pressed={newProjectColor === color}
+                    title={`Selecionar cor ${color}`}
+                    className={`h-9 w-9 rounded-full transition-transform hover:scale-110 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[#0a0f1f] disabled:cursor-not-allowed disabled:opacity-60 ${
+                      newProjectColor === color ? 'ring-2 ring-white ring-offset-2 ring-offset-[#0a0f1f]' : ''
+                    }`}
+                    style={{ backgroundColor: color }}
                   />
-                </div>
-                
-                <div>
-                  <label className="block text-sm text-white/60 mb-2">Cor</label>
-                  <div className="flex flex-wrap gap-2">
-                    {PROJECT_COLORS.map(color => (
-                      <button
-                        key={color}
-                        onClick={() => setNewProjectColor(color)}
-                        className={`w-8 h-8 rounded-full transition-all ${
-                          newProjectColor === color ? 'ring-2 ring-offset-2 ring-offset-[#0a0f1f] ring-white scale-110' : ''
-                        }`}
-                        style={{ backgroundColor: color }}
-                      />
-                    ))}
-                  </div>
-                </div>
+                ))}
               </div>
-              
-              <div className="flex gap-3 mt-6">
-                <button
-                  onClick={() => setShowAddProjectModal(false)}
-                  className="flex-1 px-4 py-2.5 rounded-xl bg-white/5 text-white/60 hover:bg-white/10 transition-colors"
-                >
-                  Cancelar
-                </button>
-                <button
-                  onClick={handleAddProject}
-                  disabled={!newProjectName.trim()}
-                  className="flex-1 px-4 py-2.5 rounded-xl bg-[#00f6ff] text-black font-medium hover:bg-[#00f6ff]/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  Criar projeto
-                </button>
-              </div>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+            </fieldset>
+
+            <DialogFooter className="flex-col-reverse gap-3 pt-2 sm:flex-row">
+              <button
+                type="button"
+                onClick={handleCloseAddProject}
+                disabled={isCreatingProject}
+                className="min-h-11 flex-1 rounded-xl bg-white/5 px-4 py-2.5 text-white/70 transition-colors hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#00f6ff] disabled:cursor-wait disabled:opacity-50"
+              >
+                Cancelar
+              </button>
+              <button
+                type="submit"
+                disabled={!newProjectName.trim() || isCreatingProject || !onAddProject}
+                className="min-h-11 flex-1 rounded-xl bg-[#00f6ff] px-4 py-2.5 font-medium text-black transition-colors hover:bg-[#00f6ff]/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white disabled:cursor-not-allowed disabled:opacity-50"
+              >
+                {isCreatingProject ? (
+                  <span className="flex items-center justify-center gap-2">
+                    <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
+                    Criando...
+                  </span>
+                ) : (
+                  'Criar projeto'
+                )}
+              </button>
+            </DialogFooter>
+          </form>
+        </DialogContent>
+      </Dialog>
 
       <DndContext
         sensors={sensors}
