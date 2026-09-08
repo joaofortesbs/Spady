@@ -1,6 +1,6 @@
 "use client";
 
-export const STORAGE_VERSION = 9;
+export const STORAGE_VERSION = 10;
 
 export const STORAGE_KEYS = {
   AUTH_CACHE: 'blindy_auth_cache',
@@ -16,6 +16,10 @@ export const STORAGE_KEYS = {
   CATEGORY_DURATIONS: 'blindy_category_durations_v1',
   SOUND_ENABLED: 'blindy_sound_enabled_v1',
 } as const;
+
+export function getUserDataCacheKey(userId: string): string {
+  return `${STORAGE_KEYS.DATA_CACHE}_${userId}`;
+}
 
 export const OLD_CACHE_KEYS = [
   'blindy_data_cache_v1',

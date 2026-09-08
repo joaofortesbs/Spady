@@ -15,6 +15,12 @@ export interface KanbanProject {
   updatedAt?: string;
 }
 
+export interface KanbanMutationResult<T> {
+  success: boolean;
+  data?: T;
+  error?: string;
+}
+
 export interface KanbanCard {
   id: string;
   title: string;
@@ -24,9 +30,9 @@ export interface KanbanCard {
   subtasks: SubTask[];
   createdAt: string;
   updatedAt: string;
-  projectId?: string;
-  dueDate?: string;
-  completedAt?: string;
+  projectId?: string | null;
+  dueDate?: string | null;
+  completedAt?: string | null;
 }
 
 export interface KanbanColumn {

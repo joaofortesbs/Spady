@@ -44,6 +44,9 @@ function MainApp() {
     addPomodoroSession,
     updatePomodoroSettings,
     addProject,
+    loadError,
+    isSyncing,
+    forceSync,
   } = useBlindadosData();
   const { data: visoesData, addNote, updateNote, removeNote, pinnedNoteIds, toggleNotePinned } = useVisoesData();
 
@@ -70,6 +73,7 @@ function MainApp() {
 
   const mountedRef = useRef(true);
   const transitionTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const selectedProjectUserRef = useRef<string | null>(null);
 
   useEffect(() => {
     mountedRef.current = true;
@@ -80,6 +84,14 @@ function MainApp() {
       }
     };
   }, []);
+
+  useEffect(() => {
+    const nextUserId = user?.id ?? null;
+    if (selectedProjectUserRef.current !== null && selectedProjectUserRef.current !== nextUserId) {
+      setSelectedProjectId(null);
+    }
+    selectedProjectUserRef.current = nextUserId;
+  }, [user]);
 
   useEffect(() => {
     const savedSection = safeStorage.getString(STORAGE_KEYS.ACTIVE_SECTION);
@@ -414,6 +426,19 @@ function MainApp() {
               </div>
 
               <div className="flex-1 min-h-0" style={{ height: '55%' }}>
+                {loadError && (
+                  <div className="mb-3 flex items-center justify-between gap-3 rounded-xl border border-red-400/20 bg-red-400/10 px-4 py-3 text-sm text-red-200">
+                    <span>Não foi possível atualizar os projetos e cards.</span>
+                    <button
+                      type="button"
+                      onClick={() => void forceSync()}
+                      disabled={isSyncing}
+                      className="rounded-lg border border-red-300/30 px-3 py-1.5 font-medium text-red-100 transition-colors hover:bg-red-300/10 disabled:cursor-wait disabled:opacity-50"
+                    >
+                      {isSyncing ? 'Tentando...' : 'Tentar novamente'}
+                    </button>
+                  </div>
+                )}
                 <KanbanBoard
                   columns={safeColumns}
                   onColumnsChange={updateKanbanColumns}

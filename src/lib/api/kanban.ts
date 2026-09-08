@@ -82,9 +82,9 @@ export function publicCard(card: {
     subtasks: card.subtasks || [],
     createdAt: card.created_at,
     updatedAt: card.updated_at,
-    projectId: card.project_id || undefined,
-    dueDate: card.due_date || undefined,
-    completedAt: card.completed_at || undefined,
+    projectId: card.project_id ?? null,
+    dueDate: card.due_date ?? null,
+    completedAt: card.completed_at ?? null,
   };
 }
 

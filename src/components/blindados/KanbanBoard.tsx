@@ -32,7 +32,7 @@ import {
 } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { Plus, MoreVertical, GripVertical, Trash2, X, Check, Pencil, Move, FolderKanban, Calendar, ChevronDown, Settings2, CheckCircle2, RotateCcw, ListOrdered } from 'lucide-react';
-import { KanbanColumn, KanbanCard, Priority, SubTask, KanbanProject, ColumnBehavior } from '@/lib/types/blindados';
+import { KanbanColumn, KanbanCard, Priority, SubTask, KanbanProject, KanbanMutationResult, ColumnBehavior } from '@/lib/types/blindados';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { format, parseISO, isToday, isBefore, startOfDay } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
@@ -56,7 +56,7 @@ interface KanbanBoardProps {
   onUpdateCardPositions: (columnId: string, cards: KanbanCard[], previousColumns?: KanbanColumn[]) => void;
   isLoaded?: boolean;
   projects?: KanbanProject[];
-  onAddProject?: (name: string, color: string) => void;
+  onAddProject?: (name: string, color: string) => Promise<KanbanMutationResult<KanbanProject>>;
   onDeleteProject?: (projectId: string) => void;
   selectedProjectId?: string | null;
   onSelectProject?: (projectId: string | null) => void;
@@ -518,9 +518,13 @@ export function KanbanBoard({
     return column.cards.filter(card => shouldShowCard(card, column.behavior || 'active'));
   }, [shouldShowCard]);
 
-  const handleAddProject = () => {
+  const handleAddProject = async () => {
     if (newProjectName.trim() && onAddProject) {
-      onAddProject(newProjectName.trim(), newProjectColor);
+      const result = await onAddProject(newProjectName.trim(), newProjectColor);
+      if (!result.success || !result.data) return;
+
+      // Select only the confirmed database ID, never the temporary optimistic ID.
+      onSelectProject?.(result.data.id);
       setNewProjectName('');
       setNewProjectColor(PROJECT_COLORS[0]);
       setShowAddProjectModal(false);
@@ -1326,7 +1330,7 @@ function EditCardModal({
       priority,
       tags,
       subtasks,
-      dueDate: dueDate || undefined,
+      dueDate: dueDate || null,
     };
     console.log('[EditCardModal] Saving card:', card.id, 'Updates:', JSON.stringify(updates));
     console.log('[EditCardModal] Tags count:', tags.length, 'Subtasks count:', subtasks.length);

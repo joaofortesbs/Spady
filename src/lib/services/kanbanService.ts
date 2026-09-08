@@ -123,9 +123,9 @@ export class KanbanService {
           subtasks: card.subtasks || [],
           createdAt: card.created_at,
           updatedAt: card.updated_at,
-          projectId: card.project_id || undefined,
-          dueDate: card.due_date || undefined,
-          completedAt: card.completed_at || undefined,
+          projectId: card.project_id ?? null,
+          dueDate: card.due_date ?? null,
+          completedAt: card.completed_at ?? null,
         });
         cardsMap.set(card.column_id, list);
       });
@@ -246,9 +246,9 @@ export class KanbanService {
           subtasks: data.subtasks || [],
           createdAt: data.created_at,
           updatedAt: data.updated_at,
-          projectId: data.project_id || undefined,
-          dueDate: data.due_date || undefined,
-          completedAt: data.completed_at || undefined,
+          projectId: data.project_id ?? null,
+          dueDate: data.due_date ?? null,
+          completedAt: data.completed_at ?? null,
         };
       });
     } catch (e) {
@@ -556,7 +556,7 @@ export class KanbanService {
 
       if (error) {
         console.error('KanbanService.loadProjects error:', error.message);
-        return [];
+        throw error;
       }
 
       return (data || []).map(project => ({
@@ -568,7 +568,7 @@ export class KanbanService {
       }));
     } catch (e) {
       console.error('KanbanService.loadProjects exception:', e);
-      return [];
+      throw e;
     }
   }
 

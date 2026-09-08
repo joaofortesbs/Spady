@@ -1,50 +1,111 @@
 "use client";
 
 import { useState, useEffect, useCallback, useRef, useMemo } from 'react';
-import { BlindadosData, DEFAULT_DATA, KanbanColumn, KanbanCard, PomodoroSession, PomodoroSettings, DEFAULT_POMODORO_SETTINGS, ColumnBehavior } from '@/lib/types/blindados';
+import { BlindadosData, DEFAULT_DATA, KanbanColumn, KanbanCard, KanbanProject, KanbanMutationResult, PomodoroSession, PomodoroSettings, DEFAULT_POMODORO_SETTINGS, ColumnBehavior } from '@/lib/types/blindados';
 import { createClient } from '@/lib/supabase/client';
 import { useAuth } from '@/lib/contexts/AuthContext';
 import { KanbanService } from '@/lib/services/kanbanService';
 import { PomodoroService } from '@/lib/services/pomodoroService';
 import { safeStorage } from '@/lib/utils/safeStorage';
-import { STORAGE_KEYS } from '@/lib/utils/storage.constants';
+import { getUserDataCacheKey, STORAGE_KEYS } from '@/lib/utils/storage.constants';
 import { toast } from 'sonner';
 
 function isValidUUID(id: string): boolean {
   return /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id);
 }
 
-function getCache(): BlindadosData | null {
-  const data = safeStorage.get<BlindadosData>(STORAGE_KEYS.DATA_CACHE);
-  if (!data?.kanban?.columns) return null;
-  const hasValidColumns = data.kanban.columns.every(col => isValidUUID(col.id));
-  if (!hasValidColumns) {
-    safeStorage.remove(STORAGE_KEYS.DATA_CACHE);
+function isKanbanProject(value: unknown): value is KanbanProject {
+  if (!value || typeof value !== 'object') return false;
+  const project = value as Partial<KanbanProject>;
+  return isValidUUID(project.id || '') &&
+    typeof project.name === 'string' &&
+    typeof project.color === 'string' &&
+    typeof project.createdAt === 'string';
+}
+
+function isValidCachedData(value: unknown): value is BlindadosData {
+  if (!value || typeof value !== 'object') return false;
+  const data = value as Partial<BlindadosData>;
+  if (!data.kanban || !Array.isArray(data.kanban.columns) || !Array.isArray(data.kanban.projects)) {
+    return false;
+  }
+
+  const hasValidProjects = data.kanban.projects.every(project =>
+    Boolean(project) &&
+    isValidUUID(project.id) &&
+    typeof project.name === 'string' &&
+    typeof project.color === 'string' &&
+    typeof project.createdAt === 'string',
+  );
+  const hasValidColumns = data.kanban.columns.every(column =>
+    Boolean(column) &&
+    isValidUUID(column.id) &&
+    typeof column.title === 'string' &&
+    Array.isArray(column.cards) &&
+    column.cards.every(card =>
+      Boolean(card) &&
+      isValidUUID(card.id) &&
+      typeof card.title === 'string' &&
+      typeof card.description === 'string' &&
+      Array.isArray(card.tags) &&
+      Array.isArray(card.subtasks) &&
+      typeof card.createdAt === 'string' &&
+      typeof card.updatedAt === 'string' &&
+      (card.projectId == null || isValidUUID(card.projectId)) &&
+      (card.dueDate == null || typeof card.dueDate === 'string') &&
+      (card.completedAt == null || typeof card.completedAt === 'string'),
+    ),
+  );
+
+  return hasValidProjects && hasValidColumns;
+}
+
+function getCache(userId: string): BlindadosData | null {
+  const cacheKey = getUserDataCacheKey(userId);
+  const data = safeStorage.get<BlindadosData>(cacheKey);
+  if (!isValidCachedData(data)) {
+    if (data) safeStorage.remove(cacheKey);
     return null;
   }
   return data;
 }
 
+let activeCacheUserId: string | null = null;
+
 function setCache(data: BlindadosData) {
-  safeStorage.set(STORAGE_KEYS.DATA_CACHE, data);
+  if (activeCacheUserId) safeStorage.set(getUserDataCacheKey(activeCacheUserId), data);
 }
 
 export function useBlindadosData() {
   const [data, setData] = useState<BlindadosData>(DEFAULT_DATA);
   const [isLoaded, setIsLoaded] = useState(false);
   const [isSyncing, setIsSyncing] = useState(false);
+  const [loadError, setLoadError] = useState<string | null>(null);
   const { user } = useAuth();
   
   const supabase = useMemo(() => createClient(), []);
   
   const dataRef = useRef(data);
   const loadingRef = useRef(false);
+  const loadGenerationRef = useRef(0);
   const pendingOperationsRef = useRef(0);
   const lastSyncTimeRef = useRef(0);
+  const dataOwnerRef = useRef<string | null>(null);
+  const userIdRef = useRef<string | null>(null);
+  const projectCreationRef = useRef(false);
   const servicesRef = useRef<{ kanban: KanbanService | null; pomodoro: PomodoroService | null }>({
     kanban: null,
     pomodoro: null,
   });
+
+  userIdRef.current = user?.id ?? null;
+  activeCacheUserId = userIdRef.current;
+
+  const writeCache = useCallback((value: BlindadosData) => {
+    if (userIdRef.current) {
+      safeStorage.set(getUserDataCacheKey(userIdRef.current), value);
+    }
+  }, []);
 
   useEffect(() => {
     dataRef.current = data;
@@ -63,7 +124,7 @@ export function useBlindadosData() {
   const loadData = useCallback(async (force: boolean = false) => {
     if (!user || loadingRef.current) return;
     
-    if (!force && pendingOperationsRef.current > 0) {
+    if (pendingOperationsRef.current > 0) {
       console.log('[useBlindadosData] loadData: Skipping - pending operations:', pendingOperationsRef.current);
       return;
     }
@@ -81,6 +142,9 @@ export function useBlindadosData() {
     
     loadingRef.current = true;
     setIsSyncing(true);
+    setLoadError(null);
+    const loadingUserId = user.id;
+    const loadingGeneration = ++loadGenerationRef.current;
 
     try {
       console.log('[useBlindadosData] loadData: Loading from database via API routes...');
@@ -108,8 +172,6 @@ export function useBlindadosData() {
           sessionsCount: pomodoroSessions.length,
         }));
         
-        safeStorage.remove(STORAGE_KEYS.DATA_CACHE);
-        console.log('[useBlindadosData] loadData: Cleared old cache to prevent stale data');
       } else {
         console.warn('[useBlindadosData] loadData: API failed, error:', pomodoroSettingsRes.error, '- trying client-side load...');
         
@@ -136,33 +198,55 @@ export function useBlindadosData() {
         lastUpdated: new Date().toISOString(),
       };
 
+      if (userIdRef.current !== loadingUserId || loadingGeneration !== loadGenerationRef.current) return;
+      dataOwnerRef.current = loadingUserId;
+      dataRef.current = newData;
       setData(newData);
-      setCache(newData);
+      writeCache(newData);
       lastSyncTimeRef.current = Date.now();
       console.log('[useBlindadosData] loadData: SUCCESS - loaded', columns.length, 'columns,', pomodoroSettings.categories?.length, 'categories with durations:', pomodoroSettings.categories?.map((c: any) => c.duration));
     } catch (e) {
       console.error('[useBlindadosData] loadData error:', e);
+      if (userIdRef.current === loadingUserId && loadingGeneration === loadGenerationRef.current) {
+        const message = e instanceof Error ? e.message : 'Erro desconhecido ao carregar os dados.';
+        setLoadError(message);
+        toast.error('Não foi possível carregar seus projetos e cards. Tente novamente.');
+      }
     } finally {
-      setIsLoaded(true);
-      setIsSyncing(false);
-      loadingRef.current = false;
+      if (loadingGeneration === loadGenerationRef.current) {
+        setIsLoaded(true);
+        setIsSyncing(false);
+        loadingRef.current = false;
+      }
     }
-  }, [user]);
+  }, [user, writeCache]);
 
   useEffect(() => {
-    const cached = getCache();
-    if (cached) {
-      setData(cached);
+    pendingOperationsRef.current = 0;
+    lastSyncTimeRef.current = 0;
+    loadGenerationRef.current++;
+    loadingRef.current = false;
+    setLoadError(null);
+
+    if (!user) {
+      dataOwnerRef.current = null;
+      dataRef.current = DEFAULT_DATA;
+      setData(DEFAULT_DATA);
       setIsLoaded(true);
+      // Never reuse the unscoped cache; it could belong to a previous account.
+      safeStorage.remove(STORAGE_KEYS.DATA_CACHE);
+      return;
     }
-    
-    if (user) {
-      console.log('[useBlindadosData] User logged in, scheduling loadData...');
-      const timer = setTimeout(() => loadData(true), 100);
-      return () => clearTimeout(timer);
-    } else {
-      setIsLoaded(true);
-    }
+
+    const cached = getCache(user.id);
+    dataOwnerRef.current = user.id;
+    dataRef.current = cached || DEFAULT_DATA;
+    setData(cached || DEFAULT_DATA);
+    setIsLoaded(Boolean(cached));
+
+    console.log('[useBlindadosData] User logged in, scheduling loadData...');
+    const timer = setTimeout(() => loadData(true), 100);
+    return () => clearTimeout(timer);
   }, [user, loadData]);
 
   useEffect(() => {
@@ -320,6 +404,9 @@ export function useBlindadosData() {
       subtasks: card.subtasks || [],
       createdAt: now,
       updatedAt: now,
+      projectId: card.projectId ?? null,
+      dueDate: card.dueDate ?? null,
+      completedAt: card.completedAt ?? null,
     };
     
     pendingOperationsRef.current++;
@@ -360,9 +447,9 @@ export function useBlindadosData() {
             tags: card.tags || [],
             subtasks: card.subtasks || [],
             position,
-            projectId: card.projectId || undefined,
-            dueDate: card.dueDate || undefined,
-            completedAt: card.completedAt || undefined,
+            projectId: card.projectId ?? undefined,
+            dueDate: card.dueDate ?? undefined,
+            completedAt: card.completedAt ?? undefined,
           }),
         });
         
@@ -431,6 +518,7 @@ export function useBlindadosData() {
     
     pendingOperationsRef.current--;
     console.log('[useBlindadosData] addKanbanCard: Failed - Pending ops:', pendingOperationsRef.current);
+    toast.error('Não foi possível criar o card. Tente novamente.');
     
     console.log('[useBlindadosData] addKanbanCard: Triggering re-sync from database...');
     setTimeout(() => loadData(true), 1000);
@@ -449,7 +537,16 @@ export function useBlindadosData() {
     
     console.log('[useBlindadosData] updateKanbanCard: Starting update for card', cardId, 'with updates:', updates);
     
-    const previousColumns = dataRef.current.kanban.columns;
+    const previousCard = dataRef.current.kanban.columns
+      .find(column => column.id === columnId)
+      ?.cards.find(card => card.id === cardId);
+    if (!previousCard) {
+      console.error('[useBlindadosData] updateKanbanCard: card not found:', cardId);
+      return;
+    }
+    const persistedUpdates = Object.fromEntries(
+      Object.entries(updates).filter(([, value]) => value !== undefined),
+    ) as Partial<KanbanCard>;
     
     pendingOperationsRef.current++;
     
@@ -462,7 +559,7 @@ export function useBlindadosData() {
               ? { 
                   ...c, 
                   cards: c.cards.map(card => 
-                    card.id === cardId ? { ...card, ...updates, updatedAt: new Date().toISOString() } : card
+                    card.id === cardId ? { ...card, ...persistedUpdates, updatedAt: new Date().toISOString() } : card
                   ) 
                 }
               : c
@@ -487,23 +584,34 @@ export function useBlindadosData() {
         const response = await fetch('/api/kanban/update-card', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            cardId,
-            title: updates.title,
-            description: updates.description,
-            priority: updates.priority,
-            tags: updates.tags,
-            subtasks: updates.subtasks,
-            projectId: updates.projectId,
-            dueDate: updates.dueDate,
-            completedAt: updates.completedAt,
-          }),
+          body: JSON.stringify({ cardId, ...persistedUpdates }),
         });
         
         const result = await response.json();
         
         if (response.ok && result.success) {
           console.log('[useBlindadosData] updateKanbanCard: SUCCESS on attempt', attempt + 1, result);
+          if (result.card) {
+            setData(prev => {
+              const updated = {
+                ...prev,
+                kanban: {
+                  ...prev.kanban,
+                  columns: prev.kanban.columns.map(column =>
+                    column.id === columnId
+                      ? {
+                          ...column,
+                          cards: column.cards.map(card => card.id === cardId ? result.card : card),
+                        }
+                      : column,
+                  ),
+                },
+                lastUpdated: new Date().toISOString(),
+              };
+              setCache(updated);
+              return updated;
+            });
+          }
           success = true;
           break;
         } else {
@@ -529,10 +637,25 @@ export function useBlindadosData() {
     if (!success) {
       console.error('[useBlindadosData] updateKanbanCard: FAILED after all retries - restoring previous state. Last error:', lastError);
       setData(prev => {
-        const updated = { ...prev, kanban: { columns: previousColumns, projects: prev.kanban.projects || [] }, lastUpdated: new Date().toISOString() };
+        const updated = {
+          ...prev,
+          kanban: {
+            ...prev.kanban,
+            columns: prev.kanban.columns.map(column =>
+              column.id === columnId
+                ? {
+                    ...column,
+                    cards: column.cards.map(card => card.id === cardId ? previousCard : card),
+                  }
+                : column,
+            ),
+          },
+          lastUpdated: new Date().toISOString(),
+        };
         setCache(updated);
         return updated;
       });
+      toast.error(`Não foi possível salvar o card. ${lastError || 'Tente novamente.'}`);
     }
     
     pendingOperationsRef.current--;
@@ -1056,39 +1179,54 @@ export function useBlindadosData() {
     setTimeout(() => loadData(true), 1000);
   }, [loadData]);
 
+  const visibleData = dataOwnerRef.current === user?.id ? data : DEFAULT_DATA;
   const safeData: BlindadosData = {
-    ...data,
+    ...visibleData,
     pomodoro: {
-      ...data.pomodoro,
+      ...visibleData.pomodoro,
       settings: {
-        categories: data.pomodoro?.settings?.categories || DEFAULT_POMODORO_SETTINGS.categories,
+        categories: visibleData.pomodoro?.settings?.categories || DEFAULT_POMODORO_SETTINGS.categories,
         intervals: {
-          shortBreak: data.pomodoro?.settings?.intervals?.shortBreak ?? DEFAULT_POMODORO_SETTINGS.intervals.shortBreak,
-          longBreak: data.pomodoro?.settings?.intervals?.longBreak ?? DEFAULT_POMODORO_SETTINGS.intervals.longBreak,
-          cyclesUntilLongBreak: data.pomodoro?.settings?.intervals?.cyclesUntilLongBreak ?? DEFAULT_POMODORO_SETTINGS.intervals.cyclesUntilLongBreak,
+          shortBreak: visibleData.pomodoro?.settings?.intervals?.shortBreak ?? DEFAULT_POMODORO_SETTINGS.intervals.shortBreak,
+          longBreak: visibleData.pomodoro?.settings?.intervals?.longBreak ?? DEFAULT_POMODORO_SETTINGS.intervals.longBreak,
+          cyclesUntilLongBreak: visibleData.pomodoro?.settings?.intervals?.cyclesUntilLongBreak ?? DEFAULT_POMODORO_SETTINGS.intervals.cyclesUntilLongBreak,
         },
       },
-      sessions: data.pomodoro?.sessions || [],
+      sessions: visibleData.pomodoro?.sessions || [],
     },
-    kanban: { columns: data.kanban?.columns || [], projects: data.kanban?.projects || [] },
+    kanban: { columns: visibleData.kanban?.columns || [], projects: visibleData.kanban?.projects || [] },
   };
 
-  const addProject = useCallback(async (name: string, color: string) => {
-    const tempProject = {
+  const addProject = useCallback(async (
+    name: string,
+    color: string,
+  ): Promise<KanbanMutationResult<KanbanProject>> => {
+    if (!user || projectCreationRef.current) {
+      return { success: false, error: 'A criação do projeto já está em andamento.' };
+    }
+
+    projectCreationRef.current = true;
+    pendingOperationsRef.current++;
+    const operationUserId = user.id;
+    const tempProject: KanbanProject = {
       id: `temp-${crypto.randomUUID()}`,
       name,
       color,
       createdAt: new Date().toISOString(),
     };
     
-    setData(prev => ({
-      ...prev,
-      kanban: {
-        ...prev.kanban,
-        projects: [...(prev.kanban.projects || []), tempProject],
-      },
-      lastUpdated: new Date().toISOString(),
-    }));
+    setData(prev => {
+      const updated = {
+        ...prev,
+        kanban: {
+          ...prev.kanban,
+          projects: [...(prev.kanban.projects || []), tempProject],
+        },
+        lastUpdated: new Date().toISOString(),
+      };
+      setCache(updated);
+      return updated;
+    });
     
     console.log('[useBlindadosData] addProject: Optimistically added project:', tempProject);
     
@@ -1096,46 +1234,62 @@ export function useBlindadosData() {
       const response = await fetch('/api/kanban/projects', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
         body: JSON.stringify({ name, color }),
       });
       
-      const result = await response.json();
+      const result = await response.json().catch(() => ({}));
       
-      if (response.ok && result.success && result.project) {
-        setData(prev => ({
+      if (!response.ok || !result.success || !isKanbanProject(result.project)) {
+        const error = result.error || `HTTP ${response.status}: não foi possível criar o projeto`;
+        throw new Error(error);
+      }
+
+      const persistedProject = result.project as KanbanProject;
+      if (userIdRef.current !== operationUserId) {
+        return { success: false, error: 'A sessão mudou antes da confirmação do projeto.' };
+      }
+
+      setData(prev => {
+        const updated = {
           ...prev,
           kanban: {
             ...prev.kanban,
-            projects: prev.kanban.projects.map(p => 
-              p.id === tempProject.id ? result.project : p
+            projects: prev.kanban.projects.map(project =>
+              project.id === tempProject.id ? persistedProject : project,
             ),
           },
           lastUpdated: new Date().toISOString(),
-        }));
-        console.log('[useBlindadosData] addProject: SUCCESS - saved to database:', result.project);
-      } else {
-        setData(prev => ({
-          ...prev,
-          kanban: {
-            ...prev.kanban,
-            projects: prev.kanban.projects.filter(p => p.id !== tempProject.id),
-          },
-          lastUpdated: new Date().toISOString(),
-        }));
-        console.error('[useBlindadosData] addProject: FAILED - reverted:', result.error);
-      }
+        };
+        setCache(updated);
+        return updated;
+      });
+      console.log('[useBlindadosData] addProject: SUCCESS - saved to database:', persistedProject);
+      return { success: true, data: persistedProject };
     } catch (e) {
       console.error('[useBlindadosData] addProject: Exception:', e);
-      setData(prev => ({
-        ...prev,
-        kanban: {
-          ...prev.kanban,
-          projects: prev.kanban.projects.filter(p => p.id !== tempProject.id),
-        },
-        lastUpdated: new Date().toISOString(),
-      }));
+      const error = e instanceof Error ? e.message : 'Não foi possível criar o projeto.';
+      if (userIdRef.current === operationUserId) {
+        setData(prev => {
+          const updated = {
+            ...prev,
+            kanban: {
+              ...prev.kanban,
+              projects: prev.kanban.projects.filter(project => project.id !== tempProject.id),
+            },
+            lastUpdated: new Date().toISOString(),
+          };
+          setCache(updated);
+          return updated;
+        });
+        toast.error(`Projeto não criado: ${error}`);
+      }
+      return { success: false, error };
+    } finally {
+      pendingOperationsRef.current = Math.max(0, pendingOperationsRef.current - 1);
+      projectCreationRef.current = false;
     }
-  }, []);
+  }, [user]);
 
   return {
     data: safeData,
@@ -1153,6 +1307,7 @@ export function useBlindadosData() {
     addPomodoroSession,
     updatePomodoroSettings,
     addProject,
+    loadError,
     forceSync: () => loadData(true),
   };
 }
