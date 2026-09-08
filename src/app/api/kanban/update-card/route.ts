@@ -1,177 +1,112 @@
-import { createClient } from '@supabase/supabase-js';
-import { createServerClient } from '@supabase/ssr';
 import { NextRequest, NextResponse } from 'next/server';
-import { cookies } from 'next/headers';
+import {
+  apiError,
+  CARD_DESCRIPTION_MAX_LENGTH,
+  CARD_TITLE_MAX_LENGTH,
+  databaseError,
+  getKanbanServerContext,
+  getOwnedRecord,
+  isDateOnly,
+  isIsoDateTime,
+  isUuid,
+  publicCard,
+  relationError,
+} from '@/lib/api/kanban';
+
+const PRIORITIES = new Set(['alta', 'media', 'baixa']);
+const UPDATE_FIELDS = new Set([
+  'cardId',
+  'title',
+  'description',
+  'priority',
+  'tags',
+  'subtasks',
+  'projectId',
+  'dueDate',
+  'completedAt',
+]);
 
 export async function POST(req: NextRequest) {
-  const startTime = Date.now();
-  
   try {
     const body = await req.json();
-    const { cardId, title, description, priority, tags, subtasks, projectId, dueDate, completedAt } = body;
-    
-    console.log('[API update-card] Request received:', { cardId, title, priority });
-    
-    if (!cardId) {
-      console.error('[API update-card] Missing required field: cardId');
-      return NextResponse.json(
-        { error: 'Missing required field: cardId' },
-        { status: 400 }
-      );
+    if (!body || typeof body !== 'object' || !isUuid((body as Record<string, unknown>).cardId)) {
+      return apiError('Card ID is invalid', 400);
     }
-    
-    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-    const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-    const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
-    
-    if (!supabaseUrl || !supabaseAnonKey || !supabaseServiceKey) {
-      console.error('[API update-card] Missing Supabase credentials');
-      return NextResponse.json(
-        { error: 'Server configuration error' },
-        { status: 500 }
-      );
+
+    const input = body as Record<string, any>;
+    const invalidField = Object.keys(input).find(key => !UPDATE_FIELDS.has(key));
+    if (invalidField) return apiError('Request contains unsupported fields', 400);
+    if (Object.keys(input).length === 1) return apiError('No card fields were supplied', 400);
+
+    if (input.title !== undefined && (typeof input.title !== 'string' || !input.title.trim() || input.title.trim().length > CARD_TITLE_MAX_LENGTH)) {
+      return apiError('Card title is invalid', 400);
     }
-    
-    const cookieStore = await cookies();
-    const authClient = createServerClient(supabaseUrl, supabaseAnonKey, {
-      cookies: {
-        getAll() {
-          return cookieStore.getAll();
-        },
-        setAll(cookiesToSet) {
-          try {
-            cookiesToSet.forEach(({ name, value, options }) => {
-              cookieStore.set(name, value, options);
-            });
-          } catch {
-            // Cookies can be read but not mutated in some server-only contexts.
-          }
-        },
-      },
-    });
-    
-    const { data: { user }, error: authError } = await authClient.auth.getUser();
-    
-    if (authError || !user) {
-      console.error('[API update-card] Unauthorized:', authError?.message || 'No user');
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
+    if (input.description !== undefined && (typeof input.description !== 'string' || input.description.length > CARD_DESCRIPTION_MAX_LENGTH)) {
+      return apiError('Card description is invalid', 400);
     }
-    
-    console.log('[API update-card] User authenticated:', user.id);
-    
-    const supabase = createClient(supabaseUrl, supabaseServiceKey);
-    
-    const { data: existingCard, error: cardCheckError } = await supabase
-      .from('kanban_cards')
-      .select('id, user_id')
-      .eq('id', cardId)
-      .single();
-    
-    if (cardCheckError || !existingCard) {
-      console.error('[API update-card] Card not found:', cardCheckError?.message);
-      return NextResponse.json(
-        { error: 'Card not found' },
-        { status: 404 }
-      );
+    if (input.priority !== undefined && (typeof input.priority !== 'string' || !PRIORITIES.has(input.priority))) {
+      return apiError('Card priority is invalid', 400);
     }
-    
-    if (existingCard.user_id !== user.id) {
-      console.error('[API update-card] Card not owned by user:', { cardUserId: existingCard.user_id, requestUserId: user.id });
-      return NextResponse.json(
-        { error: 'Access denied - card not owned by user' },
-        { status: 403 }
-      );
+    if (input.tags !== undefined && (!Array.isArray(input.tags) || input.tags.some((tag: unknown) => typeof tag !== 'string' || tag.length > 80))) {
+      return apiError('Card tags are invalid', 400);
     }
-    
-    console.log('[API update-card] Card ownership verified:', cardId);
+    if (input.subtasks !== undefined && !Array.isArray(input.subtasks)) return apiError('Card subtasks are invalid', 400);
+    if (input.projectId !== undefined && input.projectId !== null && !isUuid(input.projectId)) {
+      return apiError('Project ID is invalid', 400);
+    }
+    if (input.dueDate !== undefined && input.dueDate !== null && !isDateOnly(input.dueDate)) {
+      return apiError('Due date is invalid', 400);
+    }
+    if (input.completedAt !== undefined && input.completedAt !== null && !isIsoDateTime(input.completedAt)) {
+      return apiError('Completion date is invalid', 400);
+    }
+
+    const result = await getKanbanServerContext();
+    if ('response' in result) return result.response;
+    const { user, supabase } = result.context;
+
+    const cardOwnership = await getOwnedRecord(supabase, 'kanban_cards', input.cardId, user.id);
+    if (cardOwnership.kind !== 'owned') return relationError(cardOwnership.kind, 'card');
     
     const updateData: Record<string, unknown> = {
       updated_at: new Date().toISOString(),
     };
     
-    if (title !== undefined) updateData.title = title.trim();
-    if (description !== undefined) updateData.description = description?.trim() || '';
-    if (priority !== undefined) updateData.priority = priority;
-    if (tags !== undefined) updateData.tags = tags;
-    if (subtasks !== undefined) updateData.subtasks = subtasks;
-    if (projectId !== undefined) updateData.project_id = projectId || null;
-    if (dueDate !== undefined) updateData.due_date = dueDate || null;
-    if (completedAt !== undefined) updateData.completed_at = completedAt || null;
-    
-    console.log('[API update-card] Updating card:', { 
-      cardId, 
-      userId: user.id, 
-      fields: Object.keys(updateData).filter(k => k !== 'updated_at'),
-    });
+    if (input.title !== undefined) updateData.title = input.title.trim();
+    if (input.description !== undefined) updateData.description = input.description?.trim() || '';
+    if (input.priority !== undefined) updateData.priority = input.priority;
+    if (input.tags !== undefined) updateData.tags = input.tags;
+    if (input.subtasks !== undefined) updateData.subtasks = input.subtasks;
+    if (input.projectId !== undefined) {
+      if (input.projectId !== null) {
+        const projectOwnership = await getOwnedRecord(supabase, 'kanban_projects', input.projectId, user.id);
+        if (projectOwnership.kind !== 'owned') return relationError(projectOwnership.kind, 'project');
+      }
+      updateData.project_id = input.projectId;
+    }
+    if (input.dueDate !== undefined) updateData.due_date = input.dueDate;
+    if (input.completedAt !== undefined) updateData.completed_at = input.completedAt;
     
     const { data: updatedCard, error: updateError } = await supabase
       .from('kanban_cards')
       .update(updateData)
-      .eq('id', cardId)
+      .eq('id', input.cardId)
       .eq('user_id', user.id)
-      .select()
+      .select('id, title, description, priority, tags, subtasks, created_at, updated_at, project_id, due_date, completed_at')
       .single();
     
     if (updateError) {
-      console.error('[API update-card] Update error:', {
-        message: updateError.message,
-        code: updateError.code,
-        details: updateError.details,
-        hint: updateError.hint,
-      });
-      return NextResponse.json(
-        { error: updateError.message, details: updateError },
-        { status: 500 }
-      );
+      return databaseError('update card', updateError);
     }
     
     if (!updatedCard) {
-      console.error('[API update-card] Update returned no data');
-      return NextResponse.json(
-        { error: 'Update failed - no data returned' },
-        { status: 500 }
-      );
+      return apiError('Card was not updated', 409);
     }
-    
-    const duration = Date.now() - startTime;
-    console.log('[API update-card] SUCCESS:', {
-      cardId: updatedCard.id,
-      userId: user.id,
-      duration: `${duration}ms`,
-    });
-    
-    const responseCard = {
-      id: updatedCard.id,
-      title: updatedCard.title,
-      description: updatedCard.description || '',
-      priority: updatedCard.priority,
-      tags: updatedCard.tags || [],
-      subtasks: updatedCard.subtasks || [],
-      createdAt: updatedCard.created_at,
-      updatedAt: updatedCard.updated_at,
-      projectId: updatedCard.project_id || undefined,
-      dueDate: updatedCard.due_date || undefined,
-      completedAt: updatedCard.completed_at || undefined,
-    };
-    
-    return NextResponse.json({ 
-      success: true, 
-      card: responseCard,
-      timestamp: Date.now(),
-    });
-    
+
+    return NextResponse.json({ success: true, card: publicCard(updatedCard) });
   } catch (error) {
-    const duration = Date.now() - startTime;
-    console.error('[API update-card] Unexpected error:', {
-      error: String(error),
-      duration: `${duration}ms`,
-    });
-    return NextResponse.json(
-      { error: 'Internal server error', details: String(error) },
-      { status: 500 }
-    );
+    console.error('[API update-card] Unexpected error:', error);
+    if (error instanceof SyntaxError) return apiError('Invalid JSON body', 400);
+    return apiError('Internal server error', 500);
   }
 }

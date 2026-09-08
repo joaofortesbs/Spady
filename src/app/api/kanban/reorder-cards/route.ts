@@ -2,6 +2,7 @@ import { createClient } from '@supabase/supabase-js';
 import { createServerClient } from '@supabase/ssr';
 import { NextRequest, NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
+import { apiError } from '@/lib/api/kanban';
 
 export async function POST(req: NextRequest) {
   try {
@@ -72,21 +73,15 @@ export async function POST(req: NextRequest) {
     });
     
     if (error) {
-      console.error('[API reorder-cards] RPC error:', error);
-      return NextResponse.json(
-        { error: error.message, details: error },
-        { status: 500 }
-      );
+      console.error('[API reorder-cards] RPC error:', { code: error.code, message: error.message });
+      return apiError('Unable to reorder cards', 500);
     }
     
     console.log('[API reorder-cards] SUCCESS for user', user.id, ':', data);
     
     if (data && !data.success) {
       console.error('[API reorder-cards] RPC returned failure:', data);
-      return NextResponse.json(
-        { error: data.error || 'Operation failed', success: false },
-        { status: 400 }
-      );
+      return apiError('Unable to reorder cards', 400);
     }
     
     return NextResponse.json({ 
@@ -97,9 +92,6 @@ export async function POST(req: NextRequest) {
     
   } catch (error) {
     console.error('[API reorder-cards] Unexpected error:', error);
-    return NextResponse.json(
-      { error: 'Internal server error', details: String(error) },
-      { status: 500 }
-    );
+    return apiError('Internal server error', 500);
   }
 }

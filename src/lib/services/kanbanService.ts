@@ -337,6 +337,7 @@ export class KanbanService {
       debugLog('moveCard: Using RPC move_card for', cardId, 'to column', targetColumnId, 'position', position);
       
       const { data, error } = await this.supabase.rpc('move_card', {
+        p_user_id: this.userId,
         p_card_id: cardId,
         p_target_column_id: targetColumnId,
         p_new_position: position,
@@ -484,6 +485,7 @@ export class KanbanService {
       }));
       
       const { data, error } = await this.supabase.rpc('update_card_positions', {
+        p_user_id: this.userId,
         p_updates: updates,
       });
 
@@ -520,6 +522,7 @@ export class KanbanService {
       }));
       
       const { data, error } = await this.supabase.rpc('update_column_positions', {
+        p_user_id: this.userId,
         p_updates: updates,
       });
 
@@ -561,6 +564,7 @@ export class KanbanService {
         name: project.name,
         color: project.color,
         createdAt: project.created_at,
+        updatedAt: project.updated_at || project.created_at,
       }));
     } catch (e) {
       console.error('KanbanService.loadProjects exception:', e);
@@ -590,6 +594,7 @@ export class KanbanService {
         name: data.name,
         color: data.color,
         createdAt: data.created_at,
+        updatedAt: data.updated_at || data.created_at,
       };
     } catch (e) {
       console.error('KanbanService.addProject exception:', e);
@@ -599,17 +604,19 @@ export class KanbanService {
 
   async updateProject(projectId: string, updates: { name?: string; color?: string }): Promise<boolean> {
     try {
-      const { error } = await this.supabase
+      const { data, error } = await this.supabase
         .from('kanban_projects')
         .update(updates)
         .eq('id', projectId)
-        .eq('user_id', this.userId);
+        .eq('user_id', this.userId)
+        .select('id')
+        .maybeSingle();
 
       if (error) {
         console.error('KanbanService.updateProject error:', error.message);
         return false;
       }
-      return true;
+      return Boolean(data);
     } catch (e) {
       console.error('KanbanService.updateProject exception:', e);
       return false;
@@ -618,17 +625,19 @@ export class KanbanService {
 
   async deleteProject(projectId: string): Promise<boolean> {
     try {
-      const { error } = await this.supabase
+      const { data, error } = await this.supabase
         .from('kanban_projects')
         .delete()
         .eq('id', projectId)
-        .eq('user_id', this.userId);
+        .eq('user_id', this.userId)
+        .select('id')
+        .maybeSingle();
 
       if (error) {
         console.error('KanbanService.deleteProject error:', error.message);
         return false;
       }
-      return true;
+      return Boolean(data);
     } catch (e) {
       console.error('KanbanService.deleteProject exception:', e);
       return false;

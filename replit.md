@@ -36,9 +36,12 @@ Key architectural decisions include:
 
 # Database Migrations
 
-The following SQL migrations may need to be executed in Supabase SQL Editor:
-- `supabase/migrations/001_add_projects_and_fields.sql` - Creates `kanban_projects` table and adds new columns to `kanban_cards` and `kanban_columns`
-- `supabase/migrations/002_progressive_kanban_behavior.sql` - Ensures `kanban_columns.behavior` exists and persists `active`, `completion`, or `progressive`
+The canonical Kanban persistence rollout is documented in
+`docs/kanban-project-persistence-rollout.md`. Execute the base Kanban migration,
+then the two existing project/behavior migrations, and finally
+`supabase/migrations/003_harden_kanban_projects.sql`. The final migration is
+idempotent, rejects pre-existing cross-user relationships before adding
+constraints, and owns the `p_user_id` RPC signatures used by the API/service.
 
 # External Dependencies
 

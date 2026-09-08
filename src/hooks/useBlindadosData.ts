@@ -494,6 +494,9 @@ export function useBlindadosData() {
             priority: updates.priority,
             tags: updates.tags,
             subtasks: updates.subtasks,
+            projectId: updates.projectId,
+            dueDate: updates.dueDate,
+            completedAt: updates.completedAt,
           }),
         });
         

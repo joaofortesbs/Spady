@@ -1,86 +1,83 @@
-import { createClient } from '@supabase/supabase-js';
-import { createServerClient } from '@supabase/ssr';
 import { NextRequest, NextResponse } from 'next/server';
-import { cookies } from 'next/headers';
+import {
+  apiError,
+  CARD_DESCRIPTION_MAX_LENGTH,
+  CARD_TITLE_MAX_LENGTH,
+  databaseError,
+  getKanbanServerContext,
+  getOwnedRecord,
+  isDateOnly,
+  isIsoDateTime,
+  isUuid,
+  publicCard,
+  relationError,
+} from '@/lib/api/kanban';
+
+const PRIORITIES = new Set(['alta', 'media', 'baixa']);
+
+function validateCardPayload(body: unknown) {
+  if (!body || typeof body !== 'object') return 'Invalid request body';
+  const input = body as Record<string, unknown>;
+  if (!isUuid(input.columnId)) return 'Column ID is invalid';
+  if (typeof input.title !== 'string' || !input.title.trim() || input.title.trim().length > CARD_TITLE_MAX_LENGTH) {
+    return 'Card title is invalid';
+  }
+  if (input.description !== undefined && (typeof input.description !== 'string' || input.description.length > CARD_DESCRIPTION_MAX_LENGTH)) {
+    return 'Card description is invalid';
+  }
+  if (input.priority !== undefined && (typeof input.priority !== 'string' || !PRIORITIES.has(input.priority))) {
+    return 'Card priority is invalid';
+  }
+  if (input.tags !== undefined && (!Array.isArray(input.tags) || input.tags.some(tag => typeof tag !== 'string' || tag.length > 80))) {
+    return 'Card tags are invalid';
+  }
+  if (input.subtasks !== undefined && !Array.isArray(input.subtasks)) return 'Card subtasks are invalid';
+  if (input.position !== undefined && (!Number.isInteger(input.position) || (input.position as number) < 0)) {
+    return 'Card position is invalid';
+  }
+  if (input.projectId !== undefined && input.projectId !== null && !isUuid(input.projectId)) {
+    return 'Project ID is invalid';
+  }
+  if (input.dueDate !== undefined && input.dueDate !== null && !isDateOnly(input.dueDate)) {
+    return 'Due date is invalid';
+  }
+  if (input.completedAt !== undefined && input.completedAt !== null && !isIsoDateTime(input.completedAt)) {
+    return 'Completion date is invalid';
+  }
+  return null;
+}
 
 export async function POST(req: NextRequest) {
-  const startTime = Date.now();
-  
   try {
     const body = await req.json();
-    const { columnId, title, description, priority, tags, subtasks, position, projectId, dueDate, completedAt } = body;
-    
-    console.log('[API add-card] Request received:', { columnId, title, position });
-    
-    if (!columnId || !title) {
-      console.error('[API add-card] Missing required fields');
-      return NextResponse.json(
-        { error: 'Missing required fields: columnId, title' },
-        { status: 400 }
-      );
+    const validationError = validateCardPayload(body);
+    if (validationError) return apiError(validationError, 400);
+
+    const {
+      columnId,
+      title,
+      description,
+      priority,
+      tags,
+      subtasks,
+      position,
+      projectId,
+      dueDate,
+      completedAt,
+    } = body as Record<string, any>;
+
+    const result = await getKanbanServerContext();
+    if ('response' in result) return result.response;
+    const { user, supabase } = result.context;
+
+    const columnOwnership = await getOwnedRecord(supabase, 'kanban_columns', columnId, user.id);
+    if (columnOwnership.kind !== 'owned') return relationError(columnOwnership.kind, 'column');
+
+    if (projectId) {
+      const projectOwnership = await getOwnedRecord(supabase, 'kanban_projects', projectId, user.id);
+      if (projectOwnership.kind !== 'owned') return relationError(projectOwnership.kind, 'project');
     }
-    
-    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-    const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-    const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
-    
-    if (!supabaseUrl || !supabaseAnonKey || !supabaseServiceKey) {
-      console.error('[API add-card] Missing Supabase credentials');
-      return NextResponse.json(
-        { error: 'Server configuration error' },
-        { status: 500 }
-      );
-    }
-    
-    const cookieStore = await cookies();
-    const authClient = createServerClient(supabaseUrl, supabaseAnonKey, {
-      cookies: {
-        getAll() {
-          return cookieStore.getAll();
-        },
-        setAll(cookiesToSet) {
-          try {
-            cookiesToSet.forEach(({ name, value, options }) => {
-              cookieStore.set(name, value, options);
-            });
-          } catch {
-            // Cookies can be read but not mutated in some server-only contexts.
-          }
-        },
-      },
-    });
-    
-    const { data: { user }, error: authError } = await authClient.auth.getUser();
-    
-    if (authError || !user) {
-      console.error('[API add-card] Unauthorized:', authError?.message || 'No user');
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
-    }
-    
-    console.log('[API add-card] User authenticated:', user.id);
-    
-    const supabase = createClient(supabaseUrl, supabaseServiceKey);
-    
-    const { data: column, error: columnError } = await supabase
-      .from('kanban_columns')
-      .select('id')
-      .eq('id', columnId)
-      .eq('user_id', user.id)
-      .single();
-    
-    if (columnError || !column) {
-      console.error('[API add-card] Column not found or not owned by user:', columnError?.message);
-      return NextResponse.json(
-        { error: 'Column not found or access denied' },
-        { status: 404 }
-      );
-    }
-    
-    console.log('[API add-card] Column verified:', columnId);
-    
+
     const cardData: Record<string, unknown> = {
       user_id: user.id,
       column_id: columnId,
@@ -90,20 +87,11 @@ export async function POST(req: NextRequest) {
       tags: tags || [],
       subtasks: subtasks || [],
       position: position ?? 0,
-      created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString(),
     };
     
-    if (projectId) cardData.project_id = projectId;
-    if (dueDate) cardData.due_date = dueDate;
-    if (completedAt) cardData.completed_at = completedAt;
-    
-    console.log('[API add-card] Inserting card:', { 
-      userId: user.id, 
-      columnId, 
-      title: cardData.title,
-      position: cardData.position 
-    });
+    if (projectId !== undefined) cardData.project_id = projectId;
+    if (dueDate !== undefined) cardData.due_date = dueDate;
+    if (completedAt !== undefined) cardData.completed_at = completedAt;
     
     const { data: newCard, error: insertError } = await supabase
       .from('kanban_cards')
@@ -112,63 +100,17 @@ export async function POST(req: NextRequest) {
       .single();
     
     if (insertError) {
-      console.error('[API add-card] Insert error:', {
-        message: insertError.message,
-        code: insertError.code,
-        details: insertError.details,
-        hint: insertError.hint,
-      });
-      return NextResponse.json(
-        { error: insertError.message, details: insertError },
-        { status: 500 }
-      );
+      return databaseError('create card', insertError);
     }
     
     if (!newCard) {
-      console.error('[API add-card] Insert returned no data');
-      return NextResponse.json(
-        { error: 'Insert failed - no data returned' },
-        { status: 500 }
-      );
+      return apiError('Card was not created', 500);
     }
-    
-    const duration = Date.now() - startTime;
-    console.log('[API add-card] SUCCESS:', {
-      cardId: newCard.id,
-      columnId: newCard.column_id,
-      userId: user.id,
-      duration: `${duration}ms`,
-    });
-    
-    const responseCard = {
-      id: newCard.id,
-      title: newCard.title,
-      description: newCard.description || '',
-      priority: newCard.priority,
-      tags: newCard.tags || [],
-      subtasks: newCard.subtasks || [],
-      createdAt: newCard.created_at,
-      updatedAt: newCard.updated_at,
-      projectId: newCard.project_id || undefined,
-      dueDate: newCard.due_date || undefined,
-      completedAt: newCard.completed_at || undefined,
-    };
-    
-    return NextResponse.json({ 
-      success: true, 
-      card: responseCard,
-      timestamp: Date.now(),
-    });
-    
+
+    return NextResponse.json({ success: true, card: publicCard(newCard) });
   } catch (error) {
-    const duration = Date.now() - startTime;
-    console.error('[API add-card] Unexpected error:', {
-      error: String(error),
-      duration: `${duration}ms`,
-    });
-    return NextResponse.json(
-      { error: 'Internal server error', details: String(error) },
-      { status: 500 }
-    );
+    console.error('[API add-card] Unexpected error:', error);
+    if (error instanceof SyntaxError) return apiError('Invalid JSON body', 400);
+    return apiError('Internal server error', 500);
   }
 }

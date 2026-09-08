@@ -1,226 +1,101 @@
-import { createClient } from '@supabase/supabase-js';
-import { createServerClient } from '@supabase/ssr';
 import { NextRequest, NextResponse } from 'next/server';
-import { cookies } from 'next/headers';
+import {
+  apiError,
+  databaseError,
+  getKanbanServerContext,
+  getOwnedRecord,
+  isHexColor,
+  isUuid,
+  PROJECT_NAME_MAX_LENGTH,
+  publicProject,
+  relationError,
+} from '@/lib/api/kanban';
 
 export async function GET() {
   try {
-    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-    const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-    const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
-    
-    if (!supabaseUrl || !supabaseAnonKey || !supabaseServiceKey) {
-      console.error('[API projects] Missing Supabase credentials');
-      return NextResponse.json({ error: 'Server configuration error' }, { status: 500 });
-    }
-    
-    const cookieStore = await cookies();
-    const authClient = createServerClient(supabaseUrl, supabaseAnonKey, {
-      cookies: {
-        getAll() {
-          return cookieStore.getAll();
-        },
-        setAll(cookiesToSet) {
-          try {
-            cookiesToSet.forEach(({ name, value, options }) => {
-              cookieStore.set(name, value, options);
-            });
-          } catch {
-            // Cookies can be read but not mutated in some server-only contexts.
-          }
-        },
-      },
-    });
-    
-    const { data: { user }, error: authError } = await authClient.auth.getUser();
-    
-    if (authError || !user) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
-    
-    const supabase = createClient(supabaseUrl, supabaseServiceKey);
-    
+    const result = await getKanbanServerContext();
+    if ('response' in result) return result.response;
+    const { user, supabase } = result.context;
+
     const { data: projects, error } = await supabase
       .from('kanban_projects')
-      .select('*')
+      .select('id, name, color, created_at, updated_at')
       .eq('user_id', user.id)
       .order('created_at', { ascending: true });
-    
-    if (error) {
-      console.error('[API projects] GET error:', error.message);
-      return NextResponse.json({ error: error.message }, { status: 500 });
-    }
-    
-    const formattedProjects = (projects || []).map(p => ({
-      id: p.id,
-      name: p.name,
-      color: p.color,
-      createdAt: p.created_at,
-    }));
-    
-    return NextResponse.json({ success: true, projects: formattedProjects });
+
+    if (error) return databaseError('load projects', error);
+
+    return NextResponse.json(
+      { success: true, projects: (projects || []).map(publicProject) },
+      { headers: { 'Cache-Control': 'no-store' } },
+    );
   } catch (error) {
     console.error('[API projects] GET exception:', error);
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    return apiError('Internal server error', 500);
   }
 }
 
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    const { name, color } = body;
-    
-    console.log('[API projects] POST request:', { name, color });
-    
-    if (!name || !color) {
-      return NextResponse.json({ error: 'Missing required fields: name, color' }, { status: 400 });
+    const name = typeof body?.name === 'string' ? body.name.trim() : '';
+    const color = typeof body?.color === 'string' ? body.color.trim() : '';
+
+    if (!name || name.length > PROJECT_NAME_MAX_LENGTH || !isHexColor(color)) {
+      return apiError('Project name and color are invalid', 400);
     }
-    
-    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-    const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-    const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
-    
-    if (!supabaseUrl || !supabaseAnonKey || !supabaseServiceKey) {
-      console.error('[API projects] Missing Supabase credentials');
-      return NextResponse.json({ error: 'Server configuration error' }, { status: 500 });
-    }
-    
-    const cookieStore = await cookies();
-    const authClient = createServerClient(supabaseUrl, supabaseAnonKey, {
-      cookies: {
-        getAll() {
-          return cookieStore.getAll();
-        },
-        setAll(cookiesToSet) {
-          try {
-            cookiesToSet.forEach(({ name, value, options }) => {
-              cookieStore.set(name, value, options);
-            });
-          } catch {
-            // Cookies can be read but not mutated in some server-only contexts.
-          }
-        },
-      },
-    });
-    
-    const { data: { user }, error: authError } = await authClient.auth.getUser();
-    
-    if (authError || !user) {
-      console.error('[API projects] Unauthorized:', authError?.message);
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
-    
-    console.log('[API projects] User authenticated:', user.id);
-    
-    const supabase = createClient(supabaseUrl, supabaseServiceKey);
-    
+
+    const result = await getKanbanServerContext();
+    if ('response' in result) return result.response;
+    const { user, supabase } = result.context;
+
     const { data: project, error } = await supabase
       .from('kanban_projects')
-      .insert({
-        user_id: user.id,
-        name,
-        color,
-      })
-      .select()
+      .insert({ user_id: user.id, name, color })
+      .select('id, name, color, created_at, updated_at')
       .single();
-    
-    if (error) {
-      console.error('[API projects] POST error:', error.message, error.details, error.hint);
-      return NextResponse.json({ error: error.message, details: error }, { status: 500 });
-    }
-    
-    console.log('[API projects] POST success:', project.id);
-    
+
+    if (error) return databaseError('create project', error);
+
     return NextResponse.json({
       success: true,
-      project: {
-        id: project.id,
-        name: project.name,
-        color: project.color,
-        createdAt: project.created_at,
-      },
+      project: publicProject(project),
     });
   } catch (error) {
     console.error('[API projects] POST exception:', error);
-    return NextResponse.json({ error: 'Internal server error', details: String(error) }, { status: 500 });
+    if (error instanceof SyntaxError) return apiError('Invalid JSON body', 400);
+    return apiError('Internal server error', 500);
   }
 }
 
 export async function DELETE(req: NextRequest) {
   try {
     const body = await req.json();
-    const { projectId } = body;
-    
-    console.log('[API projects] DELETE request:', { projectId });
-    
-    if (!projectId) {
-      return NextResponse.json({ error: 'Missing required field: projectId' }, { status: 400 });
-    }
-    
-    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-    const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-    const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
-    
-    if (!supabaseUrl || !supabaseAnonKey || !supabaseServiceKey) {
-      return NextResponse.json({ error: 'Server configuration error' }, { status: 500 });
-    }
-    
-    const cookieStore = await cookies();
-    const authClient = createServerClient(supabaseUrl, supabaseAnonKey, {
-      cookies: {
-        getAll() {
-          return cookieStore.getAll();
-        },
-        setAll(cookiesToSet) {
-          try {
-            cookiesToSet.forEach(({ name, value, options }) => {
-              cookieStore.set(name, value, options);
-            });
-          } catch {
-            // Cookies can be read but not mutated in some server-only contexts.
-          }
-        },
-      },
-    });
-    
-    const { data: { user }, error: authError } = await authClient.auth.getUser();
-    
-    if (authError || !user) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
-    
-    const supabase = createClient(supabaseUrl, supabaseServiceKey);
-    
-    const { data: existingProject, error: checkError } = await supabase
-      .from('kanban_projects')
-      .select('id, user_id')
-      .eq('id', projectId)
-      .single();
-    
-    if (checkError || !existingProject) {
-      return NextResponse.json({ error: 'Project not found' }, { status: 404 });
-    }
-    
-    if (existingProject.user_id !== user.id) {
-      return NextResponse.json({ error: 'Access denied' }, { status: 403 });
-    }
-    
-    const { error: deleteError } = await supabase
+    const { projectId } = body || {};
+
+    if (!isUuid(projectId)) return apiError('Project ID is invalid', 400);
+
+    const result = await getKanbanServerContext();
+    if ('response' in result) return result.response;
+    const { user, supabase } = result.context;
+
+    const ownership = await getOwnedRecord(supabase, 'kanban_projects', projectId, user.id);
+    if (ownership.kind !== 'owned') return relationError(ownership.kind, 'project');
+
+    const { data: deletedProject, error: deleteError } = await supabase
       .from('kanban_projects')
       .delete()
       .eq('id', projectId)
-      .eq('user_id', user.id);
-    
-    if (deleteError) {
-      console.error('[API projects] DELETE error:', deleteError.message);
-      return NextResponse.json({ error: deleteError.message }, { status: 500 });
-    }
-    
-    console.log('[API projects] DELETE success:', projectId);
-    
+      .eq('user_id', user.id)
+      .select('id');
+
+    if (deleteError) return databaseError('delete project', deleteError);
+    if (!deletedProject?.length) return apiError('Project was not deleted', 409);
+
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error('[API projects] DELETE exception:', error);
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    if (error instanceof SyntaxError) return apiError('Invalid JSON body', 400);
+    return apiError('Internal server error', 500);
   }
 }
