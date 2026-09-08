@@ -19,7 +19,9 @@ export async function GET() {
 
     const { data: projects, error } = await supabase
       .from('kanban_projects')
-      .select('id, name, color, created_at, updated_at')
+      // Keep the API compatible with projects created before the hardening
+      // migration added the optional updated_at column.
+      .select('id, name, color, created_at')
       .eq('user_id', user.id)
       .order('created_at', { ascending: true });
 
@@ -52,7 +54,7 @@ export async function POST(req: NextRequest) {
     const { data: project, error } = await supabase
       .from('kanban_projects')
       .insert({ user_id: user.id, name, color })
-      .select('id, name, color, created_at, updated_at')
+      .select('id, name, color, created_at')
       .single();
 
     if (error) return databaseError('create project', error);

@@ -155,6 +155,34 @@ describe('Kanban project and card route contracts', () => {
     expect(mocks.builder.eq).toHaveBeenCalledWith('user_id', USER_ID);
   });
 
+  it('creates a project on the legacy schema without updated_at', async () => {
+    const legacyProject = {
+      id: PROJECT_ID,
+      name: 'Projeto legado',
+      color: '#06b6d4',
+      created_at: now,
+    };
+    mocks.builder.single.mockResolvedValue({ data: legacyProject, error: null });
+
+    const response = required(await PROJECTS_POST(request('POST', 'projects', {
+      name: legacyProject.name,
+      color: legacyProject.color,
+    })));
+
+    expect(response.status).toBe(200);
+    expect(await response.json()).toEqual({
+      success: true,
+      project: {
+        id: PROJECT_ID,
+        name: 'Projeto legado',
+        color: '#06b6d4',
+        createdAt: now,
+        updatedAt: now,
+      },
+    });
+    expect(mocks.builder.select).toHaveBeenCalledWith('id, name, color, created_at');
+  });
+
   it('maps project database failures to a safe error', async () => {
     mocks.builder.single.mockResolvedValue({
       data: null,

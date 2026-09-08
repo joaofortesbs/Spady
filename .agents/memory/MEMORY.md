@@ -3,3 +3,4 @@
 - [Lockfiles alternativos no publish](publish-stale-lockfiles.md) — o scanner pode bloquear vulnerabilidades de lockfiles antigos, mesmo quando o npm usa um lockfile seguro.
 - [Compilador de produção no Replit](replit-next-build-compiler.md) — use Turbopack neste app; o webpack falhou intermitentemente no hash WASM durante builds limpos do publish.
 - [Hidratação com armazenamento local](next-client-storage-hydration.md) — valores de localStorage devem ser restaurados após a montagem para manter o primeiro HTML do Next.js determinístico.
+- [Schema legado de projetos Kanban](kanban-legacy-schema.md) — a API não deve exigir `updated_at` ao confirmar projetos até a migration de hardening estar aplicada.
