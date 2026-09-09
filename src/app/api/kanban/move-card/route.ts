@@ -2,18 +2,14 @@ import { createClient } from '@supabase/supabase-js';
 import { createServerClient } from '@supabase/ssr';
 import { NextRequest, NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
-import { apiError } from '@/lib/api/kanban';
+import { apiError, isUuid } from '@/lib/api/kanban';
 
 export async function POST(req: NextRequest) {
   try {
     const { cardId, targetColumnId, position } = await req.json();
     
-    if (!cardId || !targetColumnId || position === undefined) {
-      return NextResponse.json(
-        { error: 'Missing required fields: cardId, targetColumnId, position' },
-        { status: 400 }
-      );
-    }
+    if (!isUuid(cardId) || !isUuid(targetColumnId)) return apiError('Card or target column ID is invalid', 400);
+    if (!Number.isInteger(position) || position < 0) return apiError('Card position is invalid', 400);
     
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
     const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
@@ -78,11 +74,10 @@ export async function POST(req: NextRequest) {
       return apiError('Unable to move card', 400);
     }
     
-    return NextResponse.json({ 
-      success: true, 
-      data,
-      timestamp: Date.now(),
-    });
+    return NextResponse.json(
+      { success: true, data },
+      { headers: { 'Cache-Control': 'no-store' } },
+    );
     
   } catch (error) {
     console.error('[API move-card] Unexpected error:', error);

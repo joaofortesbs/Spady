@@ -2,6 +2,7 @@
   "/_not-found/page": "app/_not-found/page.js",
   "/api/health/route": "app/api/health/route.js",
   "/api/kanban/add-card/route": "app/api/kanban/add-card/route.js",
+  "/api/kanban/columns/route": "app/api/kanban/columns/route.js",
   "/api/kanban/delete-card/route": "app/api/kanban/delete-card/route.js",
   "/api/kanban/move-card/route": "app/api/kanban/move-card/route.js",
   "/api/kanban/projects/route": "app/api/kanban/projects/route.js",

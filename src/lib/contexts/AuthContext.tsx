@@ -51,6 +51,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [isMounted, setIsMounted] = useState(false);
   const supabase = createClient();
   const initRef = useRef(false);
+  const userInitializationRef = useRef(new Map<string, Promise<void>>());
 
   const cleanupOldCaches = useCallback(() => {
     safeStorage.removeMany(OLD_CACHE_KEYS);
@@ -69,64 +70,93 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     if (error) console.error('Error creating profile:', error);
   }, [supabase]);
 
-  const initializeUserData = useCallback(async (userId: string) => {
-    try {
-      const { data: existingSettings } = await supabase
-        .from('pomodoro_settings')
-        .select('id')
-        .eq('user_id', userId)
-        .single();
+  const initializeUserData = useCallback((userId: string) => {
+    const inFlight = userInitializationRef.current.get(userId);
+    if (inFlight) return inFlight;
 
-      if (!existingSettings) {
-        await supabase.from('pomodoro_settings').insert({
-          user_id: userId,
-          short_break_minutes: 5,
-          long_break_minutes: 15,
-          cycles_until_long_break: 4,
-        });
+    const initialization = (async () => {
+      try {
+        const { data: existingSettings, error: settingsLookupError } = await supabase
+          .from('pomodoro_settings')
+          .select('user_id')
+          .eq('user_id', userId)
+          .maybeSingle();
 
-        const defaultCategories = [
-          { name: 'Trabalho', color: '#ef4444', duration_minutes: 25 },
-          { name: 'Estudo', color: '#3b82f6', duration_minutes: 30 },
-          { name: 'Projeto', color: '#22c55e', duration_minutes: 45 },
-        ];
-
-        for (const cat of defaultCategories) {
-          await supabase.from('pomodoro_categories').insert({ user_id: userId, ...cat });
+        if (settingsLookupError) {
+          console.error('Error checking initial user data:', settingsLookupError);
+          return;
         }
 
-        const defaultColumns = [
-          { title: 'A FAZER', position: 0 },
-          { title: 'EM PROGRESSO', position: 1 },
-          { title: 'CONCLUÍDO', position: 2 },
-        ];
+        if (!existingSettings) {
+          const { error: settingsInsertError } = await supabase.from('pomodoro_settings').insert({
+            user_id: userId,
+            short_break_minutes: 5,
+            long_break_minutes: 15,
+            cycles_until_long_break: 4,
+          });
 
-        for (const col of defaultColumns) {
-          await supabase.from('kanban_columns').insert({ user_id: userId, ...col });
+          if (settingsInsertError) {
+            console.error('Error creating initial pomodoro settings:', settingsInsertError);
+            return;
+          }
+
+          const defaultCategories = [
+            { name: 'Trabalho', color: '#ef4444', duration_minutes: 25 },
+            { name: 'Estudo', color: '#3b82f6', duration_minutes: 30 },
+            { name: 'Projeto', color: '#22c55e', duration_minutes: 45 },
+          ];
+
+          for (const cat of defaultCategories) {
+            await supabase.from('pomodoro_categories').upsert(
+              { user_id: userId, ...cat },
+              { onConflict: 'user_id,name', ignoreDuplicates: true },
+            );
+          }
+
+          const defaultColumns = [
+            { title: 'A FAZER', position: 0 },
+            { title: 'EM PROGRESSO', position: 1 },
+            { title: 'CONCLUÍDO', position: 2 },
+          ];
+
+          for (const col of defaultColumns) {
+            const { error: columnError } = await supabase
+              .from('kanban_columns')
+              .insert({ user_id: userId, ...col });
+            if (columnError) console.error('Error creating default Kanban column:', columnError);
+          }
+
+          const defaultGoalCategories = [
+            { name: 'Saúde', icon: '❤️', position: 0 },
+            { name: 'Carreira', icon: '💼', position: 1 },
+            { name: 'Finanças', icon: '💰', position: 2 },
+            { name: 'Relacionamentos', icon: '👥', position: 3 },
+            { name: 'Desenvolvimento Pessoal', icon: '🎯', position: 4 },
+            { name: 'Lazer', icon: '🎮', position: 5 },
+          ];
+
+          for (const cat of defaultGoalCategories) {
+            await supabase.from('goal_categories').insert({ user_id: userId, ...cat });
+          }
+
+          await supabase.from('user_settings').insert({
+            user_id: userId,
+            selected_year: new Date().getFullYear(),
+            theme: 'dark',
+          });
         }
-
-        const defaultGoalCategories = [
-          { name: 'Saúde', icon: '❤️', position: 0 },
-          { name: 'Carreira', icon: '💼', position: 1 },
-          { name: 'Finanças', icon: '💰', position: 2 },
-          { name: 'Relacionamentos', icon: '👥', position: 3 },
-          { name: 'Desenvolvimento Pessoal', icon: '🎯', position: 4 },
-          { name: 'Lazer', icon: '🎮', position: 5 },
-        ];
-
-        for (const cat of defaultGoalCategories) {
-          await supabase.from('goal_categories').insert({ user_id: userId, ...cat });
-        }
-
-        await supabase.from('user_settings').insert({
-          user_id: userId,
-          selected_year: new Date().getFullYear(),
-          theme: 'dark',
-        });
+      } catch (e) {
+        console.error('Error initializing user data:', e);
       }
-    } catch (e) {
-      console.error('Error initializing user data:', e);
-    }
+    })();
+
+    userInitializationRef.current.set(userId, initialization);
+    void initialization.finally(() => {
+      if (userInitializationRef.current.get(userId) === initialization) {
+        userInitializationRef.current.delete(userId);
+      }
+    });
+    return initialization;
   }, [supabase]);
 
   useEffect(() => {

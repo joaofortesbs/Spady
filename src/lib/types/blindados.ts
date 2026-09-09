@@ -40,7 +40,7 @@ export interface KanbanColumn {
   title: string;
   cards: KanbanCard[];
   behavior: ColumnBehavior;
-  projectId?: string;
+  projectId?: string | null;
 }
 
 export interface PomodoroCategory {

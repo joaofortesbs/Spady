@@ -40,38 +40,102 @@ describe('KanbanService.deleteCard', () => {
 });
 
 describe('KanbanService.updateColumn', () => {
-  it('persists the progressive behavior and confirms the updated column', async () => {
-    const maybeSingle = vi.fn().mockResolvedValue({
-      data: { id: 'column-id', behavior: 'progressive' },
-      error: null,
+  it('creates a column through the authenticated endpoint and maps its confirmation', async () => {
+    const fetchMock = vi.fn().mockResolvedValue(
+      new Response(JSON.stringify({
+        success: true,
+        column: {
+          id: 'column-id',
+          title: 'NOVA COLUNA',
+          position: 4,
+          behavior: 'completion',
+          projectId: '11111111-1111-4111-8111-111111111111',
+        },
+      }), { status: 200 }),
+    );
+    vi.stubGlobal('fetch', fetchMock);
+    const service = new KanbanService({} as SupabaseClient, 'user-id');
+
+    await expect(service.addColumn(
+      'Nova coluna',
+      4,
+      'completion',
+      '11111111-1111-4111-8111-111111111111',
+    )).resolves.toEqual({
+      id: 'column-id',
+      title: 'NOVA COLUNA',
+      cards: [],
+      behavior: 'completion',
+      projectId: '11111111-1111-4111-8111-111111111111',
     });
-    const select = vi.fn().mockReturnValue({ maybeSingle });
-    const secondEq = vi.fn().mockReturnValue({ select });
-    const firstEq = vi.fn().mockReturnValue({ eq: secondEq });
-    const update = vi.fn().mockReturnValue({ eq: firstEq });
-    const supabase = {
-      from: vi.fn().mockReturnValue({ update }),
-    } as unknown as SupabaseClient;
+    expect(fetchMock).toHaveBeenCalledWith('/api/kanban/columns', expect.objectContaining({
+      method: 'POST',
+      credentials: 'include',
+      body: JSON.stringify({
+        title: 'Nova coluna',
+        position: 4,
+        behavior: 'completion',
+        projectId: '11111111-1111-4111-8111-111111111111',
+      }),
+    }));
+  });
+
+  it('does not treat a response without a confirmed row as a successful creation', async () => {
+    vi.stubGlobal('fetch', vi.fn().mockResolvedValue(
+      new Response(JSON.stringify({ success: true }), { status: 200 }),
+    ));
+    const service = new KanbanService({} as SupabaseClient, 'user-id');
+
+    await expect(service.addColumn('Fantasma', 4)).resolves.toBeNull();
+  });
+
+  it('does not treat a progressive creation as successful when the response confirms active', async () => {
+    vi.stubGlobal('fetch', vi.fn().mockResolvedValue(
+      new Response(JSON.stringify({
+        success: true,
+        column: { id: 'column-id', title: 'PROGRESSIVA', position: 4, behavior: 'active' },
+      }), { status: 200 }),
+    ));
+    const service = new KanbanService({} as SupabaseClient, 'user-id');
+
+    await expect(service.addColumn('Progressiva', 4, 'progressive')).resolves.toBeNull();
+  });
+
+  it('persists the progressive behavior and confirms the updated column', async () => {
+    vi.stubGlobal('fetch', vi.fn().mockResolvedValue(
+      new Response(JSON.stringify({
+        success: true,
+        column: { id: 'column-id', behavior: 'progressive' },
+      }), { status: 200 }),
+    ));
+    const supabase = {} as SupabaseClient;
 
     const service = new KanbanService(supabase, 'user-id');
 
     await expect(service.updateColumn('column-id', { behavior: 'progressive' })).resolves.toBe(true);
-    expect(supabase.from).toHaveBeenCalledWith('kanban_columns');
-    expect(update).toHaveBeenCalledWith(expect.objectContaining({
-      behavior: 'progressive',
+    expect(fetch).toHaveBeenCalledWith('/api/kanban/columns', expect.objectContaining({
+      method: 'PATCH',
+      body: JSON.stringify({ columnId: 'column-id', behavior: 'progressive' }),
     }));
-    expect(select).toHaveBeenCalledWith('id, behavior');
+  });
+
+  it('fails when the update response confirms a different behavior', async () => {
+    vi.stubGlobal('fetch', vi.fn().mockResolvedValue(
+      new Response(JSON.stringify({
+        success: true,
+        column: { id: 'column-id', behavior: 'active' },
+      }), { status: 200 }),
+    ));
+    const service = new KanbanService({} as SupabaseClient, 'user-id');
+
+    await expect(service.updateColumn('column-id', { behavior: 'progressive' })).resolves.toBe(false);
   });
 
   it('fails when Supabase does not confirm an updated column', async () => {
-    const maybeSingle = vi.fn().mockResolvedValue({ data: null, error: null });
-    const select = vi.fn().mockReturnValue({ maybeSingle });
-    const secondEq = vi.fn().mockReturnValue({ select });
-    const firstEq = vi.fn().mockReturnValue({ eq: secondEq });
-    const update = vi.fn().mockReturnValue({ eq: firstEq });
-    const supabase = {
-      from: vi.fn().mockReturnValue({ update }),
-    } as unknown as SupabaseClient;
+    vi.stubGlobal('fetch', vi.fn().mockResolvedValue(
+      new Response(JSON.stringify({ success: false }), { status: 409 }),
+    ));
+    const supabase = {} as SupabaseClient;
 
     const service = new KanbanService(supabase, 'user-id');
 

@@ -2,6 +2,7 @@
   "/_not-found/page": "/_not-found",
   "/api/health/route": "/api/health",
   "/api/kanban/add-card/route": "/api/kanban/add-card",
+  "/api/kanban/columns/route": "/api/kanban/columns",
   "/api/kanban/delete-card/route": "/api/kanban/delete-card",
   "/api/kanban/move-card/route": "/api/kanban/move-card",
   "/api/kanban/projects/route": "/api/kanban/projects",

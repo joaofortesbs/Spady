@@ -2,17 +2,27 @@ import { createClient } from '@supabase/supabase-js';
 import { createServerClient } from '@supabase/ssr';
 import { NextRequest, NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
-import { apiError } from '@/lib/api/kanban';
+import { apiError, isUuid } from '@/lib/api/kanban';
 
 export async function POST(req: NextRequest) {
   try {
     const { columnId, cardPositions } = await req.json();
     
-    if (!columnId || !cardPositions || !Array.isArray(cardPositions)) {
-      return NextResponse.json(
-        { error: 'Missing required fields: columnId, cardPositions' },
-        { status: 400 }
-      );
+    if (!isUuid(columnId) || !Array.isArray(cardPositions) || cardPositions.length === 0) {
+      return apiError('Column or card positions are invalid', 400);
+    }
+
+    const normalizedPositions = cardPositions as Array<{ cardId?: unknown; position?: unknown }>;
+    const cardIds = normalizedPositions.map(item => item.cardId);
+    const positions = normalizedPositions.map(item => item.position);
+    if (
+      cardIds.some(cardId => !isUuid(cardId))
+      || positions.some(position => !Number.isInteger(position) || (position as number) < 0)
+      || new Set(cardIds).size !== cardIds.length
+      || new Set(positions).size !== positions.length
+      || positions.some((position, index) => position !== index)
+    ) {
+      return apiError('Card positions must be a complete ordered list', 400);
     }
     
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -84,11 +94,10 @@ export async function POST(req: NextRequest) {
       return apiError('Unable to reorder cards', 400);
     }
     
-    return NextResponse.json({ 
-      success: true, 
-      data,
-      timestamp: Date.now(),
-    });
+    return NextResponse.json(
+      { success: true, data },
+      { headers: { 'Cache-Control': 'no-store' } },
+    );
     
   } catch (error) {
     console.error('[API reorder-cards] Unexpected error:', error);

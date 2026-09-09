@@ -78,6 +78,44 @@ afterEach(() => {
 });
 
 describe('KanbanBoard project entry point', () => {
+  it('places the column creation controls in the header and sends behavior/project', async () => {
+    const onAddColumn = vi.fn().mockResolvedValue(true);
+    renderBoard({ selectedProjectId: projectA.id, onAddColumn });
+
+    fireEvent.click(screen.getByRole('button', { name: 'Adicionar coluna' }));
+    fireEvent.change(screen.getByLabelText('Nome da coluna'), { target: { value: 'Revisão' } });
+    fireEvent.change(screen.getByLabelText('Comportamento da nova coluna'), { target: { value: 'progressive' } });
+    fireEvent.click(screen.getByRole('button', { name: 'Criar' }));
+
+    await waitFor(() => expect(onAddColumn).toHaveBeenCalledWith(
+      'Revisão',
+      'progressive',
+      projectA.id,
+    ));
+    expect(screen.getByText('Quadro de tarefas')).toBeTruthy();
+  });
+
+  it.each(['active', 'completion'] as const)(
+    'sends progressive when selected from an existing %s column menu',
+    async (initialBehavior) => {
+      const onUpdateColumn = vi.fn();
+      renderBoard({
+        columns: [{ ...columns[0], behavior: initialBehavior }],
+        onUpdateColumn,
+      });
+
+      const actionsButton = screen.getByRole('button', { name: 'Abrir ações da coluna A FAZER' });
+      fireEvent.pointerDown(actionsButton);
+      fireEvent.click(actionsButton);
+      fireEvent.click(await screen.findByRole('menuitem', { name: /Progressivo/ }));
+
+      await waitFor(() => expect(onUpdateColumn).toHaveBeenCalledWith(
+        columns[0].id,
+        { behavior: 'progressive' },
+      ));
+    },
+  );
+
   it('shows all cards by default and filters by the selected project', () => {
     renderBoard({ selectedProjectId: projectA.id });
 

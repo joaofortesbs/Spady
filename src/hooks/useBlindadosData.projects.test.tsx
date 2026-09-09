@@ -116,6 +116,117 @@ describe('useBlindadosData project synchronization', () => {
     }));
   });
 
+  it('replaces an optimistic column with the confirmed row and preserves project and behavior', async () => {
+    const persistedColumn = {
+      id: '77777777-7777-4777-8777-777777777777',
+      title: 'REVISÃO',
+      cards: [],
+      behavior: 'progressive' as const,
+      projectId: '33333333-3333-4333-8333-333333333333',
+    };
+    const addColumn = vi.spyOn(KanbanService.prototype, 'addColumn').mockResolvedValue(persistedColumn);
+    const { result } = renderHook(() => useBlindadosData());
+    await waitFor(() => expect(result.current.isLoaded).toBe(true));
+
+    let success = false;
+    await act(async () => {
+      success = await result.current.addKanbanColumn(
+        'Revisão',
+        'progressive',
+        persistedColumn.projectId,
+      );
+    });
+
+    expect(success).toBe(true);
+    expect(addColumn).toHaveBeenCalledWith('Revisão', 1, 'progressive', persistedColumn.projectId);
+    expect(result.current.data.kanban.columns).toEqual([column, persistedColumn]);
+    expect(localStorage.getItem(getUserDataCacheKey('user-a'))).toContain(persistedColumn.id);
+  });
+
+  it('keeps a confirmed progressive behavior in state and cache', async () => {
+    const updateColumn = vi.spyOn(KanbanService.prototype, 'updateColumn').mockResolvedValue(true);
+    const { result } = renderHook(() => useBlindadosData());
+    await waitFor(() => expect(result.current.isLoaded).toBe(true));
+
+    let success = false;
+    await act(async () => {
+      success = await result.current.updateKanbanColumn(column.id, { behavior: 'progressive' });
+    });
+
+    expect(success).toBe(true);
+    expect(updateColumn).toHaveBeenCalledWith(column.id, { behavior: 'progressive' });
+    expect(result.current.data.kanban.columns[0].behavior).toBe('progressive');
+    expect(localStorage.getItem(getUserDataCacheKey('user-a'))).toContain('"behavior":"progressive"');
+  });
+
+  it('restores the prior behavior and cache when progressive persistence fails', async () => {
+    vi.spyOn(KanbanService.prototype, 'updateColumn').mockResolvedValue(false);
+    const { result } = renderHook(() => useBlindadosData());
+    await waitFor(() => expect(result.current.isLoaded).toBe(true));
+
+    let success = true;
+    await act(async () => {
+      success = await result.current.updateKanbanColumn(column.id, { behavior: 'progressive' });
+    });
+
+    expect(success).toBe(false);
+    expect(result.current.data.kanban.columns[0].behavior).toBe('active');
+    expect(localStorage.getItem(getUserDataCacheKey('user-a'))).toContain('"behavior":"active"');
+  });
+
+  it('does not let an older failed behavior update roll back a newer selection', async () => {
+    let resolveFirst!: (value: boolean) => void;
+    const firstUpdate = new Promise<boolean>(resolve => { resolveFirst = resolve; });
+    const updateColumn = vi.spyOn(KanbanService.prototype, 'updateColumn')
+      .mockReturnValueOnce(firstUpdate)
+      .mockResolvedValueOnce(true);
+    const { result } = renderHook(() => useBlindadosData());
+    await waitFor(() => expect(result.current.isLoaded).toBe(true));
+
+    let firstPromise!: Promise<boolean>;
+    await act(async () => {
+      firstPromise = result.current.updateKanbanColumn(column.id, { behavior: 'progressive' });
+    });
+
+    let secondPromise!: Promise<boolean>;
+    await act(async () => {
+      secondPromise = result.current.updateKanbanColumn(column.id, { behavior: 'completion' });
+    });
+
+    expect(updateColumn).toHaveBeenCalledTimes(1);
+    expect(result.current.data.kanban.columns[0].behavior).toBe('completion');
+
+    resolveFirst(false);
+    let firstSuccess = true;
+    await act(async () => {
+      firstSuccess = await firstPromise;
+    });
+    let secondSuccess = false;
+    await act(async () => {
+      secondSuccess = await secondPromise;
+    });
+
+    expect(secondSuccess).toBe(true);
+    expect(updateColumn).toHaveBeenCalledTimes(2);
+    expect(firstSuccess).toBe(false);
+    expect(result.current.data.kanban.columns[0].behavior).toBe('completion');
+  });
+
+  it('rolls back a column when the server does not confirm a row', async () => {
+    vi.spyOn(KanbanService.prototype, 'addColumn').mockResolvedValue(null);
+    const { result } = renderHook(() => useBlindadosData());
+    await waitFor(() => expect(result.current.isLoaded).toBe(true));
+
+    let success = true;
+    await act(async () => {
+      success = await result.current.addKanbanColumn('Coluna inválida');
+    });
+
+    expect(success).toBe(false);
+    expect(result.current.data.kanban.columns).toEqual([column]);
+    expect(localStorage.getItem(getUserDataCacheKey('user-a'))).not.toContain('Coluna inválida');
+  });
+
   it('rolls back an optimistic project after a failed request', async () => {
     const fetchMock = vi.mocked(fetch);
     fetchMock.mockImplementation((input) => {

@@ -6,6 +6,7 @@ import {
   isUuid,
   publicCard,
   publicProject,
+  databaseError,
 } from './kanban';
 
 describe('Kanban API validation and public DTOs', () => {
@@ -54,5 +55,17 @@ describe('Kanban API validation and public DTOs', () => {
       completed_at: null,
       user_id: 'private-user-id',
     } as never)).not.toHaveProperty('user_id');
+  });
+
+  it('returns an actionable error when the external schema rejects progressive', async () => {
+    const response = databaseError('update column', {
+      code: '23514',
+      message: 'new row for relation "kanban_columns" violates check constraint "kanban_columns_behavior_check"',
+    });
+
+    expect(response.status).toBe(409);
+    expect(await response.json()).toEqual({
+      error: 'O banco ainda não aceita o comportamento Progressivo. Aplique a migration do Kanban e tente novamente.',
+    });
   });
 });

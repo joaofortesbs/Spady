@@ -1,0 +1,198 @@
+Contexto do problema
+
+Estamos dentro do projeto Spady OFC no Replit, em uma tarefa relacionada ao Kanban. O problema atual é específico e crítico:
+
+- Dentro do dropdown de “Comportamento da coluna” do card/coluna Kanban, a opção “Progressivo” ainda não está funcionando corretamente.
+- Atualmente, apenas “Ativada” e “Conclusão” funcionam.
+- Quando o usuário seleciona “Progressivo”, a seleção é revertida para o valor anterior.
+- Também aparece a mensagem: “Não foi possível salvar o comportamento da coluna.”
+- O comportamento selecionado precisa permanecer salvo de forma persistente no banco Supabase externo atual.
+- Não quero alterações desnecessárias fora desse escopo, nem mudanças destrutivas, irreversíveis ou que prejudiquem o restante da plataforma, o chat Jota ou fluxos já estáveis.
+
+Seu objetivo principal
+
+Resolver definitivamente o problema da opção “Progressivo” no comportamento da coluna Kanban, garantindo que:
+
+1. a seleção de “Progressivo” funcione corretamente no front-end;
+2. o valor seja aceito, persistido e retornado corretamente pelo back-end/API;
+3. o valor seja salvo de forma real no Supabase externo atual;
+4. a interface não reverta indevidamente para o valor anterior;
+5. o sistema continue estável, sem regressões nas opções “Ativada” e “Conclusão”;
+6. nenhuma outra área relevante da plataforma seja quebrada.
+
+Diretriz de execução
+
+Quero uma investigação profunda, mas disciplinada e precisa. Não quero uma varredura caótica. Trabalhe em ordem lógica, com validação a cada etapa, e só altere código quando houver evidência suficiente da causa-raiz.
+
+Antes de modificar qualquer arquivo:
+
+- revise o contexto completo da tarefa, mensagens recentes, diffs, arquivos alterados e logs disponíveis;
+- mapeie o fluxo completo da funcionalidade:
+  UI/dropdown → estado local → hook/store/cache → service → endpoint/API → validação → persistência no Supabase → retorno → reconciliação/rollback;
+- identifique exatamente em qual camada ocorre a quebra real;
+- diferencie claramente:
+  - erro de UI/interação;
+  - erro de estado otimista/rollback;
+  - erro de contrato de API;
+  - erro de validação;
+  - erro de schema/constraint no banco;
+  - erro de ambiente/configuração/migration não aplicada;
+  - erro de concorrência ou sobrescrita por estado antigo.
+
+Hipótese prioritária a validar primeiro
+
+Valide primeiro, com provas, se o problema real está na camada de persistência/schema do Supabase externo, especialmente em constraint/check antiga que ainda rejeita o valor “progressive”, antes de reabrir hipóteses já enfraquecidas.
+
+Se houver evidência de erro de banco semelhante a check constraint / código 23514 / behavior constraint antiga, trate isso como linha principal de investigação até confirmar ou descartar com segurança.
+
+Escopo técnico obrigatório da investigação
+
+Analise com profundidade e precisão:
+
+1. Front-end/UI/UX
+- dropdown de comportamento da coluna;
+- eventos reais de seleção;
+- sincronização visual após seleção;
+- mensagens de erro;
+- possíveis problemas de controlled/uncontrolled state;
+- renderização, remount, cache, hidratação e re-fetch.
+
+2. Estado local e reconciliação
+- estado otimista;
+- rollback;
+- race conditions;
+- concorrência entre seleções sucessivas;
+- sobrescrita por respostas antigas;
+- cache local e revalidação.
+
+3. Serviço e API
+- payload enviado;
+- serialização do campo behavior;
+- validação dos valores permitidos;
+- tratamento de respostas divergentes;
+- confirmação autoritativa do valor persistido;
+- mensagens de erro específicas em vez de genéricas.
+
+4. Banco e Supabase externo
+- schema real atual;
+- tipo da coluna behavior;
+- default;
+- constraints/check constraints;
+- enum versus text;
+- migrations existentes;
+- drift entre código local e banco remoto;
+- existência real ou não de suporte a “progressive”.
+
+5. Qualidade e segurança
+- não deixar lógica duplicada;
+- não criar conflito entre migrations;
+- não manter código legado conflitando com a correção nova;
+- não remover nada crítico sem comprovação;
+- não executar mudanças irreversíveis ou perigosas sem necessidade.
+
+Restrições obrigatórias
+
+- Não alucine.
+- Não assuma que o problema está no front-end sem prova.
+- Não assuma que migration local já foi aplicada no Supabase externo.
+- Não execute DDL/migration em banco remoto errado.
+- Não exponha segredos, tokens, URLs sensíveis, chaves ou dados privados.
+- Não altere áreas fora do escopo sem justificar tecnicamente.
+- Não faça refactors amplos só por preferência estética.
+- Não marque como “resolvido” se a persistência real no banco externo não estiver comprovada.
+- Se a integração/autorização com o Supabase externo não estiver disponível, deixe isso explícito e separe claramente:
+  - o que foi corrigido no código;
+  - o que ainda depende de aplicação real da migration/ajuste no banco externo.
+
+Plano de execução desejado
+
+Monte e siga um plano em Macro-steps e Micro-steps, com ordem inteligente. Exemplo de estrutura esperada:
+
+Macro-step 1 — Diagnóstico e mapeamento
+- revisar contexto completo da tarefa;
+- revisar arquivos alterados recentemente;
+- mapear fluxo ponta a ponta;
+- levantar hipóteses e priorizar por evidência.
+
+Macro-step 2 — Reprodução e prova da causa-raiz
+- reproduzir o bug;
+- confirmar logs e respostas da API;
+- confirmar payload enviado;
+- confirmar valor retornado;
+- verificar se o banco rejeita “progressive”;
+- localizar com exatidão a camada que falha.
+
+Macro-step 3 — Correção mínima e segura
+- corrigir apenas o que for necessário;
+- preservar comportamento das opções já funcionais;
+- evitar regressões;
+- eliminar conflitos de lógica, fallback indevido e rollback incorreto.
+
+Macro-step 4 — Validação completa
+- testes unitários;
+- testes de integração;
+- testes de serviço/API/hook/componente;
+- typecheck;
+- lint;
+- build;
+- validação em preview;
+- validação funcional autenticada, se possível;
+- validação da persistência real no banco externo, se houver acesso autorizado.
+
+Macro-step 5 — Fechamento profissional
+- explicar causa-raiz real;
+- listar arquivos alterados;
+- explicar exatamente por que cada alteração foi feita;
+- informar riscos residuais;
+- informar pendências externas;
+- listar próximos passos recomendados.
+
+Critérios de sucesso obrigatórios
+
+Considere a tarefa realmente resolvida somente se houver evidência clara de que:
+
+- “Progressivo” pode ser selecionado sem reversão indevida;
+- o valor persistido permanece correto após refresh/reload;
+- o valor retornado pela API confirma exatamente “progressive”;
+- o Supabase externo aceita e persiste esse valor, ou fique explicitamente comprovado que a única pendência restante é a aplicação autorizada de migration/ajuste externo;
+- “Ativada” e “Conclusão” continuam funcionando;
+- não houve regressões relevantes no Kanban e fluxos relacionados.
+
+Formato obrigatório da resposta final
+
+Ao final, quero uma resposta altamente estruturada com estas seções:
+
+1. Diagnóstico final
+- causa-raiz real;
+- camadas afetadas;
+- hipóteses descartadas.
+
+2. Alterações realizadas
+- arquivo por arquivo;
+- o que foi alterado;
+- por que foi alterado.
+
+3. Validações executadas
+- testes;
+- logs;
+- build;
+- preview;
+- banco;
+- limitações encontradas.
+
+4. Pendências ou bloqueios externos
+- o que depende do Supabase externo;
+- o que ainda não pôde ser executado com segurança.
+
+5. Aprendizados técnicos
+- o que causou esse tipo de falha;
+- como evitar recorrência;
+- quais proteções adicionais devem ser adotadas.
+
+6. Próximas melhorias recomendadas
+- melhorias seguras e de alto impacto para a plataforma;
+- priorizadas por importância.
+
+Modo de trabalho
+
+Atue com postura de arquiteto-investigador sênior, com máxima precisão, profundidade e responsabilidade. Se precisar abrir frentes paralelas de análise, faça isso com organização e consolide os achados antes de editar qualquer coisa. A prioridade é resolver corretamente, com segurança, sem corromper código e sem mascarar a causa-raiz.

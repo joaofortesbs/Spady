@@ -41,14 +41,24 @@ function isValidCachedData(value: unknown): value is BlindadosData {
     Boolean(column) &&
     isValidUUID(column.id) &&
     typeof column.title === 'string' &&
+    ['active', 'completion', 'progressive'].includes(column.behavior) &&
+    (column.projectId == null || isValidUUID(column.projectId)) &&
     Array.isArray(column.cards) &&
     column.cards.every(card =>
       Boolean(card) &&
       isValidUUID(card.id) &&
       typeof card.title === 'string' &&
       typeof card.description === 'string' &&
+        ['alta', 'media', 'baixa'].includes(card.priority) &&
       Array.isArray(card.tags) &&
-      Array.isArray(card.subtasks) &&
+        card.tags.every(tag => typeof tag === 'string') &&
+        Array.isArray(card.subtasks) &&
+        card.subtasks.every(subtask =>
+          Boolean(subtask) &&
+          typeof subtask.id === 'string' &&
+          typeof subtask.title === 'string' &&
+          typeof subtask.completed === 'boolean',
+        ) &&
       typeof card.createdAt === 'string' &&
       typeof card.updatedAt === 'string' &&
       (card.projectId == null || isValidUUID(card.projectId)) &&
@@ -88,6 +98,10 @@ export function useBlindadosData() {
   const dataRef = useRef(data);
   const loadingRef = useRef(false);
   const loadGenerationRef = useRef(0);
+  const dataMutationVersionRef = useRef(0);
+  const columnMutationQueueRef = useRef(new Map<string, Promise<boolean>>());
+  const cardMutationQueueRef = useRef(new Map<string, Promise<void>>());
+  const cardMutationVersionRef = useRef(new Map<string, number>());
   const pendingOperationsRef = useRef(0);
   const lastSyncTimeRef = useRef(0);
   const dataOwnerRef = useRef<string | null>(null);
@@ -145,6 +159,7 @@ export function useBlindadosData() {
     setLoadError(null);
     const loadingUserId = user.id;
     const loadingGeneration = ++loadGenerationRef.current;
+    const loadingMutationVersion = dataMutationVersionRef.current;
 
     try {
       console.log('[useBlindadosData] loadData: Loading from database via API routes...');
@@ -198,7 +213,11 @@ export function useBlindadosData() {
         lastUpdated: new Date().toISOString(),
       };
 
-      if (userIdRef.current !== loadingUserId || loadingGeneration !== loadGenerationRef.current) return;
+      if (
+        userIdRef.current !== loadingUserId
+        || loadingGeneration !== loadGenerationRef.current
+        || loadingMutationVersion !== dataMutationVersionRef.current
+      ) return;
       dataOwnerRef.current = loadingUserId;
       dataRef.current = newData;
       setData(newData);
@@ -259,11 +278,15 @@ export function useBlindadosData() {
     return () => clearInterval(interval);
   }, [user, loadData]);
 
-  const addKanbanColumn = useCallback(async (title: string) => {
+  const addKanbanColumn = useCallback(async (
+    title: string,
+    behavior: ColumnBehavior = 'active',
+    projectId: string | null = null,
+  ): Promise<boolean> => {
     const kanbanService = servicesRef.current.kanban;
     if (!kanbanService) {
       console.error('[useBlindadosData] addKanbanColumn: service not available');
-      return;
+      return false;
     }
     
     const position = dataRef.current.kanban.columns.length;
@@ -272,7 +295,8 @@ export function useBlindadosData() {
       id: tempId,
       title: title.toUpperCase(),
       cards: [],
-      behavior: 'active',
+      behavior,
+      projectId,
     };
     
     pendingOperationsRef.current++;
@@ -284,12 +308,13 @@ export function useBlindadosData() {
         kanban: { columns: [...prev.kanban.columns, optimisticColumn], projects: prev.kanban.projects || [] },
         lastUpdated: new Date().toISOString(),
       };
+      dataRef.current = updated;
       setCache(updated);
       return updated;
     });
     
     try {
-      const newColumn = await kanbanService.addColumn(title, position);
+      const newColumn = await kanbanService.addColumn(title, position, behavior, projectId);
       
       if (newColumn) {
         console.log('[useBlindadosData] addKanbanColumn: SUCCESS - replacing temp ID with:', newColumn.id);
@@ -304,9 +329,11 @@ export function useBlindadosData() {
             },
             lastUpdated: new Date().toISOString(),
           };
+          dataRef.current = updated;
           setCache(updated);
           return updated;
         });
+        return true;
       } else {
         console.error('[useBlindadosData] addKanbanColumn: FAILED - removing optimistic column');
         setData(prev => {
@@ -315,9 +342,12 @@ export function useBlindadosData() {
             kanban: { columns: prev.kanban.columns.filter(c => c.id !== tempId), projects: prev.kanban.projects || [] },
             lastUpdated: new Date().toISOString(),
           };
+          dataRef.current = updated;
           setCache(updated);
           return updated;
         });
+        toast.error('Não foi possível criar a coluna. Tente novamente.');
+        return false;
       }
     } catch (e) {
       console.error('[useBlindadosData] addKanbanColumn error:', e);
@@ -327,9 +357,12 @@ export function useBlindadosData() {
           kanban: { columns: prev.kanban.columns.filter(c => c.id !== tempId), projects: prev.kanban.projects || [] },
           lastUpdated: new Date().toISOString(),
         };
+        dataRef.current = updated;
         setCache(updated);
         return updated;
       });
+      toast.error('Não foi possível criar a coluna. Tente novamente.');
+      return false;
     } finally {
       pendingOperationsRef.current--;
       console.log('[useBlindadosData] addKanbanColumn: Done - pending ops:', pendingOperationsRef.current);
@@ -572,93 +605,111 @@ export function useBlindadosData() {
       return updated;
     });
     
-    const maxRetries = 3;
-    const retryDelays = [500, 1000, 2000];
-    let success = false;
-    let lastError: string | null = null;
-    
-    for (let attempt = 0; attempt < maxRetries; attempt++) {
-      try {
-        console.log('[useBlindadosData] updateKanbanCard: API call attempt', attempt + 1);
-        
-        const response = await fetch('/api/kanban/update-card', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ cardId, ...persistedUpdates }),
-        });
-        
-        const result = await response.json();
-        
-        if (response.ok && result.success) {
-          console.log('[useBlindadosData] updateKanbanCard: SUCCESS on attempt', attempt + 1, result);
-          if (result.card) {
-            setData(prev => {
-              const updated = {
-                ...prev,
-                kanban: {
-                  ...prev.kanban,
-                  columns: prev.kanban.columns.map(column =>
-                    column.id === columnId
-                      ? {
-                          ...column,
-                          cards: column.cards.map(card => card.id === cardId ? result.card : card),
-                        }
-                      : column,
-                  ),
-                },
-                lastUpdated: new Date().toISOString(),
-              };
-              setCache(updated);
-              return updated;
-            });
+    const mutationVersion = (cardMutationVersionRef.current.get(cardId) ?? 0) + 1;
+    cardMutationVersionRef.current.set(cardId, mutationVersion);
+    const previousMutation = cardMutationQueueRef.current.get(cardId) ?? Promise.resolve();
+    const queuedMutation = previousMutation.catch(() => undefined).then(async () => {
+      const maxRetries = 3;
+      const retryDelays = [500, 1000, 2000];
+      let success = false;
+      let lastError: string | null = null;
+      let confirmedCard: KanbanCard | null = null;
+
+      for (let attempt = 0; attempt < maxRetries; attempt++) {
+        try {
+          console.log('[useBlindadosData] updateKanbanCard: API call attempt', attempt + 1);
+
+          const response = await fetch('/api/kanban/update-card', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ cardId, ...persistedUpdates }),
+          });
+
+          const result = await response.json().catch(() => ({}));
+
+          if (response.ok && result.success === true) {
+            console.log('[useBlindadosData] updateKanbanCard: SUCCESS on attempt', attempt + 1, result);
+            confirmedCard = result.card as KanbanCard | null;
+            success = true;
+            break;
           }
-          success = true;
-          break;
-        } else {
+
           lastError = result.error || 'Unknown error';
           console.error('[useBlindadosData] updateKanbanCard: API error on attempt', attempt + 1, lastError);
-          
+
           if (response.status === 401 || response.status === 403 || response.status === 404) {
             console.error('[useBlindadosData] updateKanbanCard: Non-retryable error, stopping');
             break;
           }
+        } catch (e) {
+          lastError = String(e);
+          console.error('[useBlindadosData] updateKanbanCard: Exception on attempt', attempt + 1, e);
         }
-      } catch (e) {
-        lastError = String(e);
-        console.error('[useBlindadosData] updateKanbanCard: Exception on attempt', attempt + 1, e);
+
+        if (attempt < maxRetries - 1) {
+          console.log('[useBlindadosData] updateKanbanCard: Waiting', retryDelays[attempt], 'ms before retry');
+          await new Promise(resolve => setTimeout(resolve, retryDelays[attempt]));
+        }
       }
-      
-      if (attempt < maxRetries - 1) {
-        console.log('[useBlindadosData] updateKanbanCard: Waiting', retryDelays[attempt], 'ms before retry');
-        await new Promise(resolve => setTimeout(resolve, retryDelays[attempt]));
+
+      if (success && confirmedCard && mutationVersion === cardMutationVersionRef.current.get(cardId)) {
+        setData(prev => {
+          const updated = {
+            ...prev,
+            kanban: {
+              ...prev.kanban,
+              columns: prev.kanban.columns.map(column =>
+                column.id === columnId
+                  ? {
+                      ...column,
+                      cards: column.cards.map(card => card.id === cardId ? confirmedCard : card),
+                    }
+                  : column,
+              ),
+            },
+            lastUpdated: new Date().toISOString(),
+          };
+          setCache(updated);
+          return updated;
+        });
       }
+
+      if (!success) {
+        console.error('[useBlindadosData] updateKanbanCard: FAILED after all retries - restoring previous state. Last error:', lastError);
+        if (mutationVersion === cardMutationVersionRef.current.get(cardId)) {
+          setData(prev => {
+            const updated = {
+              ...prev,
+              kanban: {
+                ...prev.kanban,
+                columns: prev.kanban.columns.map(column =>
+                  column.id === columnId
+                    ? {
+                        ...column,
+                        cards: column.cards.map(card => card.id === cardId ? previousCard : card),
+                      }
+                    : column,
+                ),
+              },
+              lastUpdated: new Date().toISOString(),
+            };
+            setCache(updated);
+            return updated;
+          });
+          toast.error(`Não foi possível salvar o card. ${lastError || 'Tente novamente.'}`);
+        }
+      }
+    });
+
+    cardMutationQueueRef.current.set(cardId, queuedMutation);
+    try {
+      await queuedMutation;
+    } finally {
+      if (cardMutationQueueRef.current.get(cardId) === queuedMutation) {
+        cardMutationQueueRef.current.delete(cardId);
+      }
+      pendingOperationsRef.current--;
     }
-    
-    if (!success) {
-      console.error('[useBlindadosData] updateKanbanCard: FAILED after all retries - restoring previous state. Last error:', lastError);
-      setData(prev => {
-        const updated = {
-          ...prev,
-          kanban: {
-            ...prev.kanban,
-            columns: prev.kanban.columns.map(column =>
-              column.id === columnId
-                ? {
-                    ...column,
-                    cards: column.cards.map(card => card.id === cardId ? previousCard : card),
-                  }
-                : column,
-            ),
-          },
-          lastUpdated: new Date().toISOString(),
-        };
-        setCache(updated);
-        return updated;
-      });
-      toast.error(`Não foi possível salvar o card. ${lastError || 'Tente novamente.'}`);
-    }
-    
-    pendingOperationsRef.current--;
   }, [user]);
 
   const deleteKanbanCard = useCallback(async (columnId: string, cardId: string) => {
@@ -773,15 +824,14 @@ export function useBlindadosData() {
           body: JSON.stringify({ cardId, targetColumnId: targetColId, position: targetIdx }),
         });
         
-        if (res.ok) {
-          const result = await res.json();
+        const result = await res.json().catch(() => ({}));
+        if (res.ok && result.success === true) {
           console.log('[useBlindadosData] moveCard: SUCCESS on attempt', attempt, result);
           pendingOperationsRef.current--;
           return;
         }
         
-        const errorData = await res.json().catch(() => ({}));
-        lastError = new Error(`HTTP ${res.status}: ${errorData.error || 'Unknown error'}`);
+        lastError = new Error(`HTTP ${res.status}: ${result.error || 'Unable to move card'}`);
         console.warn('[useBlindadosData] moveCard: Attempt', attempt, 'failed:', lastError.message);
         
       } catch (e) {
@@ -813,19 +863,20 @@ export function useBlindadosData() {
     pendingOperationsRef.current--;
   }, [loadData]);
 
-  const updateKanbanColumn = useCallback(async (columnId: string, updates: { title?: string; behavior?: ColumnBehavior }) => {
+  const updateKanbanColumn = useCallback(async (columnId: string, updates: { title?: string; behavior?: ColumnBehavior }): Promise<boolean> => {
     const kanbanService = servicesRef.current.kanban;
     if (!kanbanService) {
       console.error('[useBlindadosData] updateKanbanColumn: service not available');
-      return;
+      return false;
     }
     
     if (columnId.startsWith('temp-')) {
       console.log('[useBlindadosData] updateKanbanColumn: Skipping temp column');
-      return;
+      return false;
     }
     
     const previousColumns = dataRef.current.kanban.columns;
+    const mutationVersion = ++dataMutationVersionRef.current;
     
     pendingOperationsRef.current++;
     
@@ -844,33 +895,53 @@ export function useBlindadosData() {
         },
         lastUpdated: new Date().toISOString(),
       };
+      dataRef.current = updated;
       setCache(updated);
       return updated;
     });
 
-    try {
-      const success = await kanbanService.updateColumn(columnId, updates);
-      if (!success) {
-        console.error('[useBlindadosData] updateKanbanColumn: FAILED - restoring previous state');
+    const persistMutation = async (): Promise<boolean> => {
+      try {
+        const success = await kanbanService.updateColumn(columnId, updates);
+        if (!success) {
+          console.error('[useBlindadosData] updateKanbanColumn: FAILED - restoring previous state');
+          if (mutationVersion !== dataMutationVersionRef.current) return false;
+          setData(prev => {
+            const updated = { ...prev, kanban: { columns: previousColumns, projects: prev.kanban.projects || [] }, lastUpdated: new Date().toISOString() };
+            dataRef.current = updated;
+            setCache(updated);
+            return updated;
+          });
+          toast.error('Não foi possível salvar o comportamento da coluna.');
+          return false;
+        }
+        console.log('[useBlindadosData] updateKanbanColumn: SUCCESS');
+        return true;
+      } catch (e) {
+        console.error('[useBlindadosData] updateKanbanColumn error:', e);
+        if (mutationVersion !== dataMutationVersionRef.current) return false;
         setData(prev => {
           const updated = { ...prev, kanban: { columns: previousColumns, projects: prev.kanban.projects || [] }, lastUpdated: new Date().toISOString() };
+          dataRef.current = updated;
           setCache(updated);
           return updated;
         });
         toast.error('Não foi possível salvar o comportamento da coluna.');
-      } else {
-        console.log('[useBlindadosData] updateKanbanColumn: SUCCESS');
+        return false;
+      } finally {
+        pendingOperationsRef.current--;
       }
-    } catch (e) {
-      console.error('[useBlindadosData] updateKanbanColumn error:', e);
-      setData(prev => {
-        const updated = { ...prev, kanban: { columns: previousColumns, projects: prev.kanban.projects || [] }, lastUpdated: new Date().toISOString() };
-        setCache(updated);
-        return updated;
-      });
-      toast.error('Não foi possível salvar o comportamento da coluna.');
+    };
+
+    const previousMutation = columnMutationQueueRef.current.get(columnId) ?? Promise.resolve(true);
+    const queuedMutation = previousMutation.catch(() => false).then(persistMutation);
+    columnMutationQueueRef.current.set(columnId, queuedMutation);
+    try {
+      return await queuedMutation;
     } finally {
-      pendingOperationsRef.current--;
+      if (columnMutationQueueRef.current.get(columnId) === queuedMutation) {
+        columnMutationQueueRef.current.delete(columnId);
+      }
     }
   }, []);
 
@@ -890,6 +961,7 @@ export function useBlindadosData() {
       console.log('[useBlindadosData] updateKanbanColumns: Has temporary columns, only updating UI');
       setData(prev => {
         const updated = { ...prev, kanban: { columns, projects: prev.kanban.projects || [] }, lastUpdated: new Date().toISOString() };
+        dataRef.current = updated;
         setCache(updated);
         return updated;
       });
@@ -897,12 +969,30 @@ export function useBlindadosData() {
     }
     
     const previousColumns = dataRef.current.kanban.columns;
+    const columnOrderChanged =
+      columns.length !== previousColumns.length
+      || columns.some((column, index) => column.id !== previousColumns[index]?.id);
+
+    if (!columnOrderChanged) {
+      setData(prev => {
+        const updated = {
+          ...prev,
+          kanban: { ...prev.kanban, columns, projects: prev.kanban.projects || [] },
+          lastUpdated: new Date().toISOString(),
+        };
+        dataRef.current = updated;
+        setCache(updated);
+        return updated;
+      });
+      return;
+    }
     
     pendingOperationsRef.current++;
     console.log('[useBlindadosData] updateKanbanColumns: Starting - pending ops:', pendingOperationsRef.current);
     
     setData(prev => {
       const updated = { ...prev, kanban: { columns, projects: prev.kanban.projects || [] }, lastUpdated: new Date().toISOString() };
+      dataRef.current = updated;
       setCache(updated);
       return updated;
     });
@@ -917,6 +1007,7 @@ export function useBlindadosData() {
         console.error('[useBlindadosData] updateKanbanColumns: FAILED - restoring previous state');
         setData(prev => {
           const updated = { ...prev, kanban: { columns: previousColumns, projects: prev.kanban.projects || [] }, lastUpdated: new Date().toISOString() };
+          dataRef.current = updated;
           setCache(updated);
           return updated;
         });
@@ -927,6 +1018,7 @@ export function useBlindadosData() {
       console.error('[useBlindadosData] updateKanbanColumns error:', e);
       setData(prev => {
         const updated = { ...prev, kanban: { columns: previousColumns, projects: prev.kanban.projects || [] }, lastUpdated: new Date().toISOString() };
+        dataRef.current = updated;
         setCache(updated);
         return updated;
       });
@@ -974,15 +1066,14 @@ export function useBlindadosData() {
           body: JSON.stringify({ columnId, cardPositions }),
         });
         
-        if (res.ok) {
-          const result = await res.json();
+        const result = await res.json().catch(() => ({}));
+        if (res.ok && result.success === true) {
           console.log('[useBlindadosData] updateCardPositions: SUCCESS on attempt', attempt, result);
           pendingOperationsRef.current--;
           return;
         }
         
-        const errorData = await res.json().catch(() => ({}));
-        lastError = new Error(`HTTP ${res.status}: ${errorData.error || 'Unknown error'}`);
+        lastError = new Error(`HTTP ${res.status}: ${result.error || 'Unable to reorder cards'}`);
         console.warn('[useBlindadosData] updateCardPositions: Attempt', attempt, 'failed:', lastError.message);
         
       } catch (e) {

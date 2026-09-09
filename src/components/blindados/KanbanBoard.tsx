@@ -42,7 +42,7 @@ interface KanbanBoardProps {
   columns: KanbanColumn[];
   onColumnsChange: (columns: KanbanColumn[]) => void;
   onUpdateColumn: (columnId: string, updates: { title?: string; behavior?: ColumnBehavior }) => void;
-  onAddColumn: (title: string, behavior?: ColumnBehavior) => void;
+  onAddColumn: (title: string, behavior?: ColumnBehavior, projectId?: string | null) => Promise<boolean> | void;
   onDeleteColumn: (columnId: string) => void;
   onAddCard: (columnId: string, card: Omit<KanbanCard, 'id' | 'createdAt' | 'updatedAt'>) => void;
   onUpdateCard: (columnId: string, cardId: string, updates: Partial<KanbanCard>) => void;
@@ -464,6 +464,8 @@ export function KanbanBoard({
   const [overColumnId, setOverColumnId] = useState<string | null>(null);
   const [showAddColumn, setShowAddColumn] = useState(false);
   const [newColumnTitle, setNewColumnTitle] = useState('');
+  const [newColumnBehavior, setNewColumnBehavior] = useState<ColumnBehavior>('active');
+  const [isAddingColumn, setIsAddingColumn] = useState(false);
   const [editingCard, setEditingCard] = useState<{ card: KanbanCard; columnId: string } | null>(null);
   const [addingCardToColumn, setAddingCardToColumn] = useState<string | null>(null);
   const [newCardTitle, setNewCardTitle] = useState('');
@@ -863,16 +865,20 @@ export function KanbanBoard({
     activeCardOrdinalRef.current = null;
   };
 
-  const handleAddColumn = () => {
+  const handleAddColumn = async () => {
     const title = newColumnTitle.trim();
-    if (!title) return;
-    
-    // Immediately clear and close to prevent double-clicks
-    setNewColumnTitle('');
-    setShowAddColumn(false);
-    
-    // Fire and forget - optimistic update handles UI instantly
-    onAddColumn(title);
+    if (!title || isAddingColumn) return;
+
+    setIsAddingColumn(true);
+    try {
+      const result = await onAddColumn(title, newColumnBehavior, selectedProjectId);
+      if (result === false) return;
+      setNewColumnTitle('');
+      setNewColumnBehavior('active');
+      setShowAddColumn(false);
+    } finally {
+      setIsAddingColumn(false);
+    }
   };
 
   const handleAddCard = (columnId: string) => {
@@ -922,11 +928,11 @@ export function KanbanBoard({
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: 0.2 }}
-      className="bg-[#0a0f1f] rounded-2xl border border-[#00f6ff]/10 p-4 sm:p-6 h-full overflow-hidden"
+      className="bg-[#0a0f1f] rounded-2xl border border-[#00f6ff]/10 p-4 sm:p-6 h-full w-full min-w-0 overflow-hidden"
     >
-      <div className="flex flex-wrap items-center gap-3 mb-6">
-        <h2 className="text-lg font-semibold text-white">Quadro de tarefas</h2>
-        <div className="ml-auto flex max-w-full flex-wrap items-center justify-end gap-2">
+      <div className="mb-6 flex flex-wrap items-center gap-3">
+        <div className="flex min-w-0 flex-1 flex-wrap items-center gap-2">
+          <h2 className="mr-1 text-lg font-semibold text-white">Quadro de tarefas</h2>
           
           <div className="relative" ref={projectDropdownRef}>
             <button
@@ -934,7 +940,7 @@ export function KanbanBoard({
               onClick={() => setShowProjectDropdown(!showProjectDropdown)}
               aria-expanded={showProjectDropdown}
               aria-haspopup="menu"
-              className="min-h-11 max-w-full flex items-center gap-2 rounded-lg border border-white/10 bg-white/5 px-3 py-1.5 text-sm transition-colors hover:border-[#00f6ff]/30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#00f6ff]"
+              className="min-h-11 max-w-[min(18rem,100%)] flex items-center gap-2 rounded-lg border border-white/10 bg-white/5 px-3 py-1.5 text-sm transition-colors hover:border-[#00f6ff]/30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#00f6ff]"
             >
               {selectedProject ? (
                 <>
@@ -1086,6 +1092,76 @@ export function KanbanBoard({
               )}
             </AnimatePresence>
           </div>
+        </div>
+        <div className="ml-auto w-full sm:w-auto">
+          {showAddColumn ? (
+            <form
+              onSubmit={(event) => { event.preventDefault(); void handleAddColumn(); }}
+              className="flex w-full flex-wrap items-center justify-end gap-2 sm:w-auto"
+              aria-label="Criar nova coluna"
+            >
+              <label htmlFor="new-column-title" className="sr-only">Nome da coluna</label>
+              <input
+                id="new-column-title"
+                type="text"
+                value={newColumnTitle}
+                onChange={(event) => setNewColumnTitle(event.target.value)}
+                placeholder="Nome da coluna..."
+                maxLength={120}
+                autoFocus
+                disabled={isAddingColumn}
+                onKeyDown={(event) => {
+                  if (event.key === 'Escape') {
+                    setShowAddColumn(false);
+                    setNewColumnTitle('');
+                    setNewColumnBehavior('active');
+                  }
+                }}
+                className="min-h-11 min-w-0 flex-1 rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-sm text-white outline-none focus:border-[#00f6ff]/50 focus-visible:ring-2 focus-visible:ring-[#00f6ff]/50 sm:w-40 sm:flex-none"
+              />
+              <label htmlFor="new-column-behavior" className="sr-only">Comportamento da nova coluna</label>
+              <select
+                id="new-column-behavior"
+                value={newColumnBehavior}
+                onChange={(event) => setNewColumnBehavior(event.target.value as ColumnBehavior)}
+                disabled={isAddingColumn}
+                className="min-h-11 min-w-0 flex-1 rounded-xl border border-white/10 bg-[#0a0f1f] px-3 py-2 text-sm text-white outline-none focus:border-[#00f6ff]/50 focus-visible:ring-2 focus-visible:ring-[#00f6ff]/50 sm:w-36 sm:flex-none"
+              >
+                <option value="active">Ativada</option>
+                <option value="completion">Conclusão</option>
+                <option value="progressive">Progressivo</option>
+              </select>
+              <button
+                type="submit"
+                disabled={!newColumnTitle.trim() || isAddingColumn}
+                className="min-h-11 rounded-xl bg-[#00f6ff] px-4 py-2 text-sm font-medium text-[#010516] transition-colors hover:bg-[#00f6ff]/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white disabled:cursor-wait disabled:opacity-50"
+              >
+                {isAddingColumn ? <Loader2 className="h-4 w-4 animate-spin" aria-label="Criando coluna" /> : 'Criar'}
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  if (isAddingColumn) return;
+                  setShowAddColumn(false);
+                  setNewColumnTitle('');
+                  setNewColumnBehavior('active');
+                }}
+                disabled={isAddingColumn}
+                className="min-h-11 rounded-xl bg-white/5 px-3 py-2 text-sm text-white/70 transition-colors hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#00f6ff] disabled:cursor-wait disabled:opacity-50"
+              >
+                Cancelar
+              </button>
+            </form>
+          ) : (
+            <button
+              type="button"
+              onClick={() => setShowAddColumn(true)}
+              className="flex min-h-11 w-full items-center justify-center gap-2 rounded-xl border border-dashed border-[#00f6ff]/30 px-4 text-sm text-[#00f6ff] transition-colors hover:bg-[#00f6ff]/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#00f6ff] sm:w-auto"
+            >
+              <Plus className="h-4 w-4" aria-hidden="true" />
+              Adicionar coluna
+            </button>
+          )}
         </div>
       </div>
 
@@ -1251,15 +1327,13 @@ export function KanbanBoard({
                     strategy={verticalListSortingStrategy}
                   >
                     <AnimatePresence>
-                      {getFilteredCards(column).map((card) => (
+                      {getFilteredCards(column).map((card, visibleIndex, visibleCards) => (
                          <SortableCard
                           key={card.id}
                           card={card}
                           columnId={column.id}
-                           ordinal={column.behavior === 'progressive'
-                             ? column.cards.findIndex(c => c.id === card.id) + 1
-                             : undefined}
-                           ordinalTotal={column.behavior === 'progressive' ? column.cards.length : undefined}
+                            ordinal={column.behavior === 'progressive' ? visibleIndex + 1 : undefined}
+                            ordinalTotal={column.behavior === 'progressive' ? visibleCards.length : undefined}
                           onEdit={() => setEditingCard({ card, columnId: column.id })}
                           onDelete={() => onDeleteCard(column.id, card.id)}
                           isDraggingAny={activeCard !== null}
@@ -1268,7 +1342,7 @@ export function KanbanBoard({
                     </AnimatePresence>
                   </SortableContext>
                   
-                  {column.cards.length === 0 && !activeCard && (
+                  {getFilteredCards(column).length === 0 && !activeCard && (
                     <div className="flex items-center justify-center h-20 text-white/20 text-xs">
                       Sem tarefas
                     </div>
@@ -1334,44 +1408,6 @@ export function KanbanBoard({
               </SortableColumn>
             ))}
 
-            {showAddColumn ? (
-              <div className="flex-shrink-0 w-72 bg-[#010516]/50 rounded-xl border border-white/5 p-3">
-                <input
-                  type="text"
-                  value={newColumnTitle}
-                  onChange={(e) => setNewColumnTitle(e.target.value)}
-                  placeholder="Nome da coluna..."
-                  className="w-full px-3 py-2 rounded-xl bg-white/5 border border-white/10 focus:border-[#00f6ff]/50 outline-none text-white text-sm mb-3"
-                  autoFocus
-                  onKeyDown={(e) => e.key === 'Enter' && handleAddColumn()}
-                />
-                <div className="flex gap-2">
-                  <button
-                    onClick={handleAddColumn}
-                    className="flex-1 py-2 rounded-xl bg-[#00f6ff] text-[#010516] text-sm font-medium hover:bg-[#00f6ff]/90 transition-colors"
-                  >
-                    Criar
-                  </button>
-                  <button
-                    onClick={() => {
-                      setShowAddColumn(false);
-                      setNewColumnTitle('');
-                    }}
-                    className="px-3 py-2 rounded-xl bg-white/5 text-white/60 text-sm hover:bg-white/10 transition-colors"
-                  >
-                    Cancelar
-                  </button>
-                </div>
-              </div>
-            ) : (
-              <button
-                onClick={() => setShowAddColumn(true)}
-                className="flex-shrink-0 w-72 h-12 flex items-center justify-center gap-2 rounded-xl border border-dashed border-[#00f6ff]/30 text-[#00f6ff] text-sm hover:bg-[#00f6ff]/5 transition-colors"
-              >
-                <Plus className="w-4 h-4" />
-                Adicionar coluna
-              </button>
-            )}
           </div>
         </SortableContext>
 

@@ -148,64 +148,70 @@ export class KanbanService {
     const defaultBehaviors: ColumnBehavior[] = ['active', 'active', 'completion'];
 
     for (let i = 0; i < DEFAULT_COLUMNS.length; i++) {
-      const { data, error } = await this.supabase
-        .from('kanban_columns')
-        .insert({ 
-          user_id: this.userId, 
-          title: DEFAULT_COLUMNS[i], 
-          position: i,
-          behavior: defaultBehaviors[i] || 'active'
-        })
-        .select()
-        .single();
-
-      if (!error && data) {
-        columns.push({ 
-          id: data.id, 
-          title: data.title, 
-          cards: [],
-          behavior: data.behavior || 'active'
-        });
-      }
+      const column = await this.addColumn(
+        DEFAULT_COLUMNS[i],
+        i,
+        defaultBehaviors[i] || 'active',
+      );
+      if (column) columns.push(column);
     }
 
     return columns;
   }
 
-  async addColumn(title: string, position: number, behavior: ColumnBehavior = 'active'): Promise<KanbanColumn | null> {
+  async addColumn(
+    title: string,
+    position: number,
+    behavior: ColumnBehavior = 'active',
+    projectId: string | null = null,
+  ): Promise<KanbanColumn | null> {
     try {
-      return await withRetry(async () => {
-        const { data, error } = await this.supabase
-          .from('kanban_columns')
-          .insert({ user_id: this.userId, title: title.toUpperCase(), position, behavior })
-          .select()
-          .single();
-
-        if (error) {
-          console.error('KanbanService.addColumn error:', error.message);
-          throw error;
-        }
-
-        return { id: data.id, title: data.title, cards: [], behavior: data.behavior || 'active' };
+      const response = await fetch('/api/kanban/columns', {
+        method: 'POST',
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ title, position, behavior, projectId }),
       });
+      const payload = await response.json().catch(() => null);
+      if (!response.ok || !payload?.success || !payload.column?.id) {
+        console.error('KanbanService.addColumn failed:', payload?.error || response.status);
+        return null;
+      }
+      if (payload.column.behavior !== behavior) {
+        console.error('KanbanService.addColumn failed: behavior was not confirmed', {
+          expected: behavior,
+          received: payload.column.behavior,
+        });
+        return null;
+      }
+
+      return {
+        id: payload.column.id,
+        title: payload.column.title,
+        cards: [],
+        behavior,
+        projectId: payload.column.projectId ?? null,
+      };
     } catch (e) {
-      console.error('KanbanService.addColumn failed after retries:', e);
+      console.error('KanbanService.addColumn exception:', e);
       return null;
     }
   }
 
   async deleteColumn(columnId: string): Promise<boolean> {
-    const { error } = await this.supabase
-      .from('kanban_columns')
-      .delete()
-      .eq('id', columnId)
-      .eq('user_id', this.userId);
-
-    if (error) {
-      console.error('KanbanService.deleteColumn error:', error.message);
+    try {
+      const response = await fetch('/api/kanban/columns', {
+        method: 'DELETE',
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ columnId }),
+      });
+      const payload = await response.json().catch(() => null);
+      return response.ok && payload?.success === true;
+    } catch (e) {
+      console.error('KanbanService.deleteColumn exception:', e);
       return false;
     }
-    return true;
   }
 
   async addCard(columnId: string, card: Omit<KanbanCard, 'id' | 'createdAt' | 'updatedAt'>, position: number): Promise<KanbanCard | null> {
@@ -363,35 +369,19 @@ export class KanbanService {
 
   async updateColumn(columnId: string, updates: { title?: string; position?: number; behavior?: ColumnBehavior }): Promise<boolean> {
     try {
-      const dbUpdates: Record<string, unknown> = { updated_at: new Date().toISOString() };
-      if (updates.title !== undefined) dbUpdates.title = updates.title.toUpperCase();
-      if (updates.position !== undefined) dbUpdates.position = updates.position;
-      if (updates.behavior !== undefined) dbUpdates.behavior = updates.behavior;
-
-      const { data, error } = await this.supabase
-        .from('kanban_columns')
-        .update(dbUpdates)
-        .eq('id', columnId)
-        .eq('user_id', this.userId)
-        .select('id, behavior')
-        .maybeSingle();
-
-      if (error) {
-        console.error('KanbanService.updateColumn error:', {
-          message: error.message,
-          details: error.details,
-          hint: error.hint,
-          code: error.code,
-        });
-        return false;
-      }
-
-      if (!data) {
-        console.error('KanbanService.updateColumn: no column was updated');
-        return false;
-      }
-
-      return true;
+      const response = await fetch('/api/kanban/columns', {
+        method: 'PATCH',
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ columnId, ...updates }),
+      });
+      const payload = await response.json().catch(() => null);
+      const behaviorConfirmed =
+        updates.behavior === undefined || payload?.column?.behavior === updates.behavior;
+      return response.ok
+        && payload?.success === true
+        && payload.column?.id === columnId
+        && behaviorConfirmed;
     } catch (e) {
       console.error('KanbanService.updateColumn exception:', e);
       return false;
@@ -412,37 +402,17 @@ export class KanbanService {
         let allSuccess = true;
         
         // Process all columns in parallel for speed
-        const promises = columns.map(col => 
-          this.supabase
-            .from('kanban_columns')
-            .update({ 
-              position: col.position, 
-              updated_at: new Date().toISOString() 
-            })
-            .eq('id', col.id)
-            .eq('user_id', this.userId)
-            .select()
-        );
-        
-        const results = await Promise.all(promises);
-        
-        for (let i = 0; i < results.length; i++) {
-          const { data, error } = results[i];
-          const col = columns[i];
-          
-          if (error) {
-            console.error('[KanbanService] updateColumnPositions error for column', col.id, ':', error.message);
-            throw error;
-          }
-          
-          const rowsAffected = data?.length || 0;
-          debugLog(`updateColumnPositions: Column ${col.id} - rows affected:`, rowsAffected);
-          
-          if (rowsAffected === 0) {
-            console.error('[KanbanService] updateColumnPositions: No rows affected for column', col.id, '- RLS may be blocking update');
-            allSuccess = false;
-          }
-        }
+        const results = await Promise.all(columns.map(async col => {
+          const response = await fetch('/api/kanban/columns', {
+            method: 'PATCH',
+            credentials: 'include',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ columnId: col.id, position: col.position }),
+          });
+          const payload = await response.json().catch(() => null);
+          return response.ok && payload?.success === true && payload.column?.id === col.id;
+        }));
+        allSuccess = results.every(Boolean);
         
         if (allSuccess) {
           debugLog('updateColumnPositions: SUCCESS - All columns updated');

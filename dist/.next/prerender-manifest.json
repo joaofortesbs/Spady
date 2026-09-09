@@ -55,30 +55,6 @@
         "x-next-revalidate-tag-token"
       ]
     },
-    "/": {
-      "experimentalBypassFor": [
-        {
-          "type": "header",
-          "key": "next-action"
-        },
-        {
-          "type": "header",
-          "key": "content-type",
-          "value": "multipart/form-data;.*"
-        }
-      ],
-      "initialRevalidateSeconds": false,
-      "srcRoute": "/",
-      "dataRoute": "/index.rsc",
-      "allowHeader": [
-        "host",
-        "x-matched-path",
-        "x-prerender-revalidate",
-        "x-prerender-revalidate-if-generated",
-        "x-next-revalidated-tags",
-        "x-next-revalidate-tag-token"
-      ]
-    },
     "/reset-password": {
       "experimentalBypassFor": [
         {
@@ -102,13 +78,37 @@
         "x-next-revalidated-tags",
         "x-next-revalidate-tag-token"
       ]
+    },
+    "/": {
+      "experimentalBypassFor": [
+        {
+          "type": "header",
+          "key": "next-action"
+        },
+        {
+          "type": "header",
+          "key": "content-type",
+          "value": "multipart/form-data;.*"
+        }
+      ],
+      "initialRevalidateSeconds": false,
+      "srcRoute": "/",
+      "dataRoute": "/index.rsc",
+      "allowHeader": [
+        "host",
+        "x-matched-path",
+        "x-prerender-revalidate",
+        "x-prerender-revalidate-if-generated",
+        "x-next-revalidated-tags",
+        "x-next-revalidate-tag-token"
+      ]
     }
   },
   "dynamicRoutes": {},
   "notFoundRoutes": [],
   "preview": {
-    "previewModeId": "347241dff50da46031b276f689a7907e",
-    "previewModeSigningKey": "6cc614549f8d0cc8d65ec70ed0bcab781fd4a51d20ebe92a05190a0e269f46a9",
-    "previewModeEncryptionKey": "e82d36b0b17e8d056991215bf9d8bbf11bad75c031d84c911380e81bbf3623a4"
+    "previewModeId": "7654d176f23ae65c627c0ca17e1be6bb",
+    "previewModeSigningKey": "c08f543c8f7ce3523619b4122959e81945c453181716275ea9a2c51aace70078",
+    "previewModeEncryptionKey": "06aba1a2086b77aff2cc515495505f0b8fed5b793d64112e1edb6e5e792637e2"
   }
 }

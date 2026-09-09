@@ -12,6 +12,21 @@ histórica para instalações que já as executaram. Não devem ser reaplicadas 
 um caminho alternativo depois da migration canônica; as assinaturas RPC
 autoritativas são as quatro funções documentadas no arquivo 003.
 
+## Forward-fix do comportamento Progressivo
+
+Se o endpoint retornar o erro PostgreSQL `23514` para a constraint
+`kanban_columns_behavior_check`, a instalação externa ainda conserva a
+constraint legada que rejeita `progressive`. Nesse caso, execute somente
+`supabase/migrations/004_progressive_kanban_behavior_forward_fix.sql` depois de
+confirmar que a coluna `behavior` é `TEXT` e que a constraint tem esse nome.
+
+Essa migration é limitada à constraint canônica, não reescreve dados e não
+remove constraints desconhecidas. Antes de aplicá-la, confirme os metadados com
+as consultas abaixo e, depois, repita a consulta de constraints e um PATCH
+autenticado de teste. Não execute as migrations históricas `migrations/011` ou
+`supabase/migrations/002` como tentativa alternativa em uma instalação já
+parcialmente migrada.
+
 ## Pré-condições e verificação
 
 A migration canônica exige as tabelas `kanban_projects`, `kanban_columns` e

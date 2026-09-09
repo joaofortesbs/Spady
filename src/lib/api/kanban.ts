@@ -6,8 +6,11 @@ import { NextResponse } from 'next/server';
 export const UUID_PATTERN =
   /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 export const PROJECT_NAME_MAX_LENGTH = 120;
+export const COLUMN_TITLE_MAX_LENGTH = 120;
 export const CARD_TITLE_MAX_LENGTH = 240;
 export const CARD_DESCRIPTION_MAX_LENGTH = 10_000;
+export const COLUMN_BEHAVIORS = ['active', 'completion', 'progressive'] as const;
+export type ApiColumnBehavior = (typeof COLUMN_BEHAVIORS)[number];
 
 export type KanbanServerContext = {
   user: User;
@@ -30,6 +33,10 @@ export function isUuid(value: unknown): value is string {
 
 export function isHexColor(value: unknown): value is string {
   return typeof value === 'string' && /^#[0-9a-f]{6}$/i.test(value);
+}
+
+export function isColumnBehavior(value: unknown): value is ApiColumnBehavior {
+  return typeof value === 'string' && COLUMN_BEHAVIORS.includes(value as ApiColumnBehavior);
 }
 
 export function isDateOnly(value: unknown): value is string {
@@ -85,6 +92,22 @@ export function publicCard(card: {
     projectId: card.project_id ?? null,
     dueDate: card.due_date ?? null,
     completedAt: card.completed_at ?? null,
+  };
+}
+
+export function publicColumn(column: {
+  id: string;
+  title: string;
+  position: number;
+  behavior?: string | null;
+  project_id?: string | null;
+}) {
+  return {
+    id: column.id,
+    title: column.title,
+    position: column.position,
+    behavior: isColumnBehavior(column.behavior) ? column.behavior : 'active',
+    projectId: column.project_id ?? null,
   };
 }
 
@@ -176,6 +199,15 @@ export function databaseError(operation: string, error: { code?: string; message
   });
 
   if (error.code === '23505') return apiError('Resource already exists', 409);
+  if (
+    error.code === '23514'
+    && error.message?.includes('kanban_columns_behavior_check')
+  ) {
+    return apiError(
+      'O banco ainda não aceita o comportamento Progressivo. Aplique a migration do Kanban e tente novamente.',
+      409,
+    );
+  }
   if (error.code === '23503' || error.code === '23514') {
     return apiError('The submitted relationships are not valid', 400);
   }
