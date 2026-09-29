@@ -8,3 +8,9 @@ Se o cliente Supabase reclamar que faltam URL ou chave pública, confirme apenas
 **Why:** O processo de desenvolvimento exibiu erro de configuração mesmo com os segredos cadastrados e presentes no terminal; após o reinício, a página respondeu normalmente sem mudança no código.
 
 **How to apply:** Quando o erro surgir depois de configurar ou alterar segredos, verifique a presença (sem imprimir valores) e reinicie o servidor para que o Next.js receba as variáveis públicas na compilação.
+
+Um erro `ENOTFOUND` isolado para o serviço externo não comprova que a URL está incorreta.
+
+**Why:** Uma checagem de conectividade falhou por DNS; depois, as mesmas secrets permitiram leituras com a chave pública e a chave de serviço sem alterações de configuração.
+
+**How to apply:** Antes de pedir a troca de secrets após falha de DNS, repita a resolução e uma leitura segura pelo cliente da aplicação. Se persistir, investigue o endereço ou o serviço externo.
