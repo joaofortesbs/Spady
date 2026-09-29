@@ -1,0 +1,15 @@
+Analise todos os arquivos compartilhados e individuais alterados nas últimas mensagens dentro de toda a plataforma. Analise completamente os códigos e arquivos atuais, incluindo arquitetura, fluxos, front-end, back-end, UI e UX, para entender de maneira precisa e exata onde está o problema real.
+
+Ative o arquiteto e diferentes sub-agentes pesquisadores e investigadores profundos e especializados para fazer pesquisas com objetivos distintos dentro deste projeto. Isso permitirá uma visão macro e micro de absolutamente tudo, conectando todos os pontos e compreendendo toda a lógica do sistema. No final, proponha uma solução baseada em baby steps claros, detalhados e super específicos de como resolver o problema, sem alterar coisas fora de contexto e sem prejudicar negativamente nada dentro do projeto ou da plataforma como um todo.
+
+Analise todos os logs e debugs disponíveis dentro da plataforma e do servidor. Se necessário, execute diferentes testes de preview em ambientes isolados (HTML local, servidores de staging, sandboxes) para garantir que tudo está correto. Execute comandos com estratégias distintas para realizar testes, verificações e validações cruzadas, assegurando funcionamento perfeito.
+
+Teste e valide todas as variáveis de ambiente, design system e padrões de implementação. Não permita lógicas, sistemas ou configurações duplicadas ou em conflito que possam corromper o código. Faça uma apuração e depuração extremamente completas e profissionais, com curadoria cuidadosa e sem alucinar.
+
+Sempre busque, investigue e pesquise na internet padrões de implementação comprovados e funcionais, incluindo projetos open-source relevantes. Identifique todas as raízes dos problemas.
+
+Se for criar arquivos ou sistemas que substituem outros já existentes diretamente, lembre-se de excluir os antigos — mas apenas se essa decisão for realmente válida e não for mais viável atualizar algo existente.
+
+Use memórias e contextos úteis para absorver informações de apoio relevantes. Garanta que back-end, front-end, UI e UX estejam rodando nas versões mais atualizadas disponíveis.
+
+Não exclua dados sensíveis (ex.: dados de bancos de produção), não entre em pânico e não execute ações irreversíveis sem validação explícita.
