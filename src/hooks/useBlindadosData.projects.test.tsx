@@ -1,8 +1,9 @@
 import { act, cleanup, renderHook, waitFor } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { useBlindadosData } from './useBlindadosData';
-import { KanbanService } from '@/lib/services/kanbanService';
+import { KanbanColumnSaveError, KanbanService } from '@/lib/services/kanbanService';
 import { getUserDataCacheKey } from '@/lib/utils/storage.constants';
+import { toast } from 'sonner';
 
 const auth = { user: null as { id: string } | null };
 const pomodoroData = {
@@ -172,6 +173,24 @@ describe('useBlindadosData project synchronization', () => {
     expect(success).toBe(false);
     expect(result.current.data.kanban.columns[0].behavior).toBe('active');
     expect(localStorage.getItem(getUserDataCacheKey('user-a'))).toContain('"behavior":"active"');
+  });
+
+  it('shows the database explanation while restoring the prior behavior', async () => {
+    const message = 'O banco ainda não aceita o comportamento Progressivo.';
+    vi.spyOn(KanbanService.prototype, 'updateColumn')
+      .mockRejectedValue(new KanbanColumnSaveError(message));
+    const { result } = renderHook(() => useBlindadosData());
+    await waitFor(() => expect(result.current.isLoaded).toBe(true));
+
+    let success = true;
+    await act(async () => {
+      success = await result.current.updateKanbanColumn(column.id, { behavior: 'progressive' });
+    });
+
+    expect(success).toBe(false);
+    expect(result.current.data.kanban.columns[0].behavior).toBe('active');
+    expect(localStorage.getItem(getUserDataCacheKey('user-a'))).toContain('"behavior":"active"');
+    expect(toast.error).toHaveBeenCalledWith(message);
   });
 
   it('does not let an older failed behavior update roll back a newer selection', async () => {

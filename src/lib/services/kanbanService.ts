@@ -19,6 +19,13 @@ export interface KanbanOperationResult<T = void> {
   error?: string;
 }
 
+export class KanbanColumnSaveError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = 'KanbanColumnSaveError';
+  }
+}
+
 // Utility: Execute with timeout
 async function withTimeout<T>(promise: Promise<T>, timeoutMs: number): Promise<T> {
   let timeoutId: NodeJS.Timeout;
@@ -376,6 +383,9 @@ export class KanbanService {
         body: JSON.stringify({ columnId, ...updates }),
       });
       const payload = await response.json().catch(() => null);
+      if (response.status === 409 && typeof payload?.error === 'string') {
+        throw new KanbanColumnSaveError(payload.error);
+      }
       const behaviorConfirmed =
         updates.behavior === undefined || payload?.column?.behavior === updates.behavior;
       return response.ok
@@ -383,6 +393,7 @@ export class KanbanService {
         && payload.column?.id === columnId
         && behaviorConfirmed;
     } catch (e) {
+      if (e instanceof KanbanColumnSaveError) throw e;
       console.error('KanbanService.updateColumn exception:', e);
       return false;
     }

@@ -141,4 +141,15 @@ describe('KanbanService.updateColumn', () => {
 
     await expect(service.updateColumn('column-id', { behavior: 'progressive' })).resolves.toBe(false);
   });
+
+  it('passes the API explanation through when the database rejects progressive', async () => {
+    const message = 'O banco ainda não aceita o comportamento Progressivo.';
+    vi.stubGlobal('fetch', vi.fn().mockResolvedValue(
+      new Response(JSON.stringify({ error: message }), { status: 409 }),
+    ));
+    const service = new KanbanService({} as SupabaseClient, 'user-id');
+
+    await expect(service.updateColumn('column-id', { behavior: 'progressive' }))
+      .rejects.toMatchObject({ name: 'KanbanColumnSaveError', message });
+  });
 });

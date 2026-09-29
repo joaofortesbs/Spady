@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import { BlindadosData, DEFAULT_DATA, KanbanColumn, KanbanCard, KanbanProject, KanbanMutationResult, PomodoroSession, PomodoroSettings, DEFAULT_POMODORO_SETTINGS, ColumnBehavior } from '@/lib/types/blindados';
 import { createClient } from '@/lib/supabase/client';
 import { useAuth } from '@/lib/contexts/AuthContext';
-import { KanbanService } from '@/lib/services/kanbanService';
+import { KanbanColumnSaveError, KanbanService } from '@/lib/services/kanbanService';
 import { PomodoroService } from '@/lib/services/pomodoroService';
 import { safeStorage } from '@/lib/utils/safeStorage';
 import { getUserDataCacheKey, STORAGE_KEYS } from '@/lib/utils/storage.constants';
@@ -926,7 +926,9 @@ export function useBlindadosData() {
           setCache(updated);
           return updated;
         });
-        toast.error('Não foi possível salvar o comportamento da coluna.');
+        toast.error(e instanceof KanbanColumnSaveError
+          ? e.message
+          : 'Não foi possível salvar o comportamento da coluna.');
         return false;
       } finally {
         pendingOperationsRef.current--;
