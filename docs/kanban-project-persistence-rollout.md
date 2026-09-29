@@ -21,9 +21,11 @@ constraint legada que rejeita `progressive`. Nesse caso, execute somente
 confirmar que a coluna `behavior` é `TEXT` e que a constraint tem esse nome.
 
 Essa migration é limitada à constraint canônica, não reescreve dados e não
-remove constraints desconhecidas. Antes de aplicá-la, confirme os metadados com
-as consultas abaixo e, depois, repita a consulta de constraints e um PATCH
-autenticado de teste. Não execute as migrations históricas `migrations/011` ou
+remove constraints desconhecidas. Ela aborta se a coluna não for `TEXT`, se a
+constraint canônica não existir, se outra CHECK usar `behavior`, ou se houver
+valores nulos/desconhecidos. Antes de aplicá-la, confirme os metadados e faça
+um backup; depois, repita a consulta de constraints e um PATCH autenticado de
+teste. Não execute as migrations históricas `migrations/011` ou
 `supabase/migrations/002` como tentativa alternativa em uma instalação já
 parcialmente migrada.
 
