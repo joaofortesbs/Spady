@@ -4,3 +4,4 @@
 - [Compilador de produção no Replit](replit-next-build-compiler.md) — use Turbopack neste app; o webpack falhou intermitentemente no hash WASM durante builds limpos do publish.
 - [Hidratação com armazenamento local](next-client-storage-hydration.md) — valores de localStorage devem ser restaurados após a montagem para manter o primeiro HTML do Next.js determinístico.
 - [Schema legado de projetos Kanban](kanban-legacy-schema.md) — a API não deve exigir `updated_at` ao confirmar projetos até a migration de hardening estar aplicada.
+- [Segredos no servidor de desenvolvimento](next-dev-secret-refresh.md) — se o Supabase falhar apesar de segredos cadastrados, reinicie o workflow antes de alterar a integração.
