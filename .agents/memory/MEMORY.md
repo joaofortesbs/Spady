@@ -6,3 +6,4 @@
 - [Schema legado de projetos Kanban](kanban-legacy-schema.md) — a API não deve exigir `updated_at` ao confirmar projetos até a migration de hardening estar aplicada.
 - [Segredos no servidor de desenvolvimento](next-dev-secret-refresh.md) — se o Supabase falhar apesar de segredos cadastrados, reinicie o workflow antes de alterar a integração.
 - [Acesso ao schema do Supabase externo](supabase-schema-access.md) — a chave de serviço do app opera pelo REST, mas não autentica a API administrativa nem executa DDL sem uma via SQL separada.
+- [Migrations em schema ativo](live-schema-migration-safety.md) — não inicialize histórico legado sem baseline nem confunda gravações concorrentes legítimas com regressões da migration.
