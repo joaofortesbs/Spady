@@ -1,4 +1,4 @@
-import { describe, expect, it, vi } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 import type { SupabaseClient } from '@supabase/supabase-js';
 import { KanbanService } from './kanbanService';
 
@@ -13,6 +13,27 @@ function serviceWith(builder: Record<string, ReturnType<typeof vi.fn>>) {
 }
 
 describe('KanbanService projects and relations', () => {
+  afterEach(() => vi.unstubAllGlobals());
+
+  it('requires confirmed project transfer and exact persisted column color', async () => {
+    const fetchMock = vi.fn().mockResolvedValue({
+      ok: true, status: 200,
+      json: async () => ({ success: true, column: { id: 'column-a', projectId: PROJECT_ID, backgroundColor: '#abcdef' } }),
+    });
+    vi.stubGlobal('fetch', fetchMock);
+    const service = new KanbanService({} as SupabaseClient, USER_ID);
+    await expect(service.updateColumn('column-a', { projectId: PROJECT_ID })).resolves.toBe(false);
+    fetchMock.mockResolvedValue({
+      ok: true, status: 200,
+      json: async () => ({
+        success: true, cardsProjectUpdated: true,
+        column: { id: 'column-a', projectId: PROJECT_ID, backgroundColor: '#abcdef' },
+      }),
+    });
+    await expect(service.updateColumn('column-a', { projectId: PROJECT_ID, backgroundColor: '#ABCDEF' })).resolves.toBe(true);
+    await expect(service.updateColumn('column-a', { backgroundColor: null })).resolves.toBe(false);
+  });
+
   it('maps the confirmed database project ID and scopes reads by user', async () => {
     const order = vi.fn().mockResolvedValue({
       data: [{

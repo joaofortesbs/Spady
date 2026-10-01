@@ -25,6 +25,7 @@ import { FloatingHeader } from '@/components/layout/FloatingHeader';
 import { QuickCaptureModal } from '@/components/quick-capture/QuickCaptureModal';
 import { ProfileSettingsModal } from '@/components/profile/ProfileSettingsModal';
 import { useVisoesData } from '@/hooks/useVisoesData';
+import { useExpandedKanbanLayout } from '@/components/blindados/useExpandedKanbanLayout';
 
 type Section = 'flows' | 'visoes' | 'painel' | 'equipes';
 
@@ -74,6 +75,7 @@ function MainApp() {
   const mountedRef = useRef(true);
   const transitionTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const selectedProjectUserRef = useRef<string | null>(null);
+  const { flowsSectionRef, timerChartRef, painelSectionRef, flowsBoardHeight, painelBoardHeight } = useExpandedKanbanLayout();
 
   useEffect(() => {
     mountedRef.current = true;
@@ -409,9 +411,10 @@ function MainApp() {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0.15 }}
+              ref={flowsSectionRef}
               className="h-full min-h-0 overflow-y-auto p-4 sm:p-6 flex flex-col gap-6"
             >
-              <div className="grid shrink-0 grid-cols-1 gap-6 lg:h-[45%] lg:grid-cols-2" style={{ minHeight: '360px' }}>
+              <div ref={timerChartRef} className="grid shrink-0 grid-cols-1 gap-6 lg:h-[45%] lg:grid-cols-2" style={{ minHeight: '360px' }}>
                 <PomodoroTimer
                   settings={safeSettings}
                   onSettingsChange={updatePomodoroSettings}
@@ -425,7 +428,7 @@ function MainApp() {
                 />
               </div>
 
-              <div className="flex min-h-[520px] flex-1 lg:min-h-0">
+              <div className="flex min-h-[520px] flex-1 lg:min-h-0" style={flowsBoardHeight ? { minHeight: flowsBoardHeight } : undefined}>
                 <KanbanWorkspace
                   columns={safeColumns}
                   onColumnsChange={updateKanbanColumns}
@@ -474,7 +477,8 @@ function MainApp() {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0.15 }}
-              className="h-full overflow-hidden p-4 sm:p-6"
+              ref={painelSectionRef}
+              className="h-full overflow-y-auto p-4 sm:p-6"
             >
               <KanbanWorkspace
                 columns={safeColumns}
@@ -497,6 +501,7 @@ function MainApp() {
                 loadError={Boolean(loadError)}
                 isSyncing={isSyncing}
                 onRetry={() => void forceSync()}
+                  minBoardHeight={painelBoardHeight}
               />
             </motion.div>
           )}

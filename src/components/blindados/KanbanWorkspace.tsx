@@ -7,16 +7,21 @@ import {
   KanbanColumn,
   KanbanMutationResult,
   KanbanProject,
+  KanbanColumnUpdates,
 } from "@/lib/types/blindados";
 
 interface KanbanWorkspaceProps {
   columns: KanbanColumn[];
   onColumnsChange: (columns: KanbanColumn[]) => void;
-  onUpdateColumn: (columnId: string, updates: { title?: string; behavior?: ColumnBehavior }) => void;
+  onUpdateColumn: (columnId: string, updates: KanbanColumnUpdates) => Promise<boolean> | boolean | void;
   onAddColumn: (title: string, behavior?: ColumnBehavior, projectId?: string | null) => Promise<boolean> | void;
   onDeleteColumn: (columnId: string) => void;
   onAddCard: (columnId: string, card: Omit<KanbanCard, "id" | "createdAt" | "updatedAt">) => void;
-  onUpdateCard: (columnId: string, cardId: string, updates: Partial<KanbanCard>) => void;
+  onUpdateCard: (
+    columnId: string,
+    cardId: string,
+    updates: Partial<KanbanCard>,
+  ) => boolean | void | Promise<boolean | void>;
   onDeleteCard: (columnId: string, cardId: string) => void;
   onMoveCard: (
     cardId: string,
@@ -37,6 +42,7 @@ interface KanbanWorkspaceProps {
   isSyncing: boolean;
   onRetry: () => void;
   className?: string;
+  minBoardHeight?: number;
 }
 
 /**
@@ -65,9 +71,10 @@ export function KanbanWorkspace({
   isSyncing,
   onRetry,
   className = "",
+  minBoardHeight,
 }: KanbanWorkspaceProps) {
   return (
-    <div className={`flex min-h-0 h-full w-full min-w-0 flex-col ${className}`}>
+    <div className={`flex min-h-0 h-full w-full min-w-0 flex-col ${className}`} style={minBoardHeight ? { minHeight: minBoardHeight } : undefined}>
       {loadError && (
         <div className="mb-3 flex shrink-0 flex-wrap items-center justify-between gap-3 rounded-xl border border-red-400/20 bg-red-400/10 px-4 py-3 text-sm text-red-200">
           <span>Não foi possível atualizar os projetos e cards.</span>

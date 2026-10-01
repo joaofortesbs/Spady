@@ -1,6 +1,13 @@
 export type Priority = 'alta' | 'media' | 'baixa';
 export type ColumnBehavior = 'active' | 'completion' | 'progressive';
 
+export interface KanbanColumnUpdates {
+  title?: string;
+  behavior?: ColumnBehavior;
+  projectId?: string | null;
+  backgroundColor?: string | null;
+}
+
 export interface SubTask {
   id: string;
   title: string;
@@ -41,6 +48,7 @@ export interface KanbanColumn {
   cards: KanbanCard[];
   behavior: ColumnBehavior;
   projectId?: string | null;
+  backgroundColor?: string | null;
 }
 
 export interface PomodoroCategory {

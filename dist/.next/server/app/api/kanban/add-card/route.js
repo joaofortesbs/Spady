@@ -1,5 +1,5 @@
 var R=require("../../../../chunks/[turbopack]_runtime.js")("server/app/api/kanban/add-card/route.js")
-R.c("server/chunks/[root-of-the-server]__d82074f3._.js")
+R.c("server/chunks/[root-of-the-server]__6d190fcb._.js")
 R.c("server/chunks/node_modules_318a3176._.js")
 R.c("server/chunks/[root-of-the-server]__703022d1._.js")
 R.m(4596)

@@ -6,7 +6,7 @@ import {
   DndContext,
   DragOverlay,
   KeyboardSensor,
-  PointerSensor,
+  MouseSensor,
   useSensor,
   useSensors,
   DragStartEvent,
@@ -31,21 +31,39 @@ import {
   useSortable,
 } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import { Plus, MoreVertical, GripVertical, Trash2, X, Check, Pencil, Move, FolderKanban, Calendar, ChevronDown, Settings2, CheckCircle2, RotateCcw, ListOrdered, Loader2 } from 'lucide-react';
-import { KanbanColumn, KanbanCard, Priority, SubTask, KanbanProject, KanbanMutationResult, ColumnBehavior } from '@/lib/types/blindados';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import { Plus, MoreVertical, GripVertical, Trash2, X, Check, Pencil, Move, FolderKanban, Calendar, ChevronDown, Settings2, CheckCircle2, RotateCcw, ListOrdered, Loader2, Palette } from 'lucide-react';
+import { KanbanColumn, KanbanCard, Priority, SubTask, KanbanProject, KanbanMutationResult, ColumnBehavior, KanbanColumnUpdates } from '@/lib/types/blindados';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuTrigger, DropdownMenuSub, DropdownMenuSubTrigger, DropdownMenuSubContent, DropdownMenuPortal } from '@/components/ui/dropdown-menu';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { format, parseISO, isToday, isBefore, startOfDay } from 'date-fns';
+import { ColumnEditorDialog, ColumnEditorMode } from '@/components/blindados/ColumnEditorDialog';
+import { format, parseISO } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
+import { toast } from 'sonner';
+import {
+  getCardSurfaceStyle,
+  getColumnEditorSubmenuSideOffset,
+  hasMeaningfulCardDragPreview,
+  insertVisibleCard,
+  isHiddenCompletedCard,
+  mergeKanbanStructure,
+  reorderVisibleCardSlots,
+  resolveCardDropTargetColumnId,
+  resolveDragEndOverId,
+  useLocalDayClock,
+} from './kanbanBoard.helpers';
 
 interface KanbanBoardProps {
   columns: KanbanColumn[];
   onColumnsChange: (columns: KanbanColumn[]) => void;
-  onUpdateColumn: (columnId: string, updates: { title?: string; behavior?: ColumnBehavior }) => void;
+  onUpdateColumn: (columnId: string, updates: KanbanColumnUpdates) => Promise<boolean> | boolean | void;
   onAddColumn: (title: string, behavior?: ColumnBehavior, projectId?: string | null) => Promise<boolean> | void;
   onDeleteColumn: (columnId: string) => void;
   onAddCard: (columnId: string, card: Omit<KanbanCard, 'id' | 'createdAt' | 'updatedAt'>) => void;
-  onUpdateCard: (columnId: string, cardId: string, updates: Partial<KanbanCard>) => void;
+  onUpdateCard: (
+    columnId: string,
+    cardId: string,
+    updates: Partial<KanbanCard>,
+  ) => boolean | void | Promise<boolean | void>;
   onDeleteCard: (columnId: string, cardId: string) => void;
   onMoveCard: (
     cardId: string,
@@ -77,17 +95,34 @@ const priorityColors: Record<Priority, { bg: string; text: string; label: string
   baixa: { bg: 'bg-green-500/20', text: 'text-green-400', label: 'PRIORIDADE BAIXA' },
 };
 
+function isNestedInteractiveTarget(target: EventTarget, currentTarget: HTMLElement): boolean {
+  if (!(target instanceof Element)) return false;
+  const interactiveTarget = target.closest(
+    'button, a, input, select, textarea, [role="button"], [role="menuitem"], [contenteditable="true"], [data-no-dnd]',
+  );
+  return Boolean(interactiveTarget && interactiveTarget !== currentTarget);
+}
+
 function ColumnMenu({ 
   column, 
-  onRename, 
+  onEdit,
   onDelete, 
   onChangeBehavior 
 }: { 
   column: KanbanColumn;
-  onRename: () => void;
+  onEdit: (mode: ColumnEditorMode) => void;
   onDelete: () => void;
   onChangeBehavior: (behavior: ColumnBehavior) => void;
 }) {
+  const [submenuSideOffset, setSubmenuSideOffset] = useState(56);
+
+  useEffect(() => {
+    const updateViewport = () => setSubmenuSideOffset(getColumnEditorSubmenuSideOffset(window.innerWidth));
+    updateViewport();
+    window.addEventListener('resize', updateViewport);
+    return () => window.removeEventListener('resize', updateViewport);
+  }, []);
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -105,9 +140,48 @@ function ColumnMenu({
         collisionPadding={12}
         className="!z-[9999] w-64 overflow-hidden rounded-xl border border-[#00f6ff]/20 bg-[#0a0f1f] p-0 text-white shadow-xl"
       >
-        <DropdownMenuLabel className="border-b border-white/5 px-4 py-2 text-xs font-normal text-white/40">
-          Comportamento da coluna
-        </DropdownMenuLabel>
+        <div className="flex items-center justify-between border-b border-white/5 px-4 py-2">
+          <DropdownMenuLabel className="p-0 text-xs font-normal text-white/40">Comportamento da coluna</DropdownMenuLabel>
+          <div className="flex items-center gap-1">
+            <DropdownMenuSub>
+              <DropdownMenuSubTrigger
+                aria-label={`Editar coluna ${column.title}`}
+                className="h-7 w-7 justify-center rounded-md p-0 text-white/50 focus:bg-[#00f6ff]/10 focus:text-[#00f6ff] data-[state=open]:bg-[#00f6ff]/10 data-[state=open]:text-[#00f6ff] [&>svg:last-child]:hidden"
+              >
+                <Pencil className="h-4 w-4" aria-hidden="true" />
+                <span className="sr-only">Editar coluna</span>
+              </DropdownMenuSubTrigger>
+              <DropdownMenuPortal>
+                <DropdownMenuSubContent
+                  // The anchor is the pencil, not the whole menu. Account for
+                  // the trash icon, gap and right padding so neither is covered.
+                  sideOffset={submenuSideOffset}
+                  collisionPadding={12}
+                  className="!z-[10000] w-52 rounded-xl border border-[#00f6ff]/20 bg-[#0a0f1f] p-1 text-white shadow-xl"
+                  style={{ maxWidth: 'min(13rem, var(--radix-dropdown-menu-content-available-width))' }}
+                >
+                  <DropdownMenuItem onSelect={() => onEdit('project')} className="gap-3 rounded-lg px-3 py-2.5 text-sm focus:bg-[#00f6ff]/10 focus:text-[#00f6ff]">
+                    <FolderKanban className="h-4 w-4" aria-hidden="true" /> Alterar projeto
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onSelect={() => onEdit('rename')} className="gap-3 rounded-lg px-3 py-2.5 text-sm focus:bg-[#00f6ff]/10 focus:text-[#00f6ff]">
+                    <Pencil className="h-4 w-4" aria-hidden="true" /> Renomear coluna
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onSelect={() => onEdit('color')} className="gap-3 rounded-lg px-3 py-2.5 text-sm focus:bg-[#00f6ff]/10 focus:text-[#00f6ff]">
+                    <Palette className="h-4 w-4" aria-hidden="true" /> Cor da coluna
+                  </DropdownMenuItem>
+                </DropdownMenuSubContent>
+              </DropdownMenuPortal>
+            </DropdownMenuSub>
+            <DropdownMenuItem
+              onSelect={onDelete}
+              aria-label={`Excluir coluna ${column.title}`}
+              className="h-7 w-7 justify-center rounded-md p-0 text-white/50 transition-colors focus:bg-[#00f6ff]/10 focus:text-[#00f6ff]"
+            >
+              <Trash2 className="h-4 w-4" aria-hidden="true" />
+              <span className="sr-only">Excluir coluna</span>
+            </DropdownMenuItem>
+          </div>
+        </div>
         <DropdownMenuItem
           onSelect={() => onChangeBehavior('active')}
           className={`h-auto w-full items-start gap-3 rounded-none px-4 py-3 text-sm focus:bg-[#00f6ff]/10 focus:text-[#00f6ff] ${
@@ -130,7 +204,7 @@ function ColumnMenu({
           <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" />
           <span className="min-w-0 text-left">
             <span className="block">Conclusão</span>
-            <span className="mt-0.5 block text-[10px] text-white/40">Tarefas somem no dia seguinte</span>
+            <span className="mt-0.5 block text-[10px] text-white/40">Somente tarefas marcadas somem no dia seguinte</span>
           </span>
           {column.behavior === 'completion' && <Check className="ml-auto mt-0.5 h-4 w-4 shrink-0" aria-label="Selecionada" />}
         </DropdownMenuItem>
@@ -146,21 +220,6 @@ function ColumnMenu({
             <span className="mt-0.5 block text-[10px] text-white/40">Cards numerados na ordem de execução</span>
           </span>
           {column.behavior === 'progressive' && <Check className="ml-auto mt-0.5 h-4 w-4 shrink-0" aria-label="Selecionada" />}
-        </DropdownMenuItem>
-        <DropdownMenuSeparator className="my-0 bg-white/5" />
-        <DropdownMenuItem
-          onSelect={onRename}
-          className="h-auto w-full gap-3 rounded-none px-4 py-3 text-sm text-white focus:bg-white/5"
-        >
-          <Pencil className="h-4 w-4 text-[#00f6ff]" aria-hidden="true" />
-          Renomear coluna
-        </DropdownMenuItem>
-        <DropdownMenuItem
-          onSelect={onDelete}
-          className="h-auto w-full gap-3 rounded-none px-4 py-3 text-sm text-red-400 focus:bg-red-500/10 focus:text-red-300"
-        >
-          <Trash2 className="h-4 w-4" aria-hidden="true" />
-          Excluir coluna
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
@@ -184,7 +243,7 @@ function DroppableColumn({
   return (
     <div
       ref={setNodeRef}
-      className={`flex-1 overflow-y-auto space-y-2 min-h-[100px] p-1 rounded-lg transition-all duration-200 ${
+      className={`flex-1 overflow-y-auto space-y-2 min-h-[100px] p-1 rounded-lg transition-colors duration-200 ${
         isOver ? 'bg-[#00f6ff]/5 ring-2 ring-[#00f6ff]/30 ring-inset' : ''
       }`}
     >
@@ -196,19 +255,21 @@ function DroppableColumn({
 function SortableColumn({
   column,
   children,
-  onRename,
+  onEdit,
   onDelete,
   onChangeBehavior,
   isDraggingColumn,
   filteredCardCount,
+  reducedMotion,
 }: {
   column: KanbanColumn;
   children: React.ReactNode;
-  onRename: () => void;
+  onEdit: (mode: ColumnEditorMode) => void;
   onDelete: () => void;
   onChangeBehavior: (behavior: ColumnBehavior) => void;
   isDraggingColumn: boolean;
   filteredCardCount?: number;
+  reducedMotion: boolean;
 }) {
   const {
     attributes,
@@ -224,53 +285,57 @@ function SortableColumn({
 
   const style = {
     transform: CSS.Transform.toString(transform),
-    transition,
+    transition: reducedMotion ? 'transform 0ms linear' : transition || 'transform 200ms ease',
     opacity: isDragging ? 0.5 : 1,
   };
 
   return (
     <div
       ref={setNodeRef}
-      style={style}
-      className={`flex-shrink-0 w-72 bg-[#010516]/50 rounded-xl border border-white/5 p-3 flex flex-col max-h-full transition-shadow ${
-        isDragging ? 'shadow-xl shadow-[#00f6ff]/20 border-[#00f6ff]/30' : ''
-      }`}
+      style={{ ...style, transition: transition || 'transform 200ms ease' }}
     >
-      <div className="flex items-center justify-between mb-3">
-        <div className="flex items-center gap-2">
+      <div
+        className={`flex-shrink-0 w-72 rounded-xl border border-white/5 p-3 flex flex-col max-h-full transition-shadow duration-200 ${
+          isDragging ? 'shadow-xl shadow-[#00f6ff]/20 border-[#00f6ff]/30' : ''
+        }`}
+        style={{ backgroundColor: column.backgroundColor ? `color-mix(in srgb, ${column.backgroundColor} 18%, #010516)` : 'rgb(1 5 22 / 50%)' }}
+      >
+        <div className="flex items-center justify-between mb-3">
           <div
             {...attributes}
             {...listeners}
-            className="p-1 rounded cursor-grab active:cursor-grabbing hover:bg-white/10 transition-colors"
+            className="flex items-center gap-2 rounded p-1 cursor-grab active:cursor-grabbing hover:bg-white/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#00f6ff]"
+            aria-label={`Arrastar coluna ${column.title}`}
           >
-            <GripVertical className="w-4 h-4 text-white/30" />
+            <GripVertical className="w-4 h-4 text-white/30" aria-hidden="true" />
+            <h3 className="text-xs font-semibold text-white/60 tracking-wider">{column.title}</h3>
+            <div
+              className="flex items-center gap-1 px-1.5 py-0.5 rounded-full bg-white/5 border border-white/10"
+              title={column.behavior === 'completion'
+                ? 'Somente tarefas marcadas somem no dia seguinte'
+                : column.behavior === 'progressive'
+                  ? 'Cards numerados na ordem de execução'
+                  : 'Tarefas continuam no dia seguinte'}
+            >
+              {column.behavior === 'completion'
+                ? <CheckCircle2 className="w-3 h-3 text-white/60" />
+                : column.behavior === 'progressive'
+                  ? <ListOrdered className="w-3 h-3 text-white/60" />
+                  : <RotateCcw className="w-3 h-3 text-white/60" />}
+            </div>
           </div>
-          <h3 className="text-xs font-semibold text-white/60 tracking-wider">{column.title}</h3>
-          {column.behavior === 'completion' ? (
-            <div className="flex items-center gap-1 px-1.5 py-0.5 rounded-full bg-green-500/10 border border-green-500/20" title="Tarefas concluídas não aparecem no dia seguinte">
-              <CheckCircle2 className="w-3 h-3 text-green-400" />
-            </div>
-          ) : column.behavior === 'progressive' ? (
-            <div className="flex items-center gap-1 px-1.5 py-0.5 rounded-full bg-violet-500/10 border border-violet-500/20" title="Cards numerados na ordem de execução">
-              <ListOrdered className="w-3 h-3 text-violet-300" />
-            </div>
-          ) : (
-            <div className="flex items-center gap-1 px-1.5 py-0.5 rounded-full bg-[#00f6ff]/10 border border-[#00f6ff]/20" title="Tarefas continuam no dia seguinte">
-              <RotateCcw className="w-3 h-3 text-[#00f6ff]" />
-            </div>
-          )}
+          <div className="flex items-center gap-1 relative">
+            <span className="text-xs text-white/30">{filteredCardCount !== undefined ? filteredCardCount : column.cards.length}</span>
+            <ColumnMenu
+              column={column}
+              onEdit={onEdit}
+              onDelete={onDelete}
+              onChangeBehavior={onChangeBehavior}
+            />
+          </div>
         </div>
-        <div className="flex items-center gap-1 relative">
-          <span className="text-xs text-white/30">{filteredCardCount !== undefined ? filteredCardCount : column.cards.length}</span>
-          <ColumnMenu
-            column={column}
-            onRename={onRename}
-            onDelete={onDelete}
-            onChangeBehavior={onChangeBehavior}
-          />
-        </div>
+        {children}
       </div>
-      {children}
     </div>
   );
 }
@@ -278,19 +343,31 @@ function SortableColumn({
 function SortableCard({ 
   card, 
   columnId, 
+  columnColor,
+  isCompletionColumn,
   ordinal,
   ordinalTotal,
   onEdit, 
-  onDelete,
   isDraggingAny,
+  isCompletionBusy,
+  onToggleCompletion,
+  suppressClickRef,
+  clearClickSuppression,
+  reducedMotion,
 }: { 
   card: KanbanCard; 
   columnId: string; 
+  columnColor?: string | null;
+  isCompletionColumn: boolean;
   ordinal?: number;
   ordinalTotal?: number;
   onEdit: () => void; 
-  onDelete: () => void;
   isDraggingAny: boolean;
+  isCompletionBusy: boolean;
+  onToggleCompletion: () => void;
+  suppressClickRef: React.MutableRefObject<boolean>;
+  clearClickSuppression: () => void;
+  reducedMotion: boolean;
 }) {
   const {
     attributes,
@@ -304,44 +381,98 @@ function SortableCard({
     data: { type: 'card', columnId, card } 
   });
 
-  const style = {
+  const dragStyle = {
     transform: CSS.Transform.toString(transform),
-    transition,
-    opacity: isDragging ? 0 : 1,
-    zIndex: isDragging ? 1000 : 1,
+    transition: reducedMotion ? 'transform 0ms linear' : transition || 'transform 200ms ease',
   };
 
   const completedSubtasks = card.subtasks.filter(s => s.completed).length;
+  const surfaceStyle = getCardSurfaceStyle(columnColor);
   const positionLabel = ordinal
     ? `Arrastar ${card.title}, posição ${ordinal} de ${ordinalTotal ?? ordinal}`
     : `Arrastar ${card.title}`;
 
   return (
-    <motion.div
+    <div
       ref={setNodeRef}
-      style={style}
+      style={{ ...dragStyle, opacity: isDragging ? 0 : 1, zIndex: isDragging ? 1000 : 1 }}
       {...attributes}
-      initial={{ opacity: 0, y: 10 }}
-      animate={{ opacity: isDragging ? 0 : 1, y: 0 }}
-      exit={{ opacity: 0, y: -10 }}
-      onClick={() => !isDraggingAny && onEdit()}
+      {...listeners}
+      aria-label={`${positionLabel}. Pressione Enter para editar.`}
+      onMouseDownCapture={clearClickSuppression}
+      onTouchStartCapture={clearClickSuppression}
+      onMouseDown={(event) => {
+        clearClickSuppression();
+        if (isNestedInteractiveTarget(event.target, event.currentTarget)) {
+          event.stopPropagation();
+          return;
+        }
+        listeners?.onMouseDown?.(event);
+      }}
       onKeyDown={(event) => {
-        if (!isDraggingAny && (event.key === 'Enter' || event.key === ' ')) {
+        if (isNestedInteractiveTarget(event.target, event.currentTarget)) {
+          event.stopPropagation();
+          return;
+        }
+        listeners?.onKeyDown?.(event);
+        if (event.defaultPrevented) return;
+        if (event.key === 'Enter' && !isDraggingAny) {
           event.preventDefault();
           onEdit();
         }
       }}
-      aria-label={`Editar tarefa ${card.title}`}
-      className={`bg-[#0a0f1f] rounded-xl border p-3 group cursor-grab active:cursor-grabbing transition-all duration-200 touch-none select-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#00f6ff] ${
-        isDragging 
-          ? 'border-[#00f6ff]/50 shadow-lg shadow-[#00f6ff]/10' 
-          : 'border-white/5 hover:border-[#00f6ff]/20'
-      }`}
+      className="select-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#00f6ff] rounded-xl"
     >
+      <motion.div
+      initial={reducedMotion ? false : { opacity: 0, y: 10 }}
+      animate={{ opacity: isDragging ? 0 : 1, y: 0 }}
+      exit={{ opacity: 0, y: -10 }}
+      transition={{ duration: reducedMotion ? 0 : 0.2, ease: 'easeOut' }}
+      onClick={(event) => {
+        if (suppressClickRef.current && event.detail > 0) {
+          clearClickSuppression();
+          return;
+        }
+        if (!isDraggingAny) onEdit();
+      }}
+      style={{
+        backgroundColor: surfaceStyle.backgroundColor,
+        borderColor: isDragging ? 'rgba(0, 246, 255, 0.5)' : surfaceStyle.borderColor,
+      }}
+      className={`rounded-xl border p-3 group cursor-grab active:cursor-grabbing transition-[border-color,box-shadow] duration-200 ${
+        isDragging ? 'shadow-lg shadow-[#00f6ff]/10' : 'hover:border-[#00f6ff]/30'
+      }`}
+      >
       <div className="flex items-start gap-2 mb-2">
+        {isCompletionColumn && (
+          <button
+            type="button"
+            aria-label={`${card.completedAt ? 'Desmarcar' : 'Marcar'} ${card.title} ${card.completedAt ? 'como pendente' : 'como concluída'}`}
+            aria-pressed={Boolean(card.completedAt)}
+            disabled={isCompletionBusy}
+            onMouseDown={(event) => event.stopPropagation()}
+            onPointerDown={(event) => event.stopPropagation()}
+            onTouchStart={(event) => event.stopPropagation()}
+            onKeyDown={(event) => {
+              if (event.key === ' ' || event.key === 'Enter') event.stopPropagation();
+            }}
+            onClick={(event) => {
+              event.stopPropagation();
+              onToggleCompletion();
+            }}
+            className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-md border focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#00f6ff] disabled:cursor-wait disabled:opacity-60 ${
+              card.completedAt
+                ? 'border-white/30 bg-white/15 text-white'
+                : 'border-white/20 bg-white/5 text-white/40 hover:border-white/40'
+            }`}
+          >
+            {isCompletionBusy ? <Loader2 className="h-3.5 w-3.5 animate-spin" aria-hidden="true" /> :
+              card.completedAt ? <Check className="h-3.5 w-3.5" aria-hidden="true" /> : null}
+          </button>
+        )}
         {ordinal !== undefined && (
           <span
-            className="flex h-6 w-6 shrink-0 items-center justify-center rounded-md border border-violet-300/20 bg-violet-300/10 text-xs font-semibold tabular-nums text-violet-200"
+            className="flex h-6 w-6 shrink-0 items-center justify-center rounded-md border border-white/15 bg-white/5 text-xs font-semibold tabular-nums text-white/70"
             aria-label={`Posição ${ordinal} de ${ordinalTotal ?? ordinal}`}
           >
             {ordinal}
@@ -350,17 +481,9 @@ function SortableCard({
         <span className={`px-2 py-0.5 rounded text-[10px] font-semibold ${priorityColors[card.priority].bg} ${priorityColors[card.priority].text}`}>
           {priorityColors[card.priority].label}
         </span>
-        <button
-          type="button"
-          {...attributes}
-          {...listeners}
-          onClick={(event) => event.stopPropagation()}
-          className="ml-auto rounded p-1 cursor-grab active:cursor-grabbing text-white/40 hover:bg-white/10 hover:text-white/70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#00f6ff] transition-colors"
-          aria-label={positionLabel}
-          title="Arrastar card"
-        >
-          <GripVertical className="w-3 h-3" aria-hidden="true" />
-        </button>
+        <span className="ml-auto rounded p-1 text-white/40" aria-hidden="true">
+          <GripVertical className="w-3 h-3" />
+        </span>
       </div>
 
       <p className="text-sm text-white mb-2 pointer-events-none">{card.title}</p>
@@ -384,20 +507,36 @@ function SortableCard({
           ))}
         </div>
       )}
-    </motion.div>
+      </motion.div>
+    </div>
   );
 }
 
-function CardOverlay({ card, ordinal, ordinalTotal }: { card: KanbanCard; ordinal?: number; ordinalTotal?: number }) {
+function CardOverlay({
+  card,
+  columnColor,
+  isCompletionColumn,
+  ordinal,
+  ordinalTotal,
+  reducedMotion,
+}: { card: KanbanCard; columnColor?: string | null; isCompletionColumn: boolean; ordinal?: number; ordinalTotal?: number; reducedMotion: boolean }) {
+  const surfaceStyle = getCardSurfaceStyle(columnColor);
   return (
     <motion.div 
-      initial={{ scale: 1.02, rotate: 2 }}
-      animate={{ scale: 1.05, rotate: 3 }}
-      className="bg-[#0a0f1f] rounded-xl border border-[#00f6ff]/50 p-3 shadow-2xl shadow-[#00f6ff]/30 cursor-grabbing w-[280px]"
+      initial={reducedMotion ? false : { opacity: 0.96 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: reducedMotion ? 0 : 0.2 }}
+      style={{ backgroundColor: surfaceStyle.backgroundColor, borderColor: surfaceStyle.borderColor }}
+      className="rounded-xl border p-3 shadow-xl shadow-[#00f6ff]/15 cursor-grabbing w-[280px]"
     >
       <div className="flex items-start gap-2 mb-2">
+        {isCompletionColumn && (
+          <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-md border border-white/20 bg-white/10 text-white/80" aria-hidden="true">
+            {card.completedAt && <Check className="h-3.5 w-3.5" />}
+          </span>
+        )}
         {ordinal !== undefined && (
-          <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-md border border-violet-300/20 bg-violet-300/10 text-xs font-semibold tabular-nums text-violet-200">
+          <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-md border border-white/15 bg-white/5 text-xs font-semibold tabular-nums text-white/70">
             {ordinal}
           </span>
         )}
@@ -411,12 +550,15 @@ function CardOverlay({ card, ordinal, ordinalTotal }: { card: KanbanCard; ordina
 }
 
 function ColumnOverlay({ column }: { column: KanbanColumn }) {
+  const surfaceStyle = getCardSurfaceStyle(column.backgroundColor);
   return (
     <motion.div
-      initial={{ scale: 1.02, rotate: 1 }}
-      animate={{ scale: 1.03, rotate: 2 }}
-      className="w-72 bg-[#010516]/90 rounded-xl border border-[#00f6ff]/50 p-3 shadow-2xl shadow-[#00f6ff]/30 cursor-grabbing"
-    >
+      initial={false}
+      animate={{ opacity: 1 }}
+      className="w-72 rounded-xl border p-3 shadow-xl shadow-[#00f6ff]/15 cursor-grabbing"
+      style={{ backgroundColor: column.backgroundColor ? `color-mix(in srgb, ${column.backgroundColor} 22%, #010516)` : 'rgb(1 5 22 / 90%)' }}
+      >
+      <div className="rounded-xl border p-3" style={{ backgroundColor: surfaceStyle.backgroundColor, borderColor: surfaceStyle.borderColor }}>
       <div className="flex items-center gap-2 mb-3">
         <GripVertical className="w-4 h-4 text-[#00f6ff]" />
         <h3 className="text-xs font-semibold text-white tracking-wider">{column.title}</h3>
@@ -424,13 +566,14 @@ function ColumnOverlay({ column }: { column: KanbanColumn }) {
       </div>
       <div className="space-y-2 opacity-60">
         {column.cards.slice(0, 2).map(card => (
-          <div key={card.id} className="bg-[#0a0f1f] rounded-lg p-2 border border-white/10">
+          <div key={card.id} className="rounded-lg p-2 border" style={{ backgroundColor: getCardSurfaceStyle(column.backgroundColor).backgroundColor, borderColor: getCardSurfaceStyle(column.backgroundColor).borderColor }}>
             <p className="text-xs text-white/60 truncate">{card.title}</p>
           </div>
         ))}
         {column.cards.length > 2 && (
           <p className="text-xs text-white/40 text-center">+{column.cards.length - 2} mais</p>
         )}
+      </div>
       </div>
     </motion.div>
   );
@@ -459,8 +602,12 @@ export function KanbanBoard({
   const hasTemporaryColumns = columns.some(c => c.id.startsWith('temp-'));
   const canDrag = isLoaded && !hasTemporaryColumns;
   const [activeCard, setActiveCard] = useState<KanbanCard | null>(null);
+  const [dragPreviewColumns, setDragPreviewColumns] = useState<KanbanColumn[] | null>(null);
   const [activeColumn, setActiveColumn] = useState<KanbanColumn | null>(null);
   const [activeColumnId, setActiveColumnId] = useState<string | null>(null);
+  const activeCardRef = useRef<KanbanCard | null>(null);
+  const activeColumnRef = useRef<KanbanColumn | null>(null);
+  const activeColumnIdRef = useRef<string | null>(null);
   const [overColumnId, setOverColumnId] = useState<string | null>(null);
   const [showAddColumn, setShowAddColumn] = useState(false);
   const [newColumnTitle, setNewColumnTitle] = useState('');
@@ -471,12 +618,40 @@ export function KanbanBoard({
   const [newCardTitle, setNewCardTitle] = useState('');
   const [newCardPriority, setNewCardPriority] = useState<Priority>('media');
   const [newCardDueDate, setNewCardDueDate] = useState<string>('');
-  const [renamingColumnId, setRenamingColumnId] = useState<string | null>(null);
-  const [renameValue, setRenameValue] = useState('');
+  const [columnEditor, setColumnEditor] = useState<{ column: KanbanColumn; mode: ColumnEditorMode } | null>(null);
+  const [completionBusyIds, setCompletionBusyIds] = useState<Set<string>>(() => new Set());
+  const [reducedMotion, setReducedMotion] = useState(false);
+  const today = useLocalDayClock();
+  const dragPreviewRef = useRef<KanbanColumn[] | null>(null);
+  const suppressCardClickRef = useRef(false);
+  const suppressClickTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const dragActivationInputRef = useRef<'mouse' | 'touch' | 'keyboard' | null>(null);
+  const clearClickSuppression = useCallback(() => {
+    if (suppressClickTimerRef.current) clearTimeout(suppressClickTimerRef.current);
+    suppressClickTimerRef.current = null;
+    suppressCardClickRef.current = false;
+  }, []);
+  const armClickSuppression = useCallback((duration: number) => {
+    clearClickSuppression();
+    suppressCardClickRef.current = true;
+    suppressClickTimerRef.current = setTimeout(clearClickSuppression, duration);
+  }, [clearClickSuppression]);
+  const effectiveColumns = dragPreviewColumns ?? columns;
+  const visibleColumns = useMemo(
+    () => selectedProjectId
+      ? effectiveColumns.filter((column) =>
+          (column.projectId === null || column.projectId === undefined)
+          || column.projectId === selectedProjectId
+          || column.cards.some((card) => card.projectId === selectedProjectId))
+      : effectiveColumns,
+    [effectiveColumns, selectedProjectId],
+  );
   const lastOverIdRef = useRef<UniqueIdentifier | null>(null);
   const originalCardPositionRef = useRef<{ cardId: string; columnId: string; index: number } | null>(null);
   const dragColumnsSnapshotRef = useRef<KanbanColumn[] | null>(null);
   const activeCardOrdinalRef = useRef<{ ordinal?: number; total?: number } | null>(null);
+
+  useEffect(() => () => clearClickSuppression(), [clearClickSuppression]);
   
   const [showProjectDropdown, setShowProjectDropdown] = useState(false);
   const [showAddProjectModal, setShowAddProjectModal] = useState(false);
@@ -488,6 +663,28 @@ export function KanbanBoard({
   const projectDropdownRef = useRef<HTMLDivElement>(null);
   const datePickerRef = useRef<HTMLDivElement>(null);
   const projectNameInputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    const preference = typeof window.matchMedia === 'function'
+      ? window.matchMedia('(prefers-reduced-motion: reduce)')
+      : null;
+    const restorePreference = () => {
+      let savedPreference = false;
+      try {
+        savedPreference = window.localStorage.getItem('spady-reduced-motion') === 'true';
+      } catch {
+        // Storage can be unavailable in restricted browsing contexts.
+      }
+      setReducedMotion(savedPreference || Boolean(preference?.matches) || document.documentElement.dataset.reducedMotion === 'true');
+    };
+    restorePreference();
+    preference?.addEventListener('change', restorePreference);
+    window.addEventListener('storage', restorePreference);
+    return () => {
+      preference?.removeEventListener('change', restorePreference);
+      window.removeEventListener('storage', restorePreference);
+    };
+  }, []);
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -542,9 +739,10 @@ export function KanbanBoard({
       
       return true;
     }
-    
+
+    if (today && isHiddenCompletedCard(card, columnBehavior, today)) return false;
     return true;
-  }, [selectedProjectId, selectedDate]);
+  }, [selectedProjectId, selectedDate, today]);
 
   const getFilteredCards = useCallback((column: KanbanColumn) => {
     return column.cards.filter(card => shouldShowCard(card, column.behavior || 'active'));
@@ -593,40 +791,39 @@ export function KanbanBoard({
   const selectedProject = projects.find(p => p.id === selectedProjectId);
 
   const sensors = useSensors(
-    useSensor(PointerSensor, {
+    useSensor(MouseSensor, {
       activationConstraint: {
-        distance: 3,
+        distance: 6,
       },
     }),
     useSensor(TouchSensor, {
       activationConstraint: {
-        delay: 50,
+        delay: 225,
         tolerance: 5,
       },
     }),
     useSensor(KeyboardSensor, {
       coordinateGetter: sortableKeyboardCoordinates,
+      keyboardCodes: {
+        start: ['Space'],
+        end: ['Space'],
+        cancel: ['Escape'],
+      },
     })
   );
 
-  const findColumnByCardId = useCallback((cardId: string): string | null => {
-    for (const column of columns) {
-      if (column.cards.some(c => c.id === cardId)) {
-        return column.id;
-      }
-    }
-    return null;
-  }, [columns]);
-
   const collisionDetectionStrategy: CollisionDetection = useCallback((args) => {
-    if (activeColumn) {
+    if (activeColumnRef.current) {
       const columnContainers = args.droppableContainers.filter(
         container => String(container.id).startsWith('column-')
       );
-      return closestCenter({
+      const collisions = closestCenter({
         ...args,
         droppableContainers: columnContainers,
       });
+      const overId = getFirstCollision(collisions, 'id');
+      if (overId && overId !== args.active.id) lastOverIdRef.current = overId;
+      return collisions;
     }
 
     const pointerCollisions = pointerWithin(args);
@@ -635,13 +832,13 @@ export function KanbanBoard({
       let overId = getFirstCollision(pointerCollisions, 'id');
       
       if (overId) {
-        const column = columns.find(c => c.id === overId);
-        if (column && column.cards.length > 0) {
+        const column = effectiveColumns.find(c => c.id === overId);
+        if (column && getFilteredCards(column).length > 0) {
           const cardCollisions = rectIntersection({
             ...args,
             droppableContainers: args.droppableContainers.filter(
               container => container.id !== overId && 
-              column.cards.some(c => c.id === container.id)
+              getFilteredCards(column).some(c => c.id === container.id)
             ),
           });
           
@@ -650,7 +847,7 @@ export function KanbanBoard({
           }
         }
         
-        lastOverIdRef.current = overId;
+        if (overId !== args.active.id) lastOverIdRef.current = overId;
         return [{ id: overId }];
       }
     }
@@ -665,186 +862,184 @@ export function KanbanBoard({
     }
 
     return [];
-  }, [columns, activeColumn]);
+  }, [effectiveColumns, getFilteredCards]);
 
   const handleDragStart = (event: DragStartEvent) => {
-    if (!canDrag) {
-      console.log('[KanbanBoard] Drag blocked - data not ready:', { isLoaded, hasTemporaryColumns });
-      return;
-    }
-    
+    if (!canDrag) return;
     const { active } = event;
     const activeData = active.data.current;
-    
-    console.log('[KanbanBoard] Drag started:', { id: active.id, type: activeData?.type });
-    
+    activeCardRef.current = null;
+    activeColumnRef.current = null;
+    activeColumnIdRef.current = null;
+    dragActivationInputRef.current = event.activatorEvent.type === 'mousedown'
+      ? 'mouse'
+      : event.activatorEvent.type === 'touchstart'
+        ? 'touch'
+        : event.activatorEvent.type === 'keydown'
+          ? 'keyboard'
+          : null;
+    lastOverIdRef.current = null;
+
     if (activeData?.type === 'card') {
-      if (String(activeData.card.id).startsWith('temp-')) {
-        console.log('[KanbanBoard] Drag blocked - temporary card is not persisted yet');
-        return;
-      }
+      if (String(activeData.card.id).startsWith('temp-')) return;
       dragColumnsSnapshotRef.current = columns;
+      dragPreviewRef.current = columns;
+      setDragPreviewColumns(columns);
       setActiveCard(activeData.card);
       setActiveColumnId(activeData.columnId);
       const column = columns.find(c => c.id === activeData.columnId);
-      const cardIndex = column?.cards.findIndex(c => c.id === activeData.card.id) ?? -1;
+      const visibleCards = column ? getFilteredCards(column) : [];
+      const cardIndex = visibleCards.findIndex(c => c.id === activeData.card.id);
+      const globalIndex = column?.cards.findIndex(c => c.id === activeData.card.id) ?? -1;
       activeCardOrdinalRef.current = column?.behavior === 'progressive' && cardIndex >= 0
-        ? { ordinal: cardIndex + 1, total: column.cards.length }
+        ? { ordinal: cardIndex + 1, total: visibleCards.length }
         : null;
       originalCardPositionRef.current = {
         cardId: activeData.card.id,
         columnId: activeData.columnId,
-        index: cardIndex,
+        index: globalIndex,
       };
-      console.log('[KanbanBoard] Card drag started:', { cardId: activeData.card.id, columnId: activeData.columnId, index: cardIndex });
+      activeCardRef.current = activeData.card;
+      activeColumnIdRef.current = activeData.columnId;
     } else if (activeData?.type === 'sortable-column') {
-      setActiveColumn(activeData.column);
-      console.log('[KanbanBoard] Column drag started:', { columnId: activeData.column.id, title: activeData.column.title });
+      dragColumnsSnapshotRef.current = columns;
+      dragPreviewRef.current = columns;
+      setDragPreviewColumns(columns);
+      const draggingColumn = { ...activeData.column, cards: getFilteredCards(activeData.column) };
+      activeColumnRef.current = draggingColumn;
+      setActiveColumn(draggingColumn);
     }
   };
 
   const handleDragOver = (event: DragOverEvent) => {
     const { active, over } = event;
     if (!over) return;
-
-    if (activeColumn) return;
-
-    if (!activeCard) return;
+    if (activeColumnRef.current) return;
+    if (!activeCardRef.current) return;
 
     const activeData = active.data.current;
     const overData = over.data.current;
-    
     if (activeData?.type !== 'card') return;
 
-    const sourceColumnId = activeData.columnId;
-    let targetColumnId: string;
-    
-    if (overData?.type === 'card') {
-      targetColumnId = overData.columnId;
-    } else if (overData?.type === 'column') {
-      targetColumnId = over.id as string;
-    } else {
-      targetColumnId = findColumnByCardId(over.id as string) || (over.id as string);
-    }
+    const draft = dragPreviewRef.current ?? columns;
+    const sourceColumnId = activeColumnIdRef.current ?? activeData.columnId;
+    const fallbackColumnId = draft.find((column) => column.cards.some((card) => card.id === over.id))?.id
+      ?? (over.id as string);
+    const targetColumnId = resolveCardDropTargetColumnId({
+      activeCardId: active.id as string,
+      overId: over.id as string,
+      overType: overData?.type,
+      overColumnId: overData?.columnId,
+      previewColumnId: activeColumnIdRef.current,
+      fallbackColumnId,
+    });
 
     setOverColumnId(targetColumnId);
+    const sourceColumn = draft.find((column) => column.id === sourceColumnId);
+    const targetColumn = draft.find((column) => column.id === targetColumnId);
+    if (!sourceColumn || !targetColumn) return;
+    const cardId = active.id as string;
 
     if (sourceColumnId === targetColumnId) {
-      const column = columns.find(c => c.id === sourceColumnId);
-      if (!column) return;
-
-      const activeIndex = column.cards.findIndex(c => c.id === active.id);
-      const overIndex = overData?.type === 'card' 
-        ? column.cards.findIndex(c => c.id === over.id)
-        : column.cards.length;
-
-      if (activeIndex !== -1 && overIndex !== -1 && activeIndex !== overIndex) {
-        const newColumns = columns.map(col => {
-          if (col.id === sourceColumnId) {
-            return { ...col, cards: arrayMove(col.cards, activeIndex, overIndex) };
-          }
-          return col;
-        });
-        onColumnsChange(newColumns);
-      }
+      const visibleIds = getFilteredCards(sourceColumn).map((card) => card.id);
+      const activeIndex = visibleIds.indexOf(cardId);
+      const overIndex = overData?.type === 'card' ? visibleIds.indexOf(over.id as string) : visibleIds.length - 1;
+      if (activeIndex < 0 || overIndex < 0 || activeIndex === overIndex) return;
+      const orderedIds = arrayMove(visibleIds, activeIndex, overIndex);
+      const nextColumns = draft.map((column) => column.id === sourceColumnId
+        ? { ...column, cards: reorderVisibleCardSlots(column.cards, visibleIds, orderedIds) }
+        : column);
+      dragPreviewRef.current = nextColumns;
+      setDragPreviewColumns(nextColumns);
+      activeColumnIdRef.current = targetColumnId;
       return;
     }
 
-    const sourceColumn = columns.find(c => c.id === sourceColumnId);
-    const targetColumn = columns.find(c => c.id === targetColumnId);
-
-    if (!sourceColumn || !targetColumn) return;
-
-    const activeCardData = sourceColumn.cards.find(c => c.id === active.id);
+    const activeCardData = sourceColumn.cards.find((card) => card.id === cardId);
     if (!activeCardData) return;
-
-    const overIndex = overData?.type === 'card' 
-      ? targetColumn.cards.findIndex(c => c.id === over.id)
-      : targetColumn.cards.length;
-
-    const newColumns = columns.map(col => {
-      if (col.id === sourceColumnId) {
-        return { ...col, cards: col.cards.filter(c => c.id !== active.id) };
+    const targetVisibleIds = getFilteredCards(targetColumn).map((card) => card.id);
+    const overIndex = overData?.type === 'card'
+      ? Math.max(0, targetVisibleIds.indexOf(over.id as string))
+      : targetVisibleIds.length;
+    const nextColumns = draft.map((column) => {
+      if (column.id === sourceColumnId) {
+        return { ...column, cards: column.cards.filter((card) => card.id !== cardId) };
       }
-      if (col.id === targetColumnId) {
-        const newCards = [...col.cards];
-        const insertIndex = overIndex >= 0 ? overIndex : col.cards.length;
-        newCards.splice(insertIndex, 0, activeCardData);
-        return { ...col, cards: newCards };
+      if (column.id === targetColumnId) {
+        return { ...column, cards: insertVisibleCard(column.cards, targetVisibleIds, activeCardData, overIndex) };
       }
-      return col;
+      return column;
     });
-
+    dragPreviewRef.current = nextColumns;
+    setDragPreviewColumns(nextColumns);
+    activeColumnIdRef.current = targetColumnId;
     setActiveColumnId(targetColumnId);
-    activeData.columnId = targetColumnId;
-    onColumnsChange(newColumns);
   };
 
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
-    
-    console.log('[KanbanBoard] Drag ended:', { activeId: active.id, overId: over?.id, hasActiveColumn: !!activeColumn, hasActiveCard: !!activeCard });
+    const resolvedOverId = over
+      ? resolveDragEndOverId(
+          String(active.id),
+          String(over.id),
+          lastOverIdRef.current === null ? null : String(lastOverIdRef.current),
+        )
+      : null;
+    const draggingCard = activeCardRef.current;
+    const draggingColumn = activeColumnRef.current;
+    const currentColumnId = activeColumnIdRef.current;
+    const shouldSuppressPointerClick = draggingCard !== null
+      && (dragActivationInputRef.current === 'mouse' || dragActivationInputRef.current === 'touch');
+    const snapshot = dragColumnsSnapshotRef.current ?? columns;
+    let finalDraft = dragPreviewRef.current ?? snapshot;
 
-    if (activeColumn && over) {
+    if (draggingColumn && resolvedOverId !== null) {
       const activeId = active.id as string;
-      const overId = over.id as string;
-
-      // Extract column ID from either "column-{id}" or just "{id}" format
-      const getColumnIndex = (id: string) => {
-        // Try with prefix first
-        let index = columns.findIndex(c => `column-${c.id}` === id);
-        if (index === -1) {
-          // Try without prefix (from DroppableColumn)
-          index = columns.findIndex(c => c.id === id);
-        }
-        return index;
-      };
-
+      const overId = resolvedOverId as string;
+      const getColumnIndex = (id: string) => visibleColumns.findIndex((column) =>
+        `column-${column.id}` === id || column.id === id);
       const oldIndex = getColumnIndex(activeId);
       const newIndex = getColumnIndex(overId);
-
-      console.log('[KanbanBoard] Column drag end:', { activeId, overId, oldIndex, newIndex });
-
       if (oldIndex !== -1 && newIndex !== -1 && oldIndex !== newIndex) {
-        const newColumns = arrayMove(columns, oldIndex, newIndex);
-        console.log('[KanbanBoard] Reordering columns - calling onColumnsChange with:', newColumns.map((c, i) => ({ id: c.id, title: c.title, pos: i })));
-        onColumnsChange(newColumns);
-      } else {
-        console.log('[KanbanBoard] Column drag end - no reorder needed (same position or invalid indices)');
+        const reorderedVisible = arrayMove(visibleColumns, oldIndex, newIndex);
+        let visibleIndex = 0;
+        const visibleIds = new Set(visibleColumns.map((column) => column.id));
+        finalDraft = effectiveColumns.map((column) => visibleIds.has(column.id)
+          ? reorderedVisible[visibleIndex++]
+          : column);
       }
+      if (finalDraft !== snapshot) onColumnsChange(mergeKanbanStructure(columns, finalDraft));
     }
 
-    if (activeCard && originalCardPositionRef.current) {
+    if (draggingCard && originalCardPositionRef.current) {
       const original = originalCardPositionRef.current;
-      const currentColumnId = activeColumnId;
-      
-      console.log('[KanbanBoard] Card drag end:', { cardId: activeCard.id, originalColumnId: original.columnId, currentColumnId });
-      
-      if (over && currentColumnId && original.columnId !== currentColumnId) {
-        const targetColumn = columns.find(c => c.id === currentColumnId);
-        const targetIndex = targetColumn?.cards.findIndex(c => c.id === activeCard.id) ?? 0;
-        console.log('[KanbanBoard] Card moved to different column - calling onMoveCard:', { cardId: activeCard.id, from: original.columnId, to: currentColumnId, targetIndex });
-        onMoveCard(activeCard.id, original.columnId, currentColumnId, targetIndex, dragColumnsSnapshotRef.current ?? undefined);
-      } else if (over && currentColumnId && original.columnId === currentColumnId) {
-        const column = columns.find(c => c.id === currentColumnId);
-        if (column) {
-          const newIndex = column.cards.findIndex(c => c.id === activeCard.id);
-          if (newIndex !== original.index) {
-            console.log('[KanbanBoard] Card reordered within column - calling onUpdateCardPositions:', { columnId: currentColumnId, cardCount: column.cards.length, cards: column.cards.map((c, i) => ({ id: c.id, pos: i })) });
-            onUpdateCardPositions(currentColumnId, column.cards, dragColumnsSnapshotRef.current ?? undefined);
-          } else {
-            console.log('[KanbanBoard] Card drag end - no position change');
-          }
+      const hasMeaningfulPreview = hasMeaningfulCardDragPreview(snapshot, finalDraft);
+      if (over && currentColumnId && hasMeaningfulPreview) {
+        const committed = mergeKanbanStructure(columns, finalDraft);
+        const targetColumn = committed.find((column) => column.id === currentColumnId);
+        if (original.columnId !== currentColumnId) {
+          onColumnsChange(committed);
+          const targetIndex = targetColumn?.cards.findIndex((card) => card.id === draggingCard.id) ?? 0;
+          onMoveCard(draggingCard.id, original.columnId, currentColumnId, targetIndex, snapshot);
+        } else if (targetColumn) {
+          onColumnsChange(committed);
+          onUpdateCardPositions(currentColumnId, targetColumn.cards, snapshot);
         }
-      } else if (dragColumnsSnapshotRef.current) {
-        onColumnsChange(dragColumnsSnapshotRef.current);
       }
     }
 
+    if (shouldSuppressPointerClick) armClickSuppression(350);
+    else clearClickSuppression();
+    dragActivationInputRef.current = null;
+    activeCardRef.current = null;
+    activeColumnRef.current = null;
+    activeColumnIdRef.current = null;
     setActiveCard(null);
     setActiveColumn(null);
     setActiveColumnId(null);
     setOverColumnId(null);
+    dragPreviewRef.current = null;
+    setDragPreviewColumns(null);
     lastOverIdRef.current = null;
     originalCardPositionRef.current = null;
     dragColumnsSnapshotRef.current = null;
@@ -852,17 +1047,43 @@ export function KanbanBoard({
   };
 
   const handleDragCancel = (_event: DragCancelEvent) => {
-    if (activeCard && dragColumnsSnapshotRef.current) {
-      onColumnsChange(dragColumnsSnapshotRef.current);
-    }
+    const shouldSuppressPointerClick = activeCardRef.current !== null
+      && (dragActivationInputRef.current === 'mouse' || dragActivationInputRef.current === 'touch');
+    if (shouldSuppressPointerClick) armClickSuppression(1000);
+    else clearClickSuppression();
+    dragActivationInputRef.current = null;
+    activeCardRef.current = null;
+    activeColumnRef.current = null;
+    activeColumnIdRef.current = null;
     setActiveCard(null);
     setActiveColumn(null);
     setActiveColumnId(null);
     setOverColumnId(null);
+    dragPreviewRef.current = null;
+    setDragPreviewColumns(null);
     lastOverIdRef.current = null;
     originalCardPositionRef.current = null;
     dragColumnsSnapshotRef.current = null;
     activeCardOrdinalRef.current = null;
+  };
+
+  const handleToggleCompletion = async (columnId: string, card: KanbanCard) => {
+    if (completionBusyIds.has(card.id)) return;
+    const previousCompletedAt = card.completedAt ?? null;
+    const completedAt = previousCompletedAt ? null : new Date().toISOString();
+    setCompletionBusyIds((current) => new Set(current).add(card.id));
+    try {
+      const result = await onUpdateCard(columnId, card.id, { completedAt });
+      if (result === false) return;
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : 'Não foi possível atualizar a conclusão da tarefa.');
+    } finally {
+      setCompletionBusyIds((current) => {
+        const next = new Set(current);
+        next.delete(card.id);
+        return next;
+      });
+    }
   };
 
   const handleAddColumn = async () => {
@@ -905,29 +1126,13 @@ export function KanbanBoard({
     });
   };
 
-  const handleRenameColumn = (columnId: string) => {
-    const column = columns.find(c => c.id === columnId);
-    if (column) {
-      setRenamingColumnId(columnId);
-      setRenameValue(column.title);
-    }
-  };
-
-  const handleSaveRename = () => {
-    if (renamingColumnId && renameValue.trim()) {
-      onUpdateColumn(renamingColumnId, { title: renameValue.trim() });
-    }
-    setRenamingColumnId(null);
-    setRenameValue('');
-  };
-
-  const columnIds = columns.map(c => `column-${c.id}`);
+  const columnIds = visibleColumns.map(c => `column-${c.id}`);
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 20 }}
+      initial={reducedMotion ? false : { opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ delay: 0.2 }}
+      transition={{ delay: reducedMotion ? 0 : 0.2, duration: reducedMotion ? 0 : 0.2 }}
       className="bg-[#0a0f1f] rounded-2xl border border-[#00f6ff]/10 p-4 sm:p-6 h-full w-full min-w-0 overflow-hidden"
     >
       <div className="mb-6 flex flex-wrap items-center gap-3">
@@ -1286,60 +1491,43 @@ export function KanbanBoard({
       >
         <SortableContext items={columnIds} strategy={horizontalListSortingStrategy}>
           <div className="flex gap-4 overflow-x-auto pb-4 h-[calc(100%-4rem)]">
-            {columns.map((column) => (
+            {visibleColumns.map((column) => (
               <SortableColumn
                 key={column.id}
                 column={column}
-                onRename={() => handleRenameColumn(column.id)}
+                onEdit={(mode) => setColumnEditor({ column, mode })}
                 onDelete={() => onDeleteColumn(column.id)}
                 onChangeBehavior={(behavior) => onUpdateColumn(column.id, { behavior })}
                 isDraggingColumn={activeColumn !== null}
                 filteredCardCount={getFilteredCards(column).length}
+                reducedMotion={reducedMotion}
               >
-                {renamingColumnId === column.id ? (
-                  <div className="mb-3 flex gap-2">
-                    <input
-                      type="text"
-                      value={renameValue}
-                      onChange={(e) => setRenameValue(e.target.value)}
-                      className="flex-1 px-2 py-1 rounded-lg bg-white/5 border border-[#00f6ff]/30 focus:border-[#00f6ff]/50 outline-none text-white text-xs"
-                      autoFocus
-                      onKeyDown={(e) => {
-                        if (e.key === 'Enter') handleSaveRename();
-                        if (e.key === 'Escape') { setRenamingColumnId(null); setRenameValue(''); }
-                      }}
-                    />
-                    <button
-                      onClick={handleSaveRename}
-                      className="p-1 rounded-lg bg-[#00f6ff]/20 text-[#00f6ff] hover:bg-[#00f6ff]/30 transition-colors"
-                    >
-                      <Check className="w-4 h-4" />
-                    </button>
-                  </div>
-                ) : null}
-
                 <DroppableColumn 
                   column={column} 
                   isOver={overColumnId === column.id && activeCard !== null}
                 >
                   <SortableContext
-                    items={column.cards.map(c => c.id)}
+                    items={getFilteredCards(column).map(c => c.id)}
                     strategy={verticalListSortingStrategy}
                   >
-                    <AnimatePresence>
-                      {getFilteredCards(column).map((card, visibleIndex, visibleCards) => (
-                         <SortableCard
+                    {getFilteredCards(column).map((card, visibleIndex, visibleCards) => (
+                      <SortableCard
                           key={card.id}
                           card={card}
                           columnId={column.id}
+                           columnColor={column.backgroundColor}
+                           isCompletionColumn={column.behavior === 'completion'}
                             ordinal={column.behavior === 'progressive' ? visibleIndex + 1 : undefined}
                             ordinalTotal={column.behavior === 'progressive' ? visibleCards.length : undefined}
                           onEdit={() => setEditingCard({ card, columnId: column.id })}
-                          onDelete={() => onDeleteCard(column.id, card.id)}
                           isDraggingAny={activeCard !== null}
-                        />
-                      ))}
-                    </AnimatePresence>
+                           isCompletionBusy={completionBusyIds.has(card.id)}
+                           onToggleCompletion={() => void handleToggleCompletion(column.id, card)}
+                           suppressClickRef={suppressCardClickRef}
+                            clearClickSuppression={clearClickSuppression}
+                           reducedMotion={reducedMotion}
+                      />
+                    ))}
                   </SortableContext>
                   
                   {getFilteredCards(column).length === 0 && !activeCard && (
@@ -1411,24 +1599,28 @@ export function KanbanBoard({
           </div>
         </SortableContext>
 
-        <DragOverlay dropAnimation={{
+        <DragOverlay dropAnimation={reducedMotion ? { duration: 0, easing: 'linear' } : {
           duration: 200,
-          easing: 'cubic-bezier(0.18, 0.67, 0.6, 1.22)',
+          easing: 'cubic-bezier(0.2, 0, 0, 1)',
         }}>
           {activeCard && (
             <CardOverlay
               card={activeCard}
+              columnColor={effectiveColumns.find((column) => column.id === activeColumnId)?.backgroundColor}
+              isCompletionColumn={effectiveColumns.find((column) => column.id === activeColumnId)?.behavior === 'completion'}
+              reducedMotion={reducedMotion}
               ordinal={activeColumnId
                 ? (() => {
-                    const column = columns.find(c => c.id === activeColumnId);
+                    const column = effectiveColumns.find(c => c.id === activeColumnId);
                     if (!column || column.behavior !== 'progressive') return activeCardOrdinalRef.current?.ordinal;
-                    const index = column.cards.findIndex(c => c.id === activeCard.id);
+                    const filtered = getFilteredCards(column);
+                    const index = filtered.findIndex(c => c.id === activeCard.id);
                     return index >= 0 ? index + 1 : activeCardOrdinalRef.current?.ordinal;
                   })()
                 : activeCardOrdinalRef.current?.ordinal}
               ordinalTotal={activeColumnId
-                ? columns.find(c => c.id === activeColumnId)?.behavior === 'progressive'
-                  ? columns.find(c => c.id === activeColumnId)?.cards.length
+                ? effectiveColumns.find(c => c.id === activeColumnId)?.behavior === 'progressive'
+                  ? getFilteredCards(effectiveColumns.find(c => c.id === activeColumnId)!).length
                   : activeCardOrdinalRef.current?.total
                 : activeCardOrdinalRef.current?.total}
             />
@@ -1436,6 +1628,14 @@ export function KanbanBoard({
           {activeColumn && <ColumnOverlay column={activeColumn} />}
         </DragOverlay>
       </DndContext>
+
+      <ColumnEditorDialog
+        column={columnEditor?.column ?? null}
+        mode={columnEditor?.mode ?? null}
+        projects={projects}
+        onUpdate={onUpdateColumn}
+        onOpenChange={(open) => { if (!open) setColumnEditor(null); }}
+      />
 
       <AnimatePresence>
         {editingCard && (

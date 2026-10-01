@@ -32,7 +32,7 @@ export function isUuid(value: unknown): value is string {
 }
 
 export function isHexColor(value: unknown): value is string {
-  return typeof value === 'string' && /^#[0-9a-f]{6}$/i.test(value);
+  return typeof value === 'string' && value.length === 7 && /^#[0-9a-f]{6}$/i.test(value);
 }
 
 export function isColumnBehavior(value: unknown): value is ApiColumnBehavior {
@@ -101,6 +101,7 @@ export function publicColumn(column: {
   position: number;
   behavior?: string | null;
   project_id?: string | null;
+  background_color?: string | null;
 }) {
   return {
     id: column.id,
@@ -108,6 +109,7 @@ export function publicColumn(column: {
     position: column.position,
     behavior: isColumnBehavior(column.behavior) ? column.behavior : 'active',
     projectId: column.project_id ?? null,
+    backgroundColor: column.background_color ?? null,
   };
 }
 
@@ -199,6 +201,18 @@ export function databaseError(operation: string, error: { code?: string; message
   });
 
   if (error.code === '23505') return apiError('Resource already exists', 409);
+  const message = error.message?.toLowerCase() ?? '';
+  if (
+    ((error.code === 'PGRST202' || error.code === '42883')
+      && message.includes('edit_kanban_column_v1'))
+    || ((error.code === '42703' || error.code === 'PGRST204')
+      && message.includes('background_color'))
+  ) {
+    return apiError(
+      'Column editing is not available in the database yet. Apply supabase/migrations/005_kanban_column_editing.sql, then retry.',
+      409,
+    );
+  }
   if (
     error.code === '23514'
     && error.message?.includes('kanban_columns_behavior_check')

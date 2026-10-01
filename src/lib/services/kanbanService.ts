@@ -142,7 +142,8 @@ export class KanbanService {
         title: col.title,
         cards: cardsMap.get(col.id) || [],
         behavior: (col.behavior || 'active') as ColumnBehavior,
-        projectId: col.project_id || undefined,
+        projectId: col.project_id ?? null,
+        backgroundColor: col.background_color ?? null,
       }));
     } catch (e) {
       console.error('KanbanService.loadColumns error:', e);
@@ -198,6 +199,7 @@ export class KanbanService {
         cards: [],
         behavior,
         projectId: payload.column.projectId ?? null,
+        backgroundColor: payload.column.backgroundColor ?? null,
       };
     } catch (e) {
       console.error('KanbanService.addColumn exception:', e);
@@ -374,7 +376,7 @@ export class KanbanService {
     }
   }
 
-  async updateColumn(columnId: string, updates: { title?: string; position?: number; behavior?: ColumnBehavior }): Promise<boolean> {
+  async updateColumn(columnId: string, updates: { title?: string; position?: number; behavior?: ColumnBehavior; projectId?: string | null; backgroundColor?: string | null }): Promise<boolean> {
     try {
       const response = await fetch('/api/kanban/columns', {
         method: 'PATCH',
@@ -388,10 +390,15 @@ export class KanbanService {
       }
       const behaviorConfirmed =
         updates.behavior === undefined || payload?.column?.behavior === updates.behavior;
+      const editsConfirmed = (updates.title === undefined || payload?.column?.title === updates.title.trim().toUpperCase())
+        && (updates.position === undefined || payload?.column?.position === updates.position)
+        && (updates.projectId === undefined || (payload?.column?.projectId === updates.projectId && payload?.cardsProjectUpdated === true))
+        && (updates.backgroundColor === undefined || payload?.column?.backgroundColor === (updates.backgroundColor?.toLowerCase() ?? null));
       return response.ok
         && payload?.success === true
         && payload.column?.id === columnId
-        && behaviorConfirmed;
+        && behaviorConfirmed
+        && editsConfirmed;
     } catch (e) {
       if (e instanceof KanbanColumnSaveError) throw e;
       console.error('KanbanService.updateColumn exception:', e);

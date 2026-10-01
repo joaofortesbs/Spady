@@ -7,3 +7,8 @@
 - [Segredos no servidor de desenvolvimento](next-dev-secret-refresh.md) — se o Supabase falhar apesar de segredos cadastrados, reinicie o workflow antes de alterar a integração.
 - [Acesso ao schema do Supabase externo](supabase-schema-access.md) — a chave de serviço do app opera pelo REST, mas não autentica a API administrativa nem executa DDL sem uma via SQL separada.
 - [Migrations em schema ativo](live-schema-migration-safety.md) — não inicialize histórico legado sem baseline nem confunda gravações concorrentes legítimas com regressões da migration.
+- [Documentação do dnd-kit](dnd-kit-documentation-compatibility.md) — conferir a linha de pacotes: core/sortable usa a documentação legacy, não as APIs do motor novo.
+- [Conclusão do Kanban](kanban-completion-policy.md) — na virada do dia, ocultar somente tarefas marcadas no check; pendentes permanecem visíveis.
+- [Rollback estrutural do Kanban](kanban-optimistic-rollback.md) — filas não confirmam snapshots otimistas; reconciliar localização e ordem após falhas sobrepostas.
+- [Criação e transferência coletiva](kanban-creation-transfer-order.md) — transferência atômica no banco não inclui INSERT futuro; criações pendentes precisam participar da ordem da coluna.
+- [Relógio em testes autenticados](browser-clock-auth-safety.md) — avançar Date globalmente pode expirar a sessão; separar a simulação do dia civil do relógio da autenticação.

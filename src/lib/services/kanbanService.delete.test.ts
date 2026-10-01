@@ -67,6 +67,7 @@ describe('KanbanService.updateColumn', () => {
       cards: [],
       behavior: 'completion',
       projectId: '11111111-1111-4111-8111-111111111111',
+      backgroundColor: null,
     });
     expect(fetchMock).toHaveBeenCalledWith('/api/kanban/columns', expect.objectContaining({
       method: 'POST',

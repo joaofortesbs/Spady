@@ -1,4 +1,4 @@
-import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { act, cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { KanbanBoard } from './KanbanBoard';
 import type { KanbanCard, KanbanColumn, KanbanProject } from '@/lib/types/blindados';
@@ -32,6 +32,10 @@ function card(id: string, title: string, projectId: string | null): KanbanCard {
   };
 }
 
+function completionCard(id: string, title: string, completedAt: string | null): KanbanCard {
+  return { ...card(id, title, null), completedAt };
+}
+
 const columns: KanbanColumn[] = [{
   id: '33333333-3333-4333-8333-333333333333',
   title: 'A FAZER',
@@ -41,6 +45,25 @@ const columns: KanbanColumn[] = [{
     card('55555555-5555-4555-8555-555555555555', 'Card B', projectB.id),
   ],
 }];
+const reassignedAndLegacyColumns: KanbanColumn[] = [
+  {
+    id: '66666666-6666-4666-8666-666666666666',
+    title: 'Projeto B — transferida',
+    behavior: 'active',
+    projectId: projectB.id,
+    cards: [card('77777777-7777-4777-8777-777777777777', 'Card transferido', projectB.id)],
+  },
+  {
+    id: '88888888-8888-4888-8888-888888888888',
+    title: 'Etapa legada compartilhada',
+    behavior: 'active',
+    projectId: null,
+    cards: [
+      card('99999999-9999-4999-8999-999999999999', 'Card legado A', projectA.id),
+      card('aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa', 'Card legado B', projectB.id),
+    ],
+  },
+];
 
 function renderBoard(overrides: Partial<React.ComponentProps<typeof KanbanBoard>> = {}) {
   const onSelectProject = vi.fn();
@@ -75,6 +98,7 @@ function renderBoard(overrides: Partial<React.ComponentProps<typeof KanbanBoard>
 
 afterEach(() => {
   cleanup();
+  vi.useRealTimers();
 });
 
 describe('KanbanBoard project entry point', () => {
@@ -116,6 +140,79 @@ describe('KanbanBoard project entry point', () => {
     },
   );
 
+  it('opens the column editor submenu and applies a project change', async () => {
+    const onUpdateColumn = vi.fn().mockResolvedValue(true);
+    renderBoard({ onUpdateColumn });
+
+    const actionsButton = screen.getByRole('button', { name: 'Abrir ações da coluna A FAZER' });
+    fireEvent.pointerDown(actionsButton);
+    fireEvent.click(actionsButton);
+    expect(screen.getByText('Somente tarefas marcadas somem no dia seguinte')).toBeTruthy();
+    fireEvent.click(await screen.findByRole('menuitem', { name: /Editar coluna/ }));
+    const alterProject = await screen.findByRole('menuitem', { name: 'Alterar projeto' });
+    const projectSubmenu = alterProject.closest('[role="menu"]') as HTMLElement;
+    expect(projectSubmenu.style.maxWidth).toBe('min(13rem, var(--radix-dropdown-menu-content-available-width))');
+    expect(projectSubmenu.querySelectorAll('[role="menuitem"]')).toHaveLength(3);
+    fireEvent.click(alterProject);
+
+    fireEvent.change(await screen.findByLabelText('Projeto da coluna'), { target: { value: projectB.id } });
+    fireEvent.click(screen.getByRole('button', { name: 'Salvar' }));
+    await waitFor(() => expect(onUpdateColumn).toHaveBeenCalledWith(
+      columns[0].id,
+      { projectId: projectB.id },
+    ));
+  });
+
+  it.each([320, 390])('constrains the editor submenu while keeping all actions reachable at %ipx', async (width) => {
+    const originalWidth = window.innerWidth;
+    Object.defineProperty(window, 'innerWidth', { configurable: true, value: width });
+    try {
+      renderBoard();
+      const trigger = screen.getByRole('button', { name: 'Abrir ações da coluna A FAZER' });
+      fireEvent.pointerDown(trigger);
+      fireEvent.click(trigger);
+      fireEvent.click(await screen.findByRole('menuitem', { name: /Editar coluna/ }));
+      const projectOption = await screen.findByRole('menuitem', { name: 'Alterar projeto' });
+      const submenu = projectOption.closest('[role="menu"]') as HTMLElement;
+
+      expect(submenu.style.maxWidth).toBe('min(13rem, var(--radix-dropdown-menu-content-available-width))');
+      expect(submenu.querySelectorAll('[role="menuitem"]')).toHaveLength(3);
+      expect(submenu.querySelector('[role="menuitem"]:focus')).toBeNull();
+      expect(projectOption).toBeTruthy();
+    } finally {
+      cleanup();
+      Object.defineProperty(window, 'innerWidth', { configurable: true, value: originalWidth });
+    }
+  });
+
+  it.each([
+    ['active', /Ativada/, 'bg-[#00f6ff]/10 text-[#00f6ff]'],
+    ['completion', /Conclusão/, 'bg-green-500/10 text-green-400'],
+    ['progressive', /Progressivo/, 'bg-violet-500/10 text-violet-300'],
+  ] as const)('preserves the selected %s menu accent', (behavior, itemName, accentClass) => {
+    renderBoard({ columns: [{ ...columns[0], behavior }] });
+    const trigger = screen.getByRole('button', { name: 'Abrir ações da coluna A FAZER' });
+    fireEvent.pointerDown(trigger);
+    fireEvent.click(trigger);
+    expect(screen.getByRole('menuitem', { name: itemName }).className).toContain(accentClass);
+  });
+
+  it.each([
+    ['projeto de origem', projectA.id, ['Etapa legada compartilhada']],
+    ['projeto de destino', projectB.id, ['Projeto B — transferida', 'Etapa legada compartilhada']],
+    ['Todos', null, ['Projeto B — transferida', 'Etapa legada compartilhada']],
+  ] as const)(
+    'filters reassigned columns consistently in %s without hiding shared legacy stages',
+    (_label, selectedProjectId, visibleTitles) => {
+      renderBoard({ columns: reassignedAndLegacyColumns, selectedProjectId });
+
+      visibleTitles.forEach((title) => expect(screen.getByRole('heading', { name: title })).toBeTruthy());
+      expect(Boolean(screen.queryByRole('heading', { name: 'Projeto B — transferida' })))
+        .toBe(selectedProjectId !== projectA.id);
+      expect(Boolean(screen.queryByRole('heading', { name: 'Etapa legada compartilhada' }))).toBe(true);
+    },
+  );
+
   it('shows all cards by default and filters by the selected project', () => {
     renderBoard({ selectedProjectId: projectA.id });
 
@@ -139,7 +236,7 @@ describe('KanbanBoard project entry point', () => {
     expect(onSelectProject).toHaveBeenLastCalledWith(null);
 
     fireEvent.click(picker);
-    fireEvent.keyDown(document, { key: 'Escape' });
+    fireEvent.keyDown(document, { key: 'Escape', code: 'Escape' });
     expect(picker.getAttribute('aria-expanded')).toBe('false');
 
     cleanup();
@@ -181,9 +278,215 @@ describe('KanbanBoard project entry point', () => {
 
   it('opens card editing with the keyboard', () => {
     renderBoard();
-    const cardElement = screen.getByLabelText('Editar tarefa Card A');
+    const cardElement = screen.getByLabelText(/Arrastar Card A/);
 
     fireEvent.keyDown(cardElement, { key: 'Enter' });
     expect(Boolean(screen.getByText('Editar Tarefa'))).toBe(true);
+  });
+
+  it('opens card editing on a mouse click', () => {
+    renderBoard();
+    const surface = screen.getByText('Card A').closest('.rounded-xl.border') as HTMLElement;
+    fireEvent.click(surface, { detail: 1 });
+    expect(screen.getByText('Editar Tarefa')).toBeTruthy();
+  });
+
+  it('uses the shared column tint and neutral progressive ordinal on regular cards and the drag overlay', () => {
+    const tintedColumn = {
+      ...columns[0],
+      backgroundColor: '#ff0000',
+      behavior: 'progressive' as const,
+      cards: [columns[0].cards[0]],
+    };
+    renderBoard({ columns: [tintedColumn] });
+    const surface = screen.getByText('Card A').closest('.rounded-xl.border') as HTMLElement;
+    expect(surface.style.backgroundColor).not.toBe('#0a0f1f');
+    expect(surface.style.backgroundColor).not.toBe('rgb(255, 0, 0)');
+    expect(surface.style.borderColor).toMatch(/^rgb/);
+    expect(screen.getByLabelText('Posição 1 de 1').className).not.toContain('violet');
+    const progressiveBadge = screen.getByTitle('Cards numerados na ordem de execução');
+    expect(progressiveBadge.className).toContain('bg-white/5');
+    expect(progressiveBadge.className).not.toContain('violet');
+    expect(progressiveBadge.querySelector('svg')?.getAttribute('class')).toContain('text-white/60');
+    const priority = screen.getByText('PRIORIDADE MÉDIA');
+    expect(priority.className).toContain('bg-amber-500/20');
+    expect(priority.className).toContain('text-amber-400');
+
+    act(() => fireEvent.keyDown(screen.getByLabelText(/Arrastar Card A/), { key: ' ', code: 'Space' }));
+    const overlayCard = screen.getAllByText('Card A').at(-1)?.closest('.rounded-xl.border') as HTMLElement;
+    expect(overlayCard.style.backgroundColor).toBe(surface.style.backgroundColor);
+    expect(screen.getAllByText('1').some((element) => element.className.includes('violet'))).toBe(false);
+    act(() => fireEvent.keyDown(document, { key: 'Escape', code: 'Escape' }));
+  });
+
+  it.each([
+    ['active', 'Tarefas continuam no dia seguinte'],
+    ['completion', 'Somente tarefas marcadas somem no dia seguinte'],
+    ['progressive', 'Cards numerados na ordem de execução'],
+  ] as const)('uses the same neutral header behavior badge for %s columns', (behavior, title) => {
+    renderBoard({ columns: [{ ...columns[0], behavior }] });
+    const badge = screen.getByTitle(title);
+    expect(badge.className).toContain('bg-white/5');
+    expect(badge.className).toContain('border-white/10');
+    expect(badge.className).not.toMatch(/green|violet|#00f6ff/);
+    expect(badge.querySelector('svg')?.getAttribute('class')).toContain('text-white/60');
+  });
+
+  it('toggles completion using an ISO timestamp and null without opening the editor', async () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date('2026-09-10T12:34:56.000Z'));
+    const onUpdateCard = vi.fn().mockResolvedValue(true);
+    const completionColumn: KanbanColumn = {
+      ...columns[0],
+      behavior: 'completion',
+      cards: [completionCard('checked-card', 'Concluída', '2026-09-10T10:00:00.000Z'), completionCard('pending-card', 'Pendente', null)],
+    };
+    renderBoard({ columns: [completionColumn], onUpdateCard });
+
+    fireEvent.click(screen.getByRole('button', { name: 'Marcar Pendente como concluída' }));
+    await act(async () => { await Promise.resolve(); });
+    expect(onUpdateCard).toHaveBeenCalledWith(
+      completionColumn.id, 'pending-card', { completedAt: '2026-09-10T12:34:56.000Z' },
+    );
+    expect(screen.queryByText('Editar Tarefa')).toBeNull();
+    expect(screen.getAllByText('Pendente')).toHaveLength(1);
+
+    fireEvent.click(screen.getByRole('button', { name: 'Desmarcar Concluída como pendente' }));
+    await act(async () => { await Promise.resolve(); });
+    expect(onUpdateCard).toHaveBeenCalledWith(completionColumn.id, 'checked-card', { completedAt: null });
+    expect(screen.queryByText('Editar Tarefa')).toBeNull();
+  });
+
+  it('does not start card dragging from completion controls during a mouse threshold move', () => {
+    const completionColumn: KanbanColumn = {
+      ...columns[0],
+      behavior: 'completion',
+      cards: [completionCard('pending-card', 'Pendente', null)],
+    };
+    renderBoard({ columns: [completionColumn] });
+    const checkbox = screen.getByRole('button', { name: 'Marcar Pendente como concluída' });
+
+    act(() => {
+      fireEvent.mouseDown(checkbox, { button: 0, clientX: 10, clientY: 10 });
+      fireEvent.mouseMove(document, { buttons: 1, clientX: 28, clientY: 10 });
+      fireEvent.mouseUp(document, { button: 0, clientX: 28, clientY: 10 });
+    });
+    expect(screen.getAllByText('Pendente')).toHaveLength(1);
+    expect(screen.queryByText('Editar Tarefa')).toBeNull();
+
+    fireEvent.keyDown(checkbox, { key: ' ', code: 'Space' });
+    expect(screen.getAllByText('Pendente')).toHaveLength(1);
+  });
+
+  it('does not start column dragging from its menu during a mouse threshold move', async () => {
+    renderBoard();
+    const menuButton = screen.getByRole('button', { name: 'Abrir ações da coluna A FAZER' });
+
+    act(() => {
+      fireEvent.mouseDown(menuButton, { button: 0, clientX: 10, clientY: 10 });
+      fireEvent.mouseMove(document, { buttons: 1, clientX: 28, clientY: 10 });
+      fireEvent.mouseUp(document, { button: 0, clientX: 28, clientY: 10 });
+    });
+    expect(screen.getAllByRole('heading', { name: 'A FAZER' })).toHaveLength(1);
+
+    fireEvent.pointerDown(menuButton);
+    fireEvent.click(menuButton);
+    expect(await screen.findByRole('menu')).toBeTruthy();
+  });
+
+  it('keeps a completion checkbox busy through a failed callback and leaves rollback to the mutation hook', async () => {
+    let resolveUpdate!: (value: boolean) => void;
+    const onUpdateCard = vi.fn()
+      .mockImplementationOnce(() => new Promise<boolean>((resolve) => { resolveUpdate = resolve; }))
+      .mockResolvedValue(true);
+    const completionColumn: KanbanColumn = {
+      ...columns[0],
+      behavior: 'completion',
+      cards: [completionCard('pending-card', 'Pendente', null)],
+    };
+    renderBoard({ columns: [completionColumn], onUpdateCard });
+    const checkbox = screen.getByRole('button', { name: 'Marcar Pendente como concluída' });
+    fireEvent.click(checkbox);
+    expect(checkbox.hasAttribute('disabled')).toBe(true);
+    await act(async () => {
+      resolveUpdate(false);
+      await Promise.resolve();
+      await Promise.resolve();
+    });
+    expect(onUpdateCard).toHaveBeenCalledTimes(1);
+    expect(onUpdateCard).toHaveBeenCalledWith(completionColumn.id, 'pending-card', { completedAt: expect.any(String) });
+    expect(screen.getByRole('button', { name: 'Marcar Pendente como concluída' }).hasAttribute('disabled')).toBe(false);
+  });
+
+  it('hides only previously checked completion cards in the default view and keeps explicit dates historical', async () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date('2026-09-10T12:00:00.000Z'));
+    const completionColumn: KanbanColumn = {
+      ...columns[0],
+      behavior: 'completion',
+      cards: [
+        completionCard('older', 'Concluída em outro dia anterior', '2026-09-08T10:00:00.000Z'),
+        completionCard('yesterday', 'Concluída ontem', '2026-09-09T10:00:00.000Z'),
+        completionCard('today', 'Concluída hoje', '2026-09-10T10:00:00.000Z'),
+        completionCard('pending', 'Ainda pendente', null),
+      ],
+    };
+    const { unmount } = render(
+      <KanbanBoard
+        columns={[completionColumn]}
+        onColumnsChange={vi.fn()}
+        onUpdateColumn={vi.fn()}
+        onAddColumn={vi.fn()}
+        onDeleteColumn={vi.fn()}
+        onAddCard={vi.fn()}
+        onUpdateCard={vi.fn()}
+        onDeleteCard={vi.fn()}
+        onMoveCard={vi.fn()}
+        onUpdateCardPositions={vi.fn()}
+        isLoaded
+      />,
+    );
+    expect(screen.getByText('2')).toBeTruthy();
+    act(() => { vi.advanceTimersByTime(250); });
+    expect(screen.queryByText('Concluída em outro dia anterior')).toBeNull();
+    expect(screen.queryByText('Concluída ontem')).toBeNull();
+    expect(screen.getByText('Concluída hoje')).toBeTruthy();
+    expect(screen.getByText('Ainda pendente')).toBeTruthy();
+
+    unmount();
+    renderBoard({ columns: [completionColumn], selectedDate: new Date('2026-09-09T12:00:00.000Z') });
+    expect(screen.queryByText('Concluída em outro dia anterior')).toBeNull();
+    expect(screen.getByText('Concluída ontem')).toBeTruthy();
+    expect(screen.getByText('Concluída hoje')).toBeTruthy();
+    expect(screen.getByText('Ainda pendente')).toBeTruthy();
+  });
+
+  it('starts keyboard dragging with Space and cancels locally with Escape', async () => {
+    const onColumnsChange = vi.fn();
+    renderBoard({ onColumnsChange });
+    const cardActivator = screen.getByLabelText(/Arrastar Card A/);
+    act(() => fireEvent.keyDown(cardActivator, { key: ' ', code: 'Space' }));
+    expect(screen.getAllByText('Card A').length).toBeGreaterThan(1);
+    await act(async () => { await new Promise((resolve) => setTimeout(resolve, 0)); });
+    act(() => fireEvent.keyDown(cardActivator, { key: 'Escape', code: 'Escape' }));
+    expect(onColumnsChange).not.toHaveBeenCalled();
+    const cardTitle = screen.getAllByText('Card A')[0];
+    act(() => {
+      fireEvent.mouseDown(cardTitle, { button: 0, clientX: 10, clientY: 10 });
+      fireEvent.mouseUp(cardTitle, { button: 0, clientX: 10, clientY: 10 });
+    });
+    fireEvent.click(cardTitle, { detail: 1 });
+    expect(screen.getByText('Editar Tarefa')).toBeTruthy();
+  });
+
+  it('does not reveal project-filtered cards in a column drag overlay', () => {
+    renderBoard({ columns: reassignedAndLegacyColumns, selectedProjectId: projectA.id });
+    act(() => fireEvent.keyDown(
+      screen.getByLabelText('Arrastar coluna Etapa legada compartilhada'),
+      { key: ' ', code: 'Space' },
+    ));
+    expect(screen.getAllByText('Card legado A')).toHaveLength(2);
+    expect(screen.queryByText('Card legado B')).toBeNull();
+    act(() => fireEvent.keyDown(document, { key: 'Escape', code: 'Escape' }));
   });
 });

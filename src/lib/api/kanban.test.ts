@@ -5,6 +5,7 @@ import {
   isIsoDateTime,
   isUuid,
   publicCard,
+  publicColumn,
   publicProject,
   databaseError,
 } from './kanban';
@@ -19,6 +20,7 @@ describe('Kanban API validation and public DTOs', () => {
   it('validates project colors and calendar values', () => {
     expect(isHexColor('#06b6d4')).toBe(true);
     expect(isHexColor('#fff')).toBe(false);
+    expect(isHexColor('#06b6d4\n')).toBe(false);
     expect(isDateOnly('2026-02-28')).toBe(true);
     expect(isDateOnly('2026-02-30')).toBe(false);
     expect(isIsoDateTime('2026-02-28T10:00:00.000Z')).toBe(true);
@@ -57,6 +59,20 @@ describe('Kanban API validation and public DTOs', () => {
     } as never)).not.toHaveProperty('user_id');
   });
 
+  it('includes nullable column background color while preserving the default for older rows', () => {
+    expect(publicColumn({
+      id: 'column-id',
+      title: 'TODO',
+      position: 0,
+      background_color: '#06b6d4',
+    })).toMatchObject({ backgroundColor: '#06b6d4' });
+    expect(publicColumn({
+      id: 'legacy-column',
+      title: 'TODO',
+      position: 0,
+    })).toMatchObject({ backgroundColor: null });
+  });
+
   it('returns an actionable error when the external schema rejects progressive', async () => {
     const response = databaseError('update column', {
       code: '23514',
@@ -66,6 +82,23 @@ describe('Kanban API validation and public DTOs', () => {
     expect(response.status).toBe(409);
     expect(await response.json()).toEqual({
       error: 'O banco ainda não aceita o comportamento Progressivo. Aplique a migration do Kanban e tente novamente.',
+    });
+  });
+
+  it('returns an actionable conflict when the editing migration is not installed', async () => {
+    const rpcResponse = databaseError('update column', {
+      code: 'PGRST202',
+      message: 'Could not find the function public.edit_kanban_column_v1 in the schema cache',
+    });
+    const colorResponse = databaseError('update column', {
+      code: '42703',
+      message: 'column background_color does not exist',
+    });
+
+    expect(rpcResponse.status).toBe(409);
+    expect(colorResponse.status).toBe(409);
+    expect(await rpcResponse.json()).toEqual({
+      error: 'Column editing is not available in the database yet. Apply supabase/migrations/005_kanban_column_editing.sql, then retry.',
     });
   });
 });
