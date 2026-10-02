@@ -40,6 +40,7 @@ const columns: KanbanColumn[] = [{
   id: '33333333-3333-4333-8333-333333333333',
   title: 'A FAZER',
   behavior: 'active',
+  projectId: projectA.id,
   cards: [
     card('44444444-4444-4444-8444-444444444444', 'Card A', projectA.id),
     card('55555555-5555-4555-8555-555555555555', 'Card B', projectB.id),
@@ -198,26 +199,27 @@ describe('KanbanBoard project entry point', () => {
   });
 
   it.each([
-    ['projeto de origem', projectA.id, ['Etapa legada compartilhada']],
-    ['projeto de destino', projectB.id, ['Projeto B — transferida', 'Etapa legada compartilhada']],
+    ['projeto de origem', projectA.id, []],
+    ['projeto de destino', projectB.id, ['Projeto B — transferida']],
     ['Todos', null, ['Projeto B — transferida', 'Etapa legada compartilhada']],
   ] as const)(
-    'filters reassigned columns consistently in %s without hiding shared legacy stages',
+    'shows only columns bound to the selected project in %s',
     (_label, selectedProjectId, visibleTitles) => {
       renderBoard({ columns: reassignedAndLegacyColumns, selectedProjectId });
 
       visibleTitles.forEach((title) => expect(screen.getByRole('heading', { name: title })).toBeTruthy());
-      expect(Boolean(screen.queryByRole('heading', { name: 'Projeto B — transferida' })))
-        .toBe(selectedProjectId !== projectA.id);
-      expect(Boolean(screen.queryByRole('heading', { name: 'Etapa legada compartilhada' }))).toBe(true);
+      expect(Boolean(screen.queryByRole('heading', { name: 'Projeto B — transferida' }))).toBe(
+        selectedProjectId === projectB.id || selectedProjectId === null,
+      );
+      expect(Boolean(screen.queryByRole('heading', { name: 'Etapa legada compartilhada' }))).toBe(selectedProjectId === null);
     },
   );
 
-  it('shows all cards by default and filters by the selected project', () => {
+  it('uses the selected project column association rather than individual card project values', () => {
     renderBoard({ selectedProjectId: projectA.id });
 
     expect(Boolean(screen.getByText('Card A'))).toBe(true);
-    expect(screen.queryByText('Card B')).toBeNull();
+    expect(Boolean(screen.getByText('Card B'))).toBe(true);
     expect(Boolean(screen.getByRole('button', { name: /Projeto A/ }))).toBe(true);
   });
 
@@ -226,13 +228,13 @@ describe('KanbanBoard project entry point', () => {
     const picker = screen.getByRole('button', { name: /Todos/ });
 
     fireEvent.click(picker);
-    expect(Boolean(screen.getByRole('menu'))).toBe(true);
-    fireEvent.click(screen.getByRole('menuitem', { name: 'Projeto B' }));
+    expect(Boolean(screen.getByRole('group', { name: 'Projetos disponíveis' }))).toBe(true);
+    fireEvent.click(screen.getByRole('button', { name: 'Selecionar projeto Projeto B' }));
     expect(onSelectProject).toHaveBeenCalledWith(projectB.id);
     expect(picker.getAttribute('aria-expanded')).toBe('false');
 
     fireEvent.click(picker);
-    fireEvent.click(screen.getByRole('menuitem', { name: 'Todos os projetos' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Todos os projetos' }));
     expect(onSelectProject).toHaveBeenLastCalledWith(null);
 
     fireEvent.click(picker);
@@ -251,7 +253,7 @@ describe('KanbanBoard project entry point', () => {
       onAddProject: vi.fn().mockResolvedValue({ success: true, data: persisted }),
     });
     fireEvent.click(screen.getByRole('button', { name: /Todos/ }));
-    fireEvent.click(screen.getByRole('menuitem', { name: 'Novo projeto' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Novo projeto' }));
     fireEvent.change(screen.getByLabelText('Nome do projeto'), { target: { value: persisted.name } });
     fireEvent.submit(screen.getByLabelText('Nome do projeto').closest('form')!);
 
@@ -260,20 +262,71 @@ describe('KanbanBoard project entry point', () => {
     expect(screen.queryByRole('dialog')).toBeNull();
   });
 
+  it('opens a sibling project editor without changing the selected project', async () => {
+    const onSelectProject = vi.fn();
+    const onUpdateProject = vi.fn().mockResolvedValue({ success: true });
+    renderBoard({ onSelectProject, onUpdateProject });
+
+    fireEvent.click(screen.getByRole('button', { name: /Todos/ }));
+    fireEvent.click(screen.getByRole('button', { name: `Editar projeto ${projectA.name}` }));
+    fireEvent.change(await screen.findByLabelText('Nome'), { target: { value: 'Projeto atualizado' } });
+    fireEvent.click(screen.getByRole('button', { name: 'Salvar' }));
+
+    await waitFor(() => expect(onUpdateProject).toHaveBeenCalledWith(projectA.id, {
+      name: 'Projeto atualizado',
+      expected: { name: projectA.name },
+      columnChanges: [],
+    }));
+    expect(onSelectProject).not.toHaveBeenCalled();
+    expect(screen.getByRole('group', { name: 'Projetos disponíveis' })).toBeTruthy();
+  });
+
+  it('closes the editor before its project selector on Escape', async () => {
+    renderBoard();
+    fireEvent.click(screen.getByRole('button', { name: /Todos/ }));
+    fireEvent.click(screen.getByRole('button', { name: `Editar projeto ${projectA.name}` }));
+    expect(await screen.findByRole('dialog', { name: `Editar projeto ${projectA.name}` })).toBeTruthy();
+
+    fireEvent.keyDown(document, { key: 'Escape', code: 'Escape' });
+    await waitFor(() => expect(screen.queryByRole('dialog', { name: `Editar projeto ${projectA.name}` })).toBeNull());
+    expect(screen.getByRole('group', { name: 'Projetos disponíveis' })).toBeTruthy();
+  });
+
+  it('creates a card with the target column project instead of the project filter', () => {
+    const targetColumn: KanbanColumn = {
+      id: 'project-b-column',
+      title: 'Coluna B',
+      behavior: 'active',
+      projectId: projectB.id,
+      cards: [],
+    };
+    const onAddCard = vi.fn();
+    renderBoard({ columns: [targetColumn], onAddCard, selectedProjectId: null });
+
+    fireEvent.click(screen.getByRole('button', { name: 'Adicionar um card' }));
+    fireEvent.change(screen.getByPlaceholderText('Título da tarefa...'), { target: { value: 'Tarefa B' } });
+    fireEvent.click(screen.getByRole('button', { name: 'Adicionar' }));
+
+    expect(onAddCard).toHaveBeenCalledWith(targetColumn.id, expect.objectContaining({
+      title: 'Tarefa B',
+      projectId: projectB.id,
+    }));
+  });
+
   it('keeps the prior selection and reports a project creation error', async () => {
     const { onSelectProject } = renderBoard({
       selectedProjectId: projectA.id,
       onAddProject: vi.fn().mockResolvedValue({ success: false, error: 'Não foi possível criar' }),
     });
     fireEvent.click(screen.getByRole('button', { name: /Projeto A/ }));
-    fireEvent.click(screen.getByRole('menuitem', { name: 'Novo projeto' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Novo projeto' }));
     fireEvent.change(screen.getByLabelText('Nome do projeto'), { target: { value: 'Falha' } });
     fireEvent.submit(screen.getByLabelText('Nome do projeto').closest('form')!);
 
     expect((await screen.findByRole('alert')).textContent).toContain('Não foi possível criar');
     expect(onSelectProject).not.toHaveBeenCalled();
     expect(Boolean(screen.getByText('Card A'))).toBe(true);
-    expect(screen.queryByText('Card B')).toBeNull();
+    expect(Boolean(screen.getByText('Card B'))).toBe(true);
   });
 
   it('opens card editing with the keyboard', () => {
@@ -282,6 +335,7 @@ describe('KanbanBoard project entry point', () => {
 
     fireEvent.keyDown(cardElement, { key: 'Enter' });
     expect(Boolean(screen.getByText('Editar Tarefa'))).toBe(true);
+    expect(screen.getByText('Projeto A — herdado da coluna')).toBeTruthy();
   });
 
   it('opens card editing on a mouse click', () => {
@@ -479,14 +533,17 @@ describe('KanbanBoard project entry point', () => {
     expect(screen.getByText('Editar Tarefa')).toBeTruthy();
   });
 
-  it('does not reveal project-filtered cards in a column drag overlay', () => {
-    renderBoard({ columns: reassignedAndLegacyColumns, selectedProjectId: projectA.id });
+  it('renders all cards from a project-bound column in its drag overlay', () => {
+    renderBoard({
+      columns: [{ ...reassignedAndLegacyColumns[1], projectId: projectA.id }],
+      selectedProjectId: projectA.id,
+    });
     act(() => fireEvent.keyDown(
       screen.getByLabelText('Arrastar coluna Etapa legada compartilhada'),
       { key: ' ', code: 'Space' },
     ));
     expect(screen.getAllByText('Card legado A')).toHaveLength(2);
-    expect(screen.queryByText('Card legado B')).toBeNull();
+    expect(screen.getAllByText('Card legado B')).toHaveLength(2);
     act(() => fireEvent.keyDown(document, { key: 'Escape', code: 'Escape' }));
   });
 });

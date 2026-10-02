@@ -32,10 +32,11 @@ import {
 } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { Plus, MoreVertical, GripVertical, Trash2, X, Check, Pencil, Move, FolderKanban, Calendar, ChevronDown, Settings2, CheckCircle2, RotateCcw, ListOrdered, Loader2, Palette } from 'lucide-react';
-import { KanbanColumn, KanbanCard, Priority, SubTask, KanbanProject, KanbanMutationResult, ColumnBehavior, KanbanColumnUpdates } from '@/lib/types/blindados';
+import { KanbanColumn, KanbanCard, Priority, SubTask, KanbanProject, KanbanMutationResult, ColumnBehavior, KanbanColumnUpdates, KanbanProjectSaveData, KanbanProjectUpdates } from '@/lib/types/blindados';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuTrigger, DropdownMenuSub, DropdownMenuSubTrigger, DropdownMenuSubContent, DropdownMenuPortal } from '@/components/ui/dropdown-menu';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { ColumnEditorDialog, ColumnEditorMode } from '@/components/blindados/ColumnEditorDialog';
+import { ProjectEditorPopover } from '@/components/blindados/ProjectEditorPopover';
 import { format, parseISO } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { toast } from 'sonner';
@@ -76,6 +77,7 @@ interface KanbanBoardProps {
   isLoaded?: boolean;
   projects?: KanbanProject[];
   onAddProject?: (name: string, color: string) => Promise<KanbanMutationResult<KanbanProject>>;
+  onUpdateProject?: (projectId: string, updates: KanbanProjectUpdates) => Promise<KanbanMutationResult<KanbanProjectSaveData>>;
   onDeleteProject?: (projectId: string) => void;
   selectedProjectId?: string | null;
   onSelectProject?: (projectId: string | null) => void;
@@ -593,6 +595,7 @@ export function KanbanBoard({
   isLoaded = true,
   projects = [],
   onAddProject,
+  onUpdateProject,
   onDeleteProject,
   selectedProjectId = null,
   onSelectProject,
@@ -639,10 +642,7 @@ export function KanbanBoard({
   const effectiveColumns = dragPreviewColumns ?? columns;
   const visibleColumns = useMemo(
     () => selectedProjectId
-      ? effectiveColumns.filter((column) =>
-          (column.projectId === null || column.projectId === undefined)
-          || column.projectId === selectedProjectId
-          || column.cards.some((card) => card.projectId === selectedProjectId))
+      ? effectiveColumns.filter((column) => column.projectId === selectedProjectId)
       : effectiveColumns,
     [effectiveColumns, selectedProjectId],
   );
@@ -654,6 +654,7 @@ export function KanbanBoard({
   useEffect(() => () => clearClickSuppression(), [clearClickSuppression]);
   
   const [showProjectDropdown, setShowProjectDropdown] = useState(false);
+  const [editingProjectId, setEditingProjectId] = useState<string | null>(null);
   const [showAddProjectModal, setShowAddProjectModal] = useState(false);
   const [newProjectName, setNewProjectName] = useState('');
   const [newProjectColor, setNewProjectColor] = useState(PROJECT_COLORS[0]);
@@ -688,8 +689,11 @@ export function KanbanBoard({
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
+      const target = event.target;
+      if (target instanceof Element && target.closest('[data-project-editor-portal]')) return;
       if (projectDropdownRef.current && !projectDropdownRef.current.contains(event.target as Node)) {
         setShowProjectDropdown(false);
+        setEditingProjectId(null);
       }
       if (datePickerRef.current && !datePickerRef.current.contains(event.target as Node)) {
         setShowDatePicker(false);
@@ -706,23 +710,31 @@ export function KanbanBoard({
   }, [isLoaded, onSelectProject, projects, selectedProjectId]);
 
   useEffect(() => {
-    if (!showProjectDropdown && !showDatePicker) return;
+    if (editingProjectId && (!showProjectDropdown || !projects.some((project) => project.id === editingProjectId))) {
+      setEditingProjectId(null);
+    }
+  }, [editingProjectId, projects, showProjectDropdown]);
 
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key !== 'Escape') return;
+  useEffect(() => {
+    if (!showProjectDropdown) return;
+    const handleProjectEscape = (event: KeyboardEvent) => {
+      if (event.key !== 'Escape' || editingProjectId) return;
       setShowProjectDropdown(false);
-      setShowDatePicker(false);
     };
+    document.addEventListener('keydown', handleProjectEscape);
+    return () => document.removeEventListener('keydown', handleProjectEscape);
+  }, [editingProjectId, showProjectDropdown]);
 
-    document.addEventListener('keydown', handleKeyDown);
-    return () => document.removeEventListener('keydown', handleKeyDown);
-  }, [showDatePicker, showProjectDropdown]);
+  useEffect(() => {
+    if (!showDatePicker) return;
+    const handleDateEscape = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') setShowDatePicker(false);
+    };
+    document.addEventListener('keydown', handleDateEscape);
+    return () => document.removeEventListener('keydown', handleDateEscape);
+  }, [showDatePicker]);
 
   const shouldShowCard = useCallback((card: KanbanCard, columnBehavior: ColumnBehavior) => {
-    if (selectedProjectId && card.projectId !== selectedProjectId) {
-      return false;
-    }
-    
     if (selectedDate) {
       const selectedDateStr = format(selectedDate, 'yyyy-MM-dd');
       
@@ -742,7 +754,7 @@ export function KanbanBoard({
 
     if (today && isHiddenCompletedCard(card, columnBehavior, today)) return false;
     return true;
-  }, [selectedProjectId, selectedDate, today]);
+  }, [selectedDate, today]);
 
   const getFilteredCards = useCallback((column: KanbanColumn) => {
     return column.cards.filter(card => shouldShowCard(card, column.behavior || 'active'));
@@ -1108,7 +1120,7 @@ export function KanbanBoard({
     
     const priority = newCardPriority;
     const dueDate = newCardDueDate || undefined;
-    const projectId = selectedProjectId || undefined;
+    const projectId = columns.find((column) => column.id === columnId)?.projectId ?? null;
     
     setNewCardTitle('');
     setNewCardPriority('media');
@@ -1144,7 +1156,7 @@ export function KanbanBoard({
               type="button"
               onClick={() => setShowProjectDropdown(!showProjectDropdown)}
               aria-expanded={showProjectDropdown}
-              aria-haspopup="menu"
+              aria-controls="kanban-project-selector"
               className="min-h-11 max-w-[min(18rem,100%)] flex items-center gap-2 rounded-lg border border-white/10 bg-white/5 px-3 py-1.5 text-sm transition-colors hover:border-[#00f6ff]/30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#00f6ff]"
             >
               {selectedProject ? (
@@ -1170,12 +1182,13 @@ export function KanbanBoard({
                   initial={{ opacity: 0, y: -5 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -5 }}
-                  role="menu"
+                  role="group"
+                  aria-label="Projetos disponíveis"
+                  id="kanban-project-selector"
                   className="absolute right-0 top-full z-50 mt-2 w-[min(18rem,calc(100vw-2rem))] overflow-hidden rounded-xl border border-[#00f6ff]/20 bg-[#0a0f1f] shadow-xl"
                 >
                   <button
                     type="button"
-                    role="menuitem"
                     onClick={() => { onSelectProject?.(null); setShowProjectDropdown(false); }}
                     className={`flex min-h-11 w-full items-center gap-3 px-4 py-2.5 text-left text-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[#00f6ff] ${
                       !selectedProjectId ? 'bg-[#00f6ff]/10 text-[#00f6ff]' : 'text-white hover:bg-white/5'
@@ -1193,22 +1206,29 @@ export function KanbanBoard({
                   ) : projects.length > 0 ? (
                     <div className="border-t border-white/5">
                       {projects.map(project => (
-                        <button
-                          key={project.id}
-                          type="button"
-                          role="menuitem"
-                          onClick={() => { onSelectProject?.(project.id); setShowProjectDropdown(false); }}
-                          className={`flex min-h-11 w-full items-center gap-3 px-4 py-2.5 text-left text-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[#00f6ff] ${
-                            selectedProjectId === project.id ? 'bg-[#00f6ff]/10 text-[#00f6ff]' : 'text-white hover:bg-white/5'
-                          }`}
-                        >
-                          <div 
-                            className="w-3 h-3 rounded-full flex-shrink-0" 
-                            style={{ backgroundColor: project.color }}
+                        <div key={project.id} className="flex min-h-11 items-center border-b border-white/[0.04] last:border-b-0">
+                          <button
+                            type="button"
+                            aria-label={`Selecionar projeto ${project.name}`}
+                            onClick={() => { onSelectProject?.(project.id); setShowProjectDropdown(false); }}
+                            className={`flex min-h-11 min-w-0 flex-1 items-center gap-3 px-3 py-2.5 text-left text-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[#00f6ff] ${
+                              selectedProjectId === project.id ? 'bg-[#00f6ff]/10 text-[#00f6ff]' : 'text-white hover:bg-white/5'
+                            }`}
+                          >
+                            <span className="h-3 w-3 flex-shrink-0 rounded-full" style={{ backgroundColor: project.color }} aria-hidden="true" />
+                            <span className="truncate">{project.name}</span>
+                            {selectedProjectId === project.id && <Check className="ml-auto h-4 w-4 flex-shrink-0" aria-hidden="true" />}
+                          </button>
+                          <ProjectEditorPopover
+                            project={project}
+                            columns={columns}
+                            projects={projects}
+                            palette={PROJECT_COLORS}
+                            open={editingProjectId === project.id}
+                            onOpenChange={(open) => setEditingProjectId(open ? project.id : null)}
+                            onSave={onUpdateProject ?? (async () => ({ success: false, error: "A edição de projetos não está disponível." }))}
                           />
-                          <span className="truncate">{project.name}</span>
-                          {selectedProjectId === project.id && <Check className="w-4 h-4 ml-auto flex-shrink-0" />}
-                        </button>
+                        </div>
                       ))}
                     </div>
                   ) : (
@@ -1220,7 +1240,6 @@ export function KanbanBoard({
                   <div className="border-t border-white/5">
                     <button
                       type="button"
-                      role="menuitem"
                       onClick={handleOpenAddProject}
                       className="flex min-h-11 w-full items-center gap-3 px-4 py-2.5 text-left text-sm text-[#00f6ff] transition-colors hover:bg-white/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[#00f6ff]"
                     >
@@ -1642,6 +1661,12 @@ export function KanbanBoard({
           <EditCardModal
             card={editingCard.card}
             columnId={editingCard.columnId}
+            inheritedProjectLabel={(() => {
+              const projectId = columns.find((column) => column.id === editingCard.columnId)?.projectId;
+              return projectId
+                ? projects.find((project) => project.id === projectId)?.name ?? "Projeto"
+                : null;
+            })()}
             onUpdate={(updates) => {
               onUpdateCard(editingCard.columnId, editingCard.card.id, updates);
               setEditingCard(null); // Explicitly close and clear
@@ -1663,12 +1688,14 @@ export function KanbanBoard({
 function EditCardModal({
   card,
   columnId,
+  inheritedProjectLabel,
   onUpdate,
   onDelete,
   onClose,
 }: {
   card: KanbanCard;
   columnId: string;
+  inheritedProjectLabel: string | null;
   onUpdate: (updates: Partial<KanbanCard>) => void;
   onDelete: () => void;
   onClose: () => void;
@@ -1789,6 +1816,15 @@ function EditCardModal({
                 className="w-full px-3 py-2 rounded-xl bg-white/5 border border-white/10 focus:border-[#00f6ff]/50 outline-none text-white text-sm"
               />
             </div>
+          </div>
+
+          <div className="rounded-xl border border-white/10 bg-white/[0.03] px-3 py-2.5">
+            <span className="block text-xs text-white/45">Projeto</span>
+            <span className="mt-1 block text-sm text-white/80">
+              {inheritedProjectLabel
+                ? `${inheritedProjectLabel} — herdado da coluna`
+                : 'Sem projeto — herdado da coluna'}
+            </span>
           </div>
 
           <div>

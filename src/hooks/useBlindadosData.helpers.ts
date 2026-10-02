@@ -1,5 +1,14 @@
 import { KanbanCard, KanbanColumn } from '@/lib/types/blindados';
 
+export function inheritColumnProjects(columns: KanbanColumn[], columnIds?: string[]): KanbanColumn[] {
+  return columns.map(column => columnIds && !columnIds.includes(column.id) ? column : ({
+    ...column,
+    cards: column.cards.map(card => (card.projectId ?? null) === (column.projectId ?? null)
+      ? card
+      : { ...card, projectId: column.projectId ?? null }),
+  }));
+}
+
 export function normalizeCardField<K extends keyof KanbanCard>(
   key: K,
   value: KanbanCard[K],
@@ -51,7 +60,7 @@ export function mergeDraftCardStructure(
     return [{ ...current, cards: [...cards, ...omittedCurrentCards] }];
   });
   const includedIds = new Set(columns.map(column => column.id));
-  return [...columns, ...latest.filter(column => !includedIds.has(column.id))];
+  return inheritColumnProjects([...columns, ...latest.filter(column => !includedIds.has(column.id))]);
 }
 
 export function sameCardStructure(left: KanbanColumn[], right: KanbanColumn[]): boolean {
@@ -173,7 +182,7 @@ export function restoreCardStructure(
     }
   });
 
-  return restored;
+  return inheritColumnProjects(restored, affectedColumnIds);
 }
 
 export function applyCardOrder(
@@ -204,11 +213,11 @@ export function moveCardInColumns(
   const targetColumn = columns.find(column => column.id === targetColumnId);
   if (sourceColumnId === targetColumnId && targetColumn?.cards.some(card => card.id === cardId)) {
     const remainingIds = targetColumn.cards.map(card => card.id).filter(id => id !== cardId);
-    return applyCardOrder(columns, targetColumnId, [
+    return inheritColumnProjects(applyCardOrder(columns, targetColumnId, [
       ...remainingIds.slice(0, targetIndex),
       cardId,
       ...remainingIds.slice(targetIndex),
-    ]);
+    ]), [targetColumnId]);
   }
   const card = columns.flatMap(column => column.cards).find(candidate => candidate.id === cardId);
   if (!card) return columns;
@@ -221,5 +230,7 @@ export function moveCardInColumns(
   const cards = [...target.cards];
   const index = Math.max(0, Math.min(targetIndex, cards.length));
   cards.splice(index, 0, card);
-  return withoutCard.map(column => column.id === targetColumnId ? { ...column, cards } : column);
+  return inheritColumnProjects(withoutCard.map(column =>
+    column.id === targetColumnId ? { ...column, cards } : column),
+  [sourceColumnId, targetColumnId]);
 }

@@ -171,9 +171,10 @@ export async function getOwnedRecord(
 ) {
   const { data, error } = await supabase
     .from(table)
-    .select('id, user_id')
+    .select(table === 'kanban_columns' ? 'id, user_id, project_id'
+      : table === 'kanban_cards' ? 'id, user_id, column_id' : 'id, user_id')
     .eq('id', id)
-    .maybeSingle();
+    .maybeSingle<{ id: string; user_id: string; project_id?: string | null; column_id?: string }>();
 
   if (error) {
     console.error(`[Kanban API] ${table} ownership lookup failed:`, {

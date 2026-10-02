@@ -56,7 +56,9 @@ describe('update-card completion persistence', () => {
         supabase: { from: mocks.from },
       },
     });
-    mocks.getOwnedRecord.mockResolvedValue({ kind: 'owned', data: { id: CARD_ID, user_id: USER_ID } });
+    mocks.getOwnedRecord.mockResolvedValue({ kind: 'owned', data: {
+      id: CARD_ID, user_id: USER_ID, column_id: CARD_ID, project_id: null,
+    } });
   });
 
   it('sets and clears completed_at only for an owned card', async () => {

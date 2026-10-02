@@ -89,7 +89,7 @@ export async function POST(req: NextRequest) {
       position: position ?? 0,
     };
     
-    if (projectId !== undefined) cardData.project_id = projectId;
+    cardData.project_id = columnOwnership.data.project_id ?? null;
     if (dueDate !== undefined) cardData.due_date = dueDate;
     if (completedAt !== undefined) cardData.completed_at = completedAt;
     

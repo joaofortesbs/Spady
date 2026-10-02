@@ -127,6 +127,98 @@ describe('useBlindadosData project synchronization', () => {
     auth.user = null;
   });
 
+  it('saves project metadata without changing card associations or unrelated fields', async () => {
+    const project = { id: projectA, name: 'Anterior', color: '#06b6d4', createdAt: '2026-10-02' };
+    vi.mocked(KanbanService.prototype.loadProjects).mockResolvedValue([project]);
+    vi.spyOn(KanbanService.prototype, 'saveProject').mockResolvedValue({
+      success: true, data: { project: { ...project, name: 'Novo' }, columns: [], cards: [] },
+    });
+    const { result } = renderHook(() => useBlindadosData());
+    await waitFor(() => expect(result.current.isLoaded).toBe(true));
+    const before = result.current.data.kanban.columns;
+    await act(async () => {
+      expect((await result.current.updateProject(projectA, {
+        name: 'Novo', expected: { name: 'Anterior' }, columnChanges: [],
+      })).success).toBe(true);
+    });
+    expect(result.current.data.kanban.projects[0].name).toBe('Novo');
+    expect(result.current.data.kanban.columns).toEqual(before);
+    expect(JSON.parse(localStorage.getItem(getUserDataCacheKey('user-a'))!).kanban.projects[0].name).toBe('Novo');
+  });
+
+  it('keeps the entire board unchanged when atomic project saving is unavailable', async () => {
+    const project = { id: projectA, name: 'Anterior', color: '#06b6d4', createdAt: '2026-10-02' };
+    vi.mocked(KanbanService.prototype.loadProjects).mockResolvedValue([project]);
+    vi.spyOn(KanbanService.prototype, 'saveProject').mockResolvedValue({ success: false, error: 'SQL indisponível' });
+    const { result } = renderHook(() => useBlindadosData());
+    await waitFor(() => expect(result.current.isLoaded).toBe(true));
+    const before = result.current.data.kanban;
+    await act(async () => {
+      expect(await result.current.updateProject(projectA, {
+        name: 'Novo', expected: { name: 'Anterior' },
+        columnChanges: [{ columnId: column.id, expectedProjectId: null, projectId: projectA }],
+      })).toEqual({ success: false, error: 'SQL indisponível' });
+    });
+    expect(result.current.data.kanban).toEqual(before);
+  });
+
+  it('keeps the destination project after a subsequent independent card edit fails', async () => {
+    const destinationId = '77777777-7777-4777-8777-777777777777';
+    vi.mocked(KanbanService.prototype.loadColumns).mockResolvedValue([
+      { ...column, projectId: projectA },
+      { ...column, id: destinationId, projectId: projectB, cards: [] },
+    ]);
+    vi.mocked(fetch).mockImplementation(input => {
+      if (urlOf(input) === '/api/pomodoro/get-settings') return Promise.resolve(response(pomodoroData));
+      if (urlOf(input) === '/api/kanban/move-card') return Promise.resolve(response({ success: true }));
+      return Promise.resolve(response({ success: false, error: 'Rejected' }, 403));
+    });
+    const { result } = renderHook(() => useBlindadosData());
+    await waitFor(() => expect(result.current.isLoaded).toBe(true));
+    await act(async () => { await result.current.moveCard(column.cards[0].id, column.id, destinationId, 0); });
+    await act(async () => {
+      await result.current.updateKanbanCard(destinationId, column.cards[0].id, { projectId: null });
+    });
+    expect(result.current.data.kanban.columns[1].cards[0].projectId).toBe(projectB);
+  });
+
+  it('queues a create behind atomic project editing and inherits the confirmed destination', async () => {
+    const project = { id: projectB, name: 'Destino', color: '#06b6d4', createdAt: '2026-10-02' };
+    vi.mocked(KanbanService.prototype.loadProjects).mockResolvedValue([project]);
+    vi.mocked(KanbanService.prototype.loadColumns).mockResolvedValue([{ ...column, projectId: projectA }]);
+    const saved = { project, columns: [{ id: column.id, projectId: projectB }],
+      cards: column.cards.map(card => ({ id: card.id, columnId: column.id, projectId: projectB })) };
+    const save = deferred<{ success: boolean; data: typeof saved }>();
+    const saveProject = vi.spyOn(KanbanService.prototype, 'saveProject').mockReturnValue(save.promise);
+    vi.mocked(fetch).mockImplementation((input, options) => {
+      if (urlOf(input) === '/api/pomodoro/get-settings') return Promise.resolve(response(pomodoroData));
+      if (urlOf(input) === '/api/kanban/add-card') {
+        const request = JSON.parse(options!.body as string);
+        return Promise.resolve(response({ success: true, card: persistedCard(request.projectId) }));
+      }
+      return Promise.resolve(response({ success: false }, 500));
+    });
+    const { result } = renderHook(() => useBlindadosData());
+    await waitFor(() => expect(result.current.isLoaded).toBe(true));
+    let editing: ReturnType<typeof result.current.updateProject>;
+    let creating: Promise<void>;
+    act(() => {
+      editing = result.current.updateProject(projectB, {
+        expected: {}, columnChanges: [{ columnId: column.id, expectedProjectId: projectA, projectId: projectB }],
+      });
+    });
+    await waitFor(() => expect(saveProject).toHaveBeenCalledTimes(1));
+    act(() => { creating = result.current.addKanbanCard(column.id, newCard(projectA)); });
+    expect(vi.mocked(fetch).mock.calls.some(([input]) => urlOf(input) === '/api/kanban/add-card')).toBe(false);
+    await act(async () => {
+      save.resolve({ success: true, data: saved });
+      await editing;
+      await creating;
+    });
+    expect(result.current.data.kanban.columns[0].projectId).toBe(projectB);
+    expect(result.current.data.kanban.columns[0].cards.every(card => card.projectId === projectB)).toBe(true);
+  });
+
   it('replaces the optimistic project with the confirmed database ID', async () => {
     const persisted = {
       id: '44444444-4444-4444-8444-444444444444',
@@ -232,6 +324,7 @@ describe('useBlindadosData project synchronization', () => {
   });
 
   it('waits for the full create response before persisting a later transfer and keeps its optimistic project', async () => {
+    vi.mocked(KanbanService.prototype.loadColumns).mockResolvedValue([{ ...column, projectId: projectA }]);
     const createResponse = deferred<Response>();
     const transferResponse = deferred<boolean>();
     const fetchMock = vi.mocked(fetch);
@@ -366,14 +459,14 @@ describe('useBlindadosData project synchronization', () => {
     expect(ownerBCache).not.toContain(newCard().title);
   });
 
-  it('preserves an intentional card project choice when no column transfer is pending', async () => {
+  it('clears an intentional card project choice in a column without a project', async () => {
     const manualProject = '88888888-8888-4888-8888-888888888888';
     const fetchMock = vi.mocked(fetch);
     fetchMock.mockImplementation(input => {
       const url = urlOf(input);
       if (url === '/api/pomodoro/get-settings') return Promise.resolve(response(pomodoroData));
       if (url === '/api/kanban/add-card') {
-        return Promise.resolve(response({ success: true, card: persistedCard(manualProject) }));
+        return Promise.resolve(response({ success: true, card: persistedCard(null) }));
       }
       return Promise.resolve(response({ success: false, error: 'unexpected request' }, 500));
     });
@@ -385,9 +478,9 @@ describe('useBlindadosData project synchronization', () => {
     });
     const request = JSON.parse((fetchMock.mock.calls.find(([input]) =>
       urlOf(input) === '/api/kanban/add-card')?.[1] as RequestInit).body as string);
-    expect(request.projectId).toBe(manualProject);
-    expect(result.current.data.kanban.columns[0].cards.find(card => card.id === persistedCard(manualProject).id)?.projectId)
-      .toBe(manualProject);
+    expect(request.projectId).toBeNull();
+    expect(result.current.data.kanban.columns[0].cards.find(card => card.id === persistedCard(null).id)?.projectId)
+      .toBeNull();
   });
 
   it('does not retry an ambiguous failed create request and removes its temporary card', async () => {

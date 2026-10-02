@@ -95,7 +95,9 @@ describe('Kanban project and card route contracts', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     setContext();
-    mocks.getOwnedRecord.mockResolvedValue({ kind: 'owned', data: { id: PROJECT_ID, user_id: USER_ID } });
+    mocks.getOwnedRecord.mockResolvedValue({ kind: 'owned', data: {
+      id: PROJECT_ID, user_id: USER_ID, column_id: COLUMN_ID, project_id: PROJECT_ID,
+    } });
     mocks.builder.order.mockResolvedValue({ data: [projectRow], error: null });
     mocks.builder.single.mockResolvedValue({ data: projectRow, error: null });
     mocks.builder.maybeSingle.mockResolvedValue({ data: [projectRow], error: null });
@@ -231,7 +233,7 @@ describe('Kanban project and card route contracts', () => {
 
   it('creates a same-user card with the real project relation and public DTO', async () => {
     mocks.getOwnedRecord
-      .mockResolvedValueOnce({ kind: 'owned', data: { id: COLUMN_ID, user_id: USER_ID } })
+      .mockResolvedValueOnce({ kind: 'owned', data: { id: COLUMN_ID, user_id: USER_ID, project_id: PROJECT_ID } })
       .mockResolvedValueOnce({ kind: 'owned', data: { id: PROJECT_ID, user_id: USER_ID } });
     mocks.builder.single.mockResolvedValue({ data: cardRow, error: null });
 
@@ -255,9 +257,10 @@ describe('Kanban project and card route contracts', () => {
     }));
   });
 
-  it('clears a card project explicitly and validates a new project ownership', async () => {
+  it('clears a card project in an unbound column and validates legacy input ownership', async () => {
     mocks.getOwnedRecord
-      .mockResolvedValueOnce({ kind: 'owned', data: { id: CARD_ID, user_id: USER_ID } });
+      .mockResolvedValueOnce({ kind: 'owned', data: { id: CARD_ID, user_id: USER_ID, column_id: COLUMN_ID } })
+      .mockResolvedValueOnce({ kind: 'owned', data: { id: COLUMN_ID, user_id: USER_ID, project_id: null } });
     mocks.builder.single.mockResolvedValue({ data: { ...cardRow, project_id: null }, error: null });
 
     const clearResponse = required(await UPDATE_CARD(request('POST', 'update-card', {
@@ -269,7 +272,8 @@ describe('Kanban project and card route contracts', () => {
     expect(mocks.builder.update).toHaveBeenCalledWith(expect.objectContaining({ project_id: null }));
 
     mocks.getOwnedRecord
-      .mockResolvedValueOnce({ kind: 'owned', data: { id: CARD_ID, user_id: USER_ID } })
+      .mockResolvedValueOnce({ kind: 'owned', data: { id: CARD_ID, user_id: USER_ID, column_id: COLUMN_ID } })
+      .mockResolvedValueOnce({ kind: 'owned', data: { id: COLUMN_ID, user_id: USER_ID, project_id: null } })
       .mockResolvedValueOnce({ kind: 'forbidden' });
     const crossUserResponse = required(await UPDATE_CARD(request('POST', 'update-card', {
       cardId: CARD_ID,
@@ -278,6 +282,28 @@ describe('Kanban project and card route contracts', () => {
 
     expect(crossUserResponse.status).toBe(403);
     expect(await crossUserResponse.json()).toEqual({ error: 'You do not have access to this project' });
+  });
+
+  it('ignores an independent project choice when creating in an unbound column', async () => {
+    mocks.getOwnedRecord.mockResolvedValueOnce({
+      kind: 'owned', data: { id: COLUMN_ID, user_id: USER_ID, project_id: null },
+    });
+    mocks.builder.single.mockResolvedValue({ data: { ...cardRow, project_id: null }, error: null });
+    const response = required(await ADD_CARD(request('POST', 'add-card', {
+      columnId: COLUMN_ID, title: 'Card E2E', projectId: PROJECT_ID,
+    })));
+    expect(response.status).toBe(200);
+    expect(mocks.builder.insert).toHaveBeenCalledWith(expect.objectContaining({ project_id: null }));
+    expect((await response.json()).card.projectId).toBeNull();
+  });
+
+  it('does not clear an independent card association while its column remains bound', async () => {
+    mocks.builder.single.mockResolvedValue({ data: cardRow, error: null });
+    const response = required(await UPDATE_CARD(request('POST', 'update-card', {
+      cardId: CARD_ID, projectId: null,
+    })));
+    expect(response.status).toBe(200);
+    expect(mocks.builder.update).toHaveBeenCalledWith(expect.objectContaining({ project_id: PROJECT_ID }));
   });
 
   it('does not leak database details from card persistence failures', async () => {

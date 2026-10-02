@@ -13,3 +13,4 @@
 - [Criação e transferência coletiva](kanban-creation-transfer-order.md) — transferência atômica no banco não inclui INSERT futuro; criações pendentes precisam participar da ordem da coluna.
 - [Dependência de projeto e filtros](kanban-project-binding-policy.md) — tarefas sempre seguem a coluna, inclusive sem projeto; sem escolha individual ou exceção no filtro.
 - [Relógio em testes autenticados](browser-clock-auth-safety.md) — avançar Date globalmente pode expirar a sessão; separar a simulação do dia civil do relógio da autenticação.
+- [Concorrência na herança de projeto](kanban-parent-binding-locks.md) — serializar antes de locks de linhas, inclusive em RPCs antigas; um trigger por linha não basta.

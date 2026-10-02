@@ -8,6 +8,8 @@ import {
   KanbanMutationResult,
   KanbanProject,
   KanbanColumnUpdates,
+  KanbanProjectSaveData,
+  KanbanProjectUpdates,
 } from "@/lib/types/blindados";
 
 interface KanbanWorkspaceProps {
@@ -36,6 +38,7 @@ interface KanbanWorkspaceProps {
   selectedProjectId: string | null;
   onSelectProject: (projectId: string | null) => void;
   onAddProject: (name: string, color: string) => Promise<KanbanMutationResult<KanbanProject>>;
+  onUpdateProject?: (projectId: string, updates: KanbanProjectUpdates) => Promise<KanbanMutationResult<KanbanProjectSaveData>>;
   selectedDate: Date | null;
   onSelectDate: (date: Date | null) => void;
   loadError: boolean;
@@ -65,6 +68,7 @@ export function KanbanWorkspace({
   selectedProjectId,
   onSelectProject,
   onAddProject,
+  onUpdateProject,
   selectedDate,
   onSelectDate,
   loadError,
@@ -104,6 +108,7 @@ export function KanbanWorkspace({
         selectedProjectId={selectedProjectId}
         onSelectProject={onSelectProject}
         onAddProject={onAddProject}
+        onUpdateProject={onUpdateProject}
         selectedDate={selectedDate}
         onSelectDate={onSelectDate}
       />

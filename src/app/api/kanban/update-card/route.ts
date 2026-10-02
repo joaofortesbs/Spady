@@ -67,6 +67,9 @@ export async function POST(req: NextRequest) {
 
     const cardOwnership = await getOwnedRecord(supabase, 'kanban_cards', input.cardId, user.id);
     if (cardOwnership.kind !== 'owned') return relationError(cardOwnership.kind, 'card');
+    if (!isUuid(cardOwnership.data.column_id)) return apiError('Card column could not be verified', 409);
+    const columnOwnership = await getOwnedRecord(supabase, 'kanban_columns', cardOwnership.data.column_id, user.id);
+    if (columnOwnership.kind !== 'owned') return relationError(columnOwnership.kind, 'column');
     
     const updateData: Record<string, unknown> = {
       updated_at: new Date().toISOString(),
@@ -82,8 +85,8 @@ export async function POST(req: NextRequest) {
         const projectOwnership = await getOwnedRecord(supabase, 'kanban_projects', input.projectId, user.id);
         if (projectOwnership.kind !== 'owned') return relationError(projectOwnership.kind, 'project');
       }
-      updateData.project_id = input.projectId;
     }
+    updateData.project_id = columnOwnership.data.project_id ?? null;
     if (input.dueDate !== undefined) updateData.due_date = input.dueDate;
     if (input.completedAt !== undefined) updateData.completed_at = input.completedAt;
     

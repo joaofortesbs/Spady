@@ -9,8 +9,11 @@ import { PomodoroService } from '@/lib/services/pomodoroService';
 import { safeStorage } from '@/lib/utils/safeStorage';
 import { getUserDataCacheKey, STORAGE_KEYS } from '@/lib/utils/storage.constants';
 import { toast } from 'sonner';
+import type { KanbanProjectSaveData, KanbanProjectUpdates } from '@/lib/types/blindados';
+import { parseProjectUpdates } from '@/lib/kanban-project-mutations';
 import {
   applyCardOrder,
+  inheritColumnProjects,
   moveCardInColumns,
   mergeDraftCardStructure,
   mergeRequestedCardFields,
@@ -122,6 +125,7 @@ export function useBlindadosData() {
   const loadGenerationRef = useRef(0);
   const dataMutationVersionRef = useRef(0);
   const columnMutationQueueRef = useRef(new Map<string, Promise<boolean>>());
+  const projectMutationQueueRef = useRef(new Map<string, Promise<boolean>>());
   const confirmedColumnsRef = useRef(new Map<string, KanbanColumn>());
   const columnFieldVersionsRef = useRef(new Map<string, Partial<Record<keyof KanbanColumnUpdates, number>>>());
   const columnProjectEpochRef = useRef(new Map<string, number>());
@@ -297,6 +301,7 @@ export function useBlindadosData() {
   useEffect(() => {
     pendingOperationsRef.current = 0;
     columnMutationQueueRef.current.clear();
+    projectMutationQueueRef.current.clear();
     cardMutationQueueRef.current.clear();
     cardMutationVersionRef.current.clear();
     cardFieldVersionsRef.current.clear();
@@ -585,7 +590,7 @@ export function useBlindadosData() {
       subtasks: card.subtasks || [],
       createdAt: now,
       updatedAt: now,
-      projectId: card.projectId ?? null,
+      projectId: column.projectId ?? null,
       dueDate: card.dueDate ?? null,
       completedAt: card.completedAt ?? null,
     };
@@ -667,14 +672,10 @@ export function useBlindadosData() {
         return false;
       }
 
-      // A create ordered behind a project transfer inherits the confirmed
-      // column association, including an explicit clear. Otherwise retain the
-      // card's intentional project choice.
-      const resolvedProjectId = projectTransferAhead
-        ? (confirmedColumnProjectsRef.current.has(columnId)
+      // A card always inherits the confirmed column, including an explicit clear.
+      const resolvedProjectId = confirmedColumnProjectsRef.current.has(columnId)
           ? confirmedColumnProjectsRef.current.get(columnId)
-          : currentColumn.projectId)
-        : card.projectId;
+          : currentColumn.projectId;
       if (projectTransferAhead) {
         const latest = dataRef.current;
         const updated = {
@@ -726,7 +727,7 @@ export function useBlindadosData() {
             tags: card.tags || [],
             subtasks: card.subtasks || [],
             position,
-            projectId: projectTransferAhead ? resolvedProjectId ?? null : card.projectId ?? undefined,
+            projectId: resolvedProjectId ?? null,
             dueDate: card.dueDate ?? undefined,
             completedAt: card.completedAt ?? undefined,
           }),
@@ -855,6 +856,10 @@ export function useBlindadosData() {
     const persistedUpdates = Object.fromEntries(
       Object.entries(updates).filter(([, value]) => value !== undefined),
     ) as Partial<KanbanCard>;
+    // Project choice is never independent from the card's current column.
+    if (persistedUpdates.projectId !== undefined) {
+      persistedUpdates.projectId = currentColumn?.projectId ?? null;
+    }
     const requestedKeys = Object.keys(persistedUpdates) as (keyof KanbanCard)[];
     if (requestedKeys.length === 0) return false;
     const effectiveColumnId = currentColumn?.id ?? columnId;
@@ -1267,6 +1272,15 @@ export function useBlindadosData() {
                 targetColId,
                 targetIdx,
               );
+              const confirmedMovedCard = confirmedCardStructureRef.current
+                .find(column => column.id === targetColId)?.cards.find(card => card.id === cardId);
+              if (confirmedMovedCard) {
+                confirmedCardProjectsRef.current.set(cardId, confirmedMovedCard.projectId);
+                const baseline = confirmedCardsRef.current.get(cardId);
+                if (baseline) confirmedCardsRef.current.set(cardId, {
+                  ...baseline, projectId: confirmedMovedCard.projectId,
+                });
+              }
             }
             if (userIdRef.current === owner && isLatestStructure()) {
               for (const [key, scope] of dirtyCardStructureScopesRef.current) {
@@ -1469,7 +1483,11 @@ export function useBlindadosData() {
         Object.assign(confirmed, normalized);
         if (normalized.projectId !== undefined) {
           confirmedColumnProjectsRef.current.set(columnId, normalized.projectId);
-          dataRef.current.kanban.columns.find(column => column.id === columnId)?.cards.forEach(card => {
+          confirmedCardStructureRef.current = inheritColumnProjects(
+            confirmedCardStructureRef.current.map(column => column.id === columnId
+              ? { ...column, projectId: normalized.projectId } : column), [columnId],
+          );
+          confirmedCardStructureRef.current.find(column => column.id === columnId)?.cards.forEach(card => {
             confirmedCardProjectsRef.current.set(card.id, normalized.projectId);
             const confirmedCard = confirmedCardsRef.current.get(card.id);
             if (confirmedCard) confirmedCardsRef.current.set(card.id, { ...confirmedCard, projectId: normalized.projectId });
@@ -2153,6 +2171,104 @@ export function useBlindadosData() {
     }
   }, [user]);
 
+  const updateProject = useCallback(async (
+    projectId: string, input: KanbanProjectUpdates,
+  ): Promise<KanbanMutationResult<KanbanProjectSaveData>> => {
+    const owner = userIdRef.current;
+    const generation = loadGenerationRef.current;
+    const updates = parseProjectUpdates(projectId, input);
+    const service = servicesRef.current.kanban;
+    if (!owner || !service || !updates
+      || !dataRef.current.kanban.projects.some(project => project.id === projectId)) {
+      return { success: false, error: 'Projeto ou alterações inválidas.' };
+    }
+    const isCurrent = () => userIdRef.current === owner && loadGenerationRef.current === generation;
+    const columnIds = updates.columnChanges.map(change => change.columnId);
+    const predecessors = [
+      projectMutationQueueRef.current.get(projectId),
+      ...columnIds.flatMap(id => [
+        columnMutationQueueRef.current.get(id), columnStructuralQueueRef.current.get(id),
+        ...dataRef.current.kanban.columns.find(column => column.id === id)?.cards.map(card =>
+          cardMutationQueueRef.current.get(card.id)) ?? [],
+      ]),
+    ].filter((operation): operation is Promise<boolean> => Boolean(operation));
+    const version = ++dataMutationVersionRef.current;
+    columnIds.forEach(id => {
+      columnProjectEpochRef.current.set(id, version);
+      const fields = columnFieldVersionsRef.current.get(id) ?? {};
+      fields.projectId = version;
+      columnFieldVersionsRef.current.set(id, fields);
+    });
+    pendingOperationsRef.current++;
+    let result: KanbanMutationResult<KanbanProjectSaveData> = { success: false };
+    const operation = Promise.allSettled(predecessors).then(async () => {
+      if (!isCurrent()) return false;
+      result = await service.saveProject(projectId, updates);
+      if (!isCurrent()) {
+        result = { success: false, error: 'A sessão mudou antes da confirmação.' };
+        return false;
+      }
+      if (!result.success || !result.data) return false;
+      const saved = result.data;
+      for (const column of saved.columns) {
+        confirmedColumnProjectsRef.current.set(column.id, column.projectId);
+        const baseline = confirmedColumnsRef.current.get(column.id);
+        if (baseline) {
+          baseline.projectId = column.projectId;
+          baseline.cards = baseline.cards.map(card => ({ ...card, projectId: column.projectId }));
+        }
+      }
+      for (const card of saved.cards) {
+        confirmedCardProjectsRef.current.set(card.id, card.projectId);
+        const baseline = confirmedCardsRef.current.get(card.id);
+        if (baseline) confirmedCardsRef.current.set(card.id, { ...baseline, projectId: card.projectId });
+      }
+      confirmedCardStructureRef.current = inheritColumnProjects(
+        confirmedCardStructureRef.current.map(column => {
+          const binding = saved.columns.find(changed => changed.id === column.id);
+          return binding ? { ...column, projectId: binding.projectId } : column;
+        }), columnIds,
+      );
+      const apply = (current: BlindadosData): BlindadosData => ({
+        ...current,
+        kanban: {
+          projects: current.kanban.projects.map(project => project.id === projectId ? saved.project : project),
+          columns: current.kanban.columns.map(column => {
+            const binding = saved.columns.find(changed => changed.id === column.id);
+            return binding && columnFieldVersionsRef.current.get(column.id)?.projectId === version
+              ? { ...column, projectId: binding.projectId,
+                cards: column.cards.map(card => ({ ...card, projectId: binding.projectId })) } : column;
+          }),
+        },
+        lastUpdated: new Date().toISOString(),
+      });
+      dataRef.current = apply(dataRef.current);
+      writeCache(dataRef.current);
+      setData(current => {
+        const updated = apply(current);
+        writeCache(updated);
+        return updated;
+      });
+      return true;
+    }).catch(() => {
+      result = { success: false, error: 'Não foi possível confirmar a edição do projeto.' };
+      return false;
+    }).finally(() => {
+      if (isCurrent()) {
+        pendingOperationsRef.current = Math.max(0, pendingOperationsRef.current - 1);
+        columnIds.forEach(id => columnConfirmedProjectEpochRef.current.set(id, version));
+      }
+      if (projectMutationQueueRef.current.get(projectId) === operation) projectMutationQueueRef.current.delete(projectId);
+      columnIds.forEach(id => {
+        if (columnMutationQueueRef.current.get(id) === operation) columnMutationQueueRef.current.delete(id);
+      });
+    });
+    projectMutationQueueRef.current.set(projectId, operation);
+    columnIds.forEach(id => columnMutationQueueRef.current.set(id, operation));
+    await operation;
+    return result;
+  }, [writeCache]);
+
   return {
     data: safeData,
     isLoaded,
@@ -2169,6 +2285,7 @@ export function useBlindadosData() {
     addPomodoroSession,
     updatePomodoroSettings,
     addProject,
+    updateProject,
     loadError,
     forceSync: () => loadData(true),
   };

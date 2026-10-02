@@ -1,5 +1,7 @@
 import { SupabaseClient } from '@supabase/supabase-js';
 import { KanbanColumn, KanbanCard, KanbanProject, ColumnBehavior } from '@/lib/types/blindados';
+import type { KanbanMutationResult, KanbanProjectSaveData, KanbanProjectUpdates } from '@/lib/types/blindados';
+import { confirmsProjectUpdates, isProjectSaveData, parseProjectUpdates } from '@/lib/kanban-project-mutations';
 
 const DEFAULT_COLUMNS = ['A FAZER', 'EM PROGRESSO', 'CONCLUÍDO'];
 const MAX_RETRIES = 2;
@@ -587,6 +589,28 @@ export class KanbanService {
     } catch (e) {
       console.error('KanbanService.addProject exception:', e);
       return null;
+    }
+  }
+
+  async saveProject(
+    projectId: string, updates: KanbanProjectUpdates,
+  ): Promise<KanbanMutationResult<KanbanProjectSaveData>> {
+    const normalized = parseProjectUpdates(projectId, updates);
+    if (!normalized) return { success: false, error: 'Alterações de projeto inválidas.' };
+    try {
+      const response = await fetch('/api/kanban/projects', {
+        method: 'PATCH', credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ projectId, updates: normalized }),
+      });
+      const result = await response.json().catch(() => ({}));
+      if (!response.ok || result.success !== true || !isProjectSaveData(result.data)
+        || !confirmsProjectUpdates(result.data, projectId, normalized)) {
+        return { success: false, error: result.error || 'O servidor não confirmou a edição do projeto.' };
+      }
+      return { success: true, data: result.data };
+    } catch {
+      return { success: false, error: 'Não foi possível confirmar a edição. Recarregue antes de tentar novamente.' };
     }
   }
 

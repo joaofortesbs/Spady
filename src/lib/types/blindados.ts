@@ -28,6 +28,23 @@ export interface KanbanMutationResult<T> {
   error?: string;
 }
 
+export interface KanbanProjectUpdates {
+  name?: string;
+  color?: string;
+  expected: { name?: string; color?: string };
+  columnChanges: {
+    columnId: string;
+    expectedProjectId: string | null;
+    projectId: string | null;
+  }[];
+}
+
+export interface KanbanProjectSaveData {
+  project: KanbanProject;
+  columns: { id: string; projectId: string | null }[];
+  cards: { id: string; columnId: string; projectId: string | null }[];
+}
+
 export interface KanbanCard {
   id: string;
   title: string;

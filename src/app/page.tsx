@@ -45,6 +45,7 @@ function MainApp() {
     addPomodoroSession,
     updatePomodoroSettings,
     addProject,
+    updateProject,
     loadError,
     isSyncing,
     forceSync,
@@ -445,6 +446,7 @@ function MainApp() {
                   selectedProjectId={selectedProjectId}
                   onSelectProject={setSelectedProjectId}
                   onAddProject={addProject}
+                  onUpdateProject={updateProject}
                   selectedDate={selectedDate}
                   onSelectDate={setSelectedDate}
                   loadError={Boolean(loadError)}
@@ -496,6 +498,7 @@ function MainApp() {
                 selectedProjectId={selectedProjectId}
                 onSelectProject={setSelectedProjectId}
                 onAddProject={addProject}
+                onUpdateProject={updateProject}
                 selectedDate={selectedDate}
                 onSelectDate={setSelectedDate}
                 loadError={Boolean(loadError)}
