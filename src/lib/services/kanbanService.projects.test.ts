@@ -15,6 +15,24 @@ function serviceWith(builder: Record<string, ReturnType<typeof vi.fn>>) {
 describe('KanbanService projects and relations', () => {
   afterEach(() => vi.unstubAllGlobals());
 
+  it('deletes only through the authenticated API and requires the exact project confirmation', async () => {
+    const fetchMock = vi.fn().mockResolvedValue({
+      ok: true, json: async () => ({ success: true, deletedProjectId: PROJECT_ID }),
+    });
+    vi.stubGlobal('fetch', fetchMock);
+    const client = { from: vi.fn() };
+    const service = new KanbanService(client as unknown as SupabaseClient, USER_ID);
+    await expect(service.deleteProject(PROJECT_ID)).resolves.toBe(true);
+    expect(fetchMock).toHaveBeenCalledWith('/api/kanban/projects', expect.objectContaining({
+      method: 'DELETE', credentials: 'include', body: JSON.stringify({ projectId: PROJECT_ID }),
+    }));
+    expect(client.from).not.toHaveBeenCalled();
+    fetchMock.mockResolvedValue({ ok: true, json: async () => ({ success: true }) });
+    await expect(service.deleteProject(PROJECT_ID)).resolves.toBe(false);
+    fetchMock.mockResolvedValue({ ok: false, json: async () => ({ success: false }) });
+    await expect(service.deleteProject(PROJECT_ID)).resolves.toBe(false);
+  });
+
   it('requires confirmed project transfer and exact persisted column color', async () => {
     const fetchMock = vi.fn().mockResolvedValue({
       ok: true, status: 200,

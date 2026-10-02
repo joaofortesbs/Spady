@@ -78,7 +78,7 @@ interface KanbanBoardProps {
   projects?: KanbanProject[];
   onAddProject?: (name: string, color: string) => Promise<KanbanMutationResult<KanbanProject>>;
   onUpdateProject?: (projectId: string, updates: KanbanProjectUpdates) => Promise<KanbanMutationResult<KanbanProjectSaveData>>;
-  onDeleteProject?: (projectId: string) => void;
+  onDeleteProject?: (projectId: string) => Promise<KanbanMutationResult<void>>;
   selectedProjectId?: string | null;
   onSelectProject?: (projectId: string | null) => void;
   selectedDate?: Date | null;
@@ -1227,6 +1227,7 @@ export function KanbanBoard({
                             open={editingProjectId === project.id}
                             onOpenChange={(open) => setEditingProjectId(open ? project.id : null)}
                             onSave={onUpdateProject ?? (async () => ({ success: false, error: "A edição de projetos não está disponível." }))}
+                            onDelete={onDeleteProject}
                           />
                         </div>
                       ))}

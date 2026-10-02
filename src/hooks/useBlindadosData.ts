@@ -126,6 +126,7 @@ export function useBlindadosData() {
   const dataMutationVersionRef = useRef(0);
   const columnMutationQueueRef = useRef(new Map<string, Promise<boolean>>());
   const projectMutationQueueRef = useRef(new Map<string, Promise<boolean>>());
+  const deletingProjectsRef = useRef(new Set<string>());
   const confirmedColumnsRef = useRef(new Map<string, KanbanColumn>());
   const columnFieldVersionsRef = useRef(new Map<string, Partial<Record<keyof KanbanColumnUpdates, number>>>());
   const columnProjectEpochRef = useRef(new Map<string, number>());
@@ -302,6 +303,7 @@ export function useBlindadosData() {
     pendingOperationsRef.current = 0;
     columnMutationQueueRef.current.clear();
     projectMutationQueueRef.current.clear();
+    deletingProjectsRef.current.clear();
     cardMutationQueueRef.current.clear();
     cardMutationVersionRef.current.clear();
     cardFieldVersionsRef.current.clear();
@@ -2269,6 +2271,99 @@ export function useBlindadosData() {
     return result;
   }, [writeCache]);
 
+  const deleteProject = useCallback(async (projectId: string): Promise<KanbanMutationResult<void>> => {
+    const owner = userIdRef.current;
+    const generation = loadGenerationRef.current;
+    const service = servicesRef.current.kanban;
+    if (!owner || !service || !isValidUUID(projectId)
+      || !dataRef.current.kanban.projects.some(project => project.id === projectId)) {
+      return { success: false, error: 'O projeto não está disponível para exclusão.' };
+    }
+    if (deletingProjectsRef.current.has(projectId)) {
+      return { success: false, error: 'A exclusão deste projeto já está em andamento.' };
+    }
+    const isCurrent = () => userIdRef.current === owner && loadGenerationRef.current === generation;
+    // Wait for existing binding/creation/movement writes before deleting. Future
+    // writes on these columns wait for this operation and resolve the new binding.
+    const columnIds = dataRef.current.kanban.columns.map(column => column.id);
+    const predecessors = [...new Set([
+      ...projectMutationQueueRef.current.values(),
+      ...columnMutationQueueRef.current.values(),
+      ...columnStructuralQueueRef.current.values(),
+      ...cardMutationQueueRef.current.values(),
+    ])];
+    const version = ++dataMutationVersionRef.current;
+    pendingOperationsRef.current++;
+    deletingProjectsRef.current.add(projectId);
+    let result: KanbanMutationResult<void> = { success: false, error: 'A sessão mudou antes da exclusão.' };
+    const clearBinding = (column: KanbanColumn): KanbanColumn => ({
+      ...column,
+      projectId: column.projectId === projectId ? null : column.projectId,
+      cards: column.cards.map(card => column.projectId === projectId || card.projectId === projectId
+        ? { ...card, projectId: null } : card),
+    });
+    const operation = Promise.allSettled(predecessors).then(async () => {
+      if (!isCurrent()) return false;
+      const success = await service.deleteProject(projectId);
+      if (!isCurrent()) return false;
+      if (!success) {
+        result = { success: false, error: 'Não foi possível confirmar a exclusão do projeto. Tente novamente.' };
+        return false;
+      }
+      for (const [id, binding] of confirmedColumnProjectsRef.current) {
+        if (binding !== projectId) continue;
+        confirmedColumnProjectsRef.current.set(id, null);
+        columnConfirmedProjectEpochRef.current.set(id, version);
+        if ((columnProjectEpochRef.current.get(id) ?? 0) <= version) {
+          columnProjectEpochRef.current.set(id, version);
+        }
+      }
+      for (const [id, baseline] of confirmedColumnsRef.current) {
+        confirmedColumnsRef.current.set(id, clearBinding(baseline));
+      }
+      for (const [id, binding] of confirmedCardProjectsRef.current) {
+        if (binding === projectId) confirmedCardProjectsRef.current.set(id, null);
+      }
+      for (const [id, baseline] of confirmedCardsRef.current) {
+        if (baseline.projectId === projectId) confirmedCardsRef.current.set(id, { ...baseline, projectId: null });
+      }
+      confirmedCardStructureRef.current = confirmedCardStructureRef.current.map(clearBinding);
+      const apply = (current: BlindadosData): BlindadosData => ({
+        ...current,
+        kanban: {
+          projects: current.kanban.projects.filter(project => project.id !== projectId),
+          columns: current.kanban.columns.map(clearBinding),
+        },
+        lastUpdated: new Date().toISOString(),
+      });
+      dataRef.current = apply(dataRef.current);
+      writeCache(dataRef.current);
+      setData(current => {
+        const updated = apply(current);
+        writeCache(updated);
+        return updated;
+      });
+      result = { success: true };
+      return true;
+    }).catch(() => {
+      result = { success: false, error: 'Não foi possível confirmar a exclusão do projeto. Tente novamente.' };
+      return false;
+    }).finally(() => {
+      if (isCurrent()) {
+        pendingOperationsRef.current = Math.max(0, pendingOperationsRef.current - 1);
+        deletingProjectsRef.current.delete(projectId);
+      }
+      if (projectMutationQueueRef.current.get(projectId) === operation) projectMutationQueueRef.current.delete(projectId);
+      columnIds.forEach(id => {
+        if (columnMutationQueueRef.current.get(id) === operation) columnMutationQueueRef.current.delete(id);
+      });
+    });
+    projectMutationQueueRef.current.set(projectId, operation);
+    columnIds.forEach(id => columnMutationQueueRef.current.set(id, operation));
+    await operation;
+    return result;
+  }, [writeCache]);
+
   return {
     data: safeData,
     isLoaded,
@@ -2286,6 +2381,7 @@ export function useBlindadosData() {
     updatePomodoroSettings,
     addProject,
     updateProject,
+    deleteProject,
     loadError,
     forceSync: () => loadData(true),
   };

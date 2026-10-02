@@ -127,6 +127,114 @@ describe('useBlindadosData project synchronization', () => {
     auth.user = null;
   });
 
+  it('removes only the confirmed project and clears bindings without deleting columns or cards', async () => {
+    const project = { id: projectA, name: 'Original', color: '#06b6d4', createdAt: '2026-10-02' };
+    vi.mocked(KanbanService.prototype.loadProjects).mockResolvedValue([project]);
+    vi.mocked(KanbanService.prototype.loadColumns).mockResolvedValue([{ ...column, projectId: projectA }]);
+    vi.spyOn(KanbanService.prototype, 'deleteProject').mockResolvedValue(true);
+    const { result } = renderHook(() => useBlindadosData());
+    await waitFor(() => expect(result.current.isLoaded).toBe(true));
+    const before = result.current.data.kanban.columns[0];
+    await act(async () => {
+      expect(await result.current.deleteProject(projectA)).toEqual({ success: true });
+    });
+    expect(result.current.data.kanban.projects).toEqual([]);
+    expect(result.current.data.kanban.columns[0]).toEqual({
+      ...before, projectId: null, cards: before.cards.map(card => ({ ...card, projectId: null })),
+    });
+    const cached = JSON.parse(localStorage.getItem(getUserDataCacheKey('user-a'))!);
+    expect(cached.kanban.projects).toEqual([]);
+    expect(cached.kanban.columns[0].cards).toHaveLength(before.cards.length);
+    expect(cached.kanban.columns[0].projectId).toBeNull();
+  });
+
+  it('preserves the entire board when deletion is not confirmed', async () => {
+    const project = { id: projectA, name: 'Original', color: '#06b6d4', createdAt: '2026-10-02' };
+    vi.mocked(KanbanService.prototype.loadProjects).mockResolvedValue([project]);
+    vi.spyOn(KanbanService.prototype, 'deleteProject').mockResolvedValue(false);
+    const { result } = renderHook(() => useBlindadosData());
+    await waitFor(() => expect(result.current.isLoaded).toBe(true));
+    const before = result.current.data.kanban;
+    await act(async () => {
+      expect((await result.current.deleteProject(projectA)).success).toBe(false);
+    });
+    expect(result.current.data.kanban).toEqual(before);
+  });
+
+  it('blocks duplicate deletion while waiting for server confirmation', async () => {
+    const project = { id: projectA, name: 'Original', color: '#06b6d4', createdAt: '2026-10-02' };
+    vi.mocked(KanbanService.prototype.loadProjects).mockResolvedValue([project]);
+    const pending = deferred<boolean>();
+    const remove = vi.spyOn(KanbanService.prototype, 'deleteProject').mockReturnValue(pending.promise);
+    const { result } = renderHook(() => useBlindadosData());
+    await waitFor(() => expect(result.current.isLoaded).toBe(true));
+    let deletion!: ReturnType<typeof result.current.deleteProject>;
+    act(() => { deletion = result.current.deleteProject(projectA); });
+    await waitFor(() => expect(remove).toHaveBeenCalledTimes(1));
+    await act(async () => {
+      expect((await result.current.deleteProject(projectA)).success).toBe(false);
+      pending.resolve(true);
+      await deletion;
+    });
+    expect(remove).toHaveBeenCalledTimes(1);
+  });
+
+  it('ignores a late deletion response after the account changes', async () => {
+    const project = { id: projectA, name: 'Original', color: '#06b6d4', createdAt: '2026-10-02' };
+    vi.mocked(KanbanService.prototype.loadProjects).mockResolvedValue([project]);
+    const pending = deferred<boolean>();
+    const remove = vi.spyOn(KanbanService.prototype, 'deleteProject').mockReturnValue(pending.promise);
+    const { result, rerender } = renderHook(() => useBlindadosData());
+    await waitFor(() => expect(result.current.isLoaded).toBe(true));
+    let deletion!: ReturnType<typeof result.current.deleteProject>;
+    act(() => { deletion = result.current.deleteProject(projectA); });
+    await waitFor(() => expect(remove).toHaveBeenCalledTimes(1));
+    act(() => { auth.user = { id: 'user-b' }; rerender(); });
+    await waitFor(() => expect(result.current.isLoaded).toBe(true));
+    const newAccountData = result.current.data.kanban;
+    await act(async () => {
+      pending.resolve(true);
+      expect((await deletion).success).toBe(false);
+    });
+    expect(result.current.data.kanban).toEqual(newAccountData);
+  });
+
+  it('waits for a pending transfer and does not clear the destination project', async () => {
+    const project = { id: projectA, name: 'Original', color: '#06b6d4', createdAt: '2026-10-02' };
+    const destination = { ...project, id: projectB };
+    vi.mocked(KanbanService.prototype.loadProjects).mockResolvedValue([project, destination]);
+    const pending = deferred<{
+      success: boolean;
+      data: { project: typeof project; columns: { id: string; projectId: string }[];
+        cards: { id: string; columnId: string; projectId: string }[] };
+    }>();
+    const save = vi.spyOn(KanbanService.prototype, 'saveProject').mockReturnValue(pending.promise);
+    const remove = vi.spyOn(KanbanService.prototype, 'deleteProject').mockResolvedValue(true);
+    const { result } = renderHook(() => useBlindadosData());
+    await waitFor(() => expect(result.current.isLoaded).toBe(true));
+    let transfer!: ReturnType<typeof result.current.updateProject>;
+    let deletion!: ReturnType<typeof result.current.deleteProject>;
+    act(() => {
+      transfer = result.current.updateProject(projectB, {
+        expected: {}, columnChanges: [{ columnId: column.id, expectedProjectId: projectA, projectId: projectB }],
+      });
+      deletion = result.current.deleteProject(projectA);
+    });
+    await waitFor(() => expect(save).toHaveBeenCalledTimes(1));
+    expect(remove).not.toHaveBeenCalled();
+    await act(async () => {
+      pending.resolve({ success: true, data: {
+        project: destination, columns: [{ id: column.id, projectId: projectB }],
+        cards: [{ id: column.cards[0].id, columnId: column.id, projectId: projectB }],
+      } });
+      await transfer;
+      await deletion;
+    });
+    expect(result.current.data.kanban.projects.map(project => project.id)).toEqual([projectB]);
+    expect(result.current.data.kanban.columns[0].projectId).toBe(projectB);
+    expect(result.current.data.kanban.columns[0].cards[0].projectId).toBe(projectB);
+  });
+
   it('saves project metadata without changing card associations or unrelated fields', async () => {
     const project = { id: projectA, name: 'Anterior', color: '#06b6d4', createdAt: '2026-10-02' };
     vi.mocked(KanbanService.prototype.loadProjects).mockResolvedValue([project]);

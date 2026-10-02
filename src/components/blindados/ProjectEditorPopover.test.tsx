@@ -1,4 +1,4 @@
-import { cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { cleanup, fireEvent, render, screen, waitFor, within } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { ProjectEditorPopover } from "./ProjectEditorPopover";
 import type { KanbanColumn, KanbanProject, KanbanProjectUpdates } from "@/lib/types/blindados";
@@ -16,7 +16,10 @@ const columns: KanbanColumn[] = [
   { id: "column-c", title: "Pessoal", behavior: "active", projectId: null, cards: [] },
 ];
 
-function renderEditor(onSave = vi.fn().mockResolvedValue({ success: true })) {
+function renderEditor(
+  onSave = vi.fn().mockResolvedValue({ success: true }),
+  onDelete?: (projectId: string) => Promise<{ success: boolean; error?: string }>,
+) {
   const onOpenChange = vi.fn();
   render(
     <ProjectEditorPopover
@@ -27,6 +30,7 @@ function renderEditor(onSave = vi.fn().mockResolvedValue({ success: true })) {
       open
       onOpenChange={onOpenChange}
       onSave={onSave}
+      onDelete={onDelete}
     />,
   );
   return { onSave, onOpenChange };
@@ -103,5 +107,109 @@ describe("ProjectEditorPopover", () => {
     fireEvent.click(screen.getByRole("button", { name: "Cancelar" }));
     expect(onSave).not.toHaveBeenCalled();
     expect(onOpenChange).toHaveBeenCalledWith(false);
+  });
+
+  it("exposes an accessible delete control and never deletes before explicit confirmation", async () => {
+    const onDelete = vi.fn().mockResolvedValue({ success: true });
+    renderEditor(undefined, onDelete);
+
+    const deleteButton = screen.getByRole("button", { name: "Excluir projeto Projeto A" });
+    expect(deleteButton.getAttribute("aria-haspopup")).toBe("dialog");
+    expect(deleteButton.className).toContain("h-11");
+    expect(deleteButton.className).toContain("w-11");
+    expect(onDelete).not.toHaveBeenCalled();
+
+    fireEvent.click(deleteButton);
+    const alertDialog = await screen.findByRole("alertdialog");
+    expect(within(alertDialog).getByText("Excluir definitivamente Projeto A?")).toBeTruthy();
+    expect(within(alertDialog).getByText("Colunas e tarefas serão preservadas e ficarão sem projeto.")).toBeTruthy();
+
+    fireEvent.click(within(alertDialog).getByRole("button", { name: "Cancelar" }));
+    await waitFor(() => expect(screen.queryByRole("alertdialog")).toBeNull());
+    expect(onDelete).not.toHaveBeenCalled();
+  });
+
+  it("deletes only once after confirmation and closes the editor on success", async () => {
+    const onDelete = vi.fn().mockResolvedValue({ success: true });
+    const { onOpenChange } = renderEditor(undefined, onDelete);
+
+    fireEvent.click(screen.getByRole("button", { name: "Excluir projeto Projeto A" }));
+    const alertDialog = await screen.findByRole("alertdialog");
+    fireEvent.click(within(alertDialog).getByRole("button", { name: "Excluir definitivamente" }));
+    await waitFor(() => expect(onDelete).toHaveBeenCalledTimes(1));
+    expect(onDelete).toHaveBeenCalledWith(project.id);
+    await waitFor(() => expect(onOpenChange).toHaveBeenCalledWith(false));
+    expect(screen.queryByRole("alertdialog")).toBeNull();
+  });
+
+  it("keeps the editor and draft after a deletion result failure", async () => {
+    const onDelete = vi.fn().mockResolvedValue({ success: false, error: "Projeto em uso" });
+    const { onOpenChange } = renderEditor(undefined, onDelete);
+    const name = await screen.findByLabelText("Nome");
+    fireEvent.change(name, { target: { value: "Rascunho intacto" } });
+
+    fireEvent.click(screen.getByRole("button", { name: "Excluir projeto Projeto A" }));
+    const alertDialog = await screen.findByRole("alertdialog");
+    fireEvent.click(within(alertDialog).getByRole("button", { name: "Excluir definitivamente" }));
+
+    expect(await screen.findByRole("alert")).toHaveProperty("textContent", "Projeto em uso");
+    expect((screen.getByLabelText("Nome") as HTMLInputElement).value).toBe("Rascunho intacto");
+    expect(screen.getByRole("dialog", { name: "Editar projeto Projeto A", hidden: true })).toBeTruthy();
+    expect(onOpenChange).not.toHaveBeenCalledWith(false);
+  });
+
+  it("keeps the confirmation open after a rejected delete request", async () => {
+    const onDelete = vi.fn().mockRejectedValue(new Error("Falha de conexão"));
+    renderEditor(undefined, onDelete);
+    fireEvent.click(screen.getByRole("button", { name: "Excluir projeto Projeto A" }));
+    const alertDialog = await screen.findByRole("alertdialog");
+    fireEvent.click(within(alertDialog).getByRole("button", { name: "Excluir definitivamente" }));
+
+    expect(await screen.findByRole("alert")).toHaveProperty("textContent", "Falha de conexão");
+    expect(screen.getByRole("alertdialog")).toBeTruthy();
+    expect(screen.getByLabelText("Nome")).toBeTruthy();
+  });
+
+  it("blocks duplicate delete and save submissions and prevents Escape from closing while deleting", async () => {
+    let finishDelete!: (value: { success: boolean }) => void;
+    const onDelete = vi.fn(() => new Promise<{ success: boolean }>((resolve) => { finishDelete = resolve; }));
+    const onSave = vi.fn().mockResolvedValue({ success: true });
+    const { onOpenChange } = renderEditor(onSave, onDelete);
+
+    fireEvent.click(screen.getByRole("button", { name: "Excluir projeto Projeto A" }));
+    const alertDialog = await screen.findByRole("alertdialog");
+    const confirmButton = within(alertDialog).getByRole("button", { name: "Excluir definitivamente" });
+    fireEvent.click(confirmButton);
+    expect(await screen.findByRole("button", { name: "Excluindo..." })).toHaveProperty("disabled", true);
+    fireEvent.click(confirmButton);
+    fireEvent.submit(screen.getByLabelText("Nome").closest("form") as HTMLFormElement);
+    fireEvent.keyDown(document, { key: "Escape", code: "Escape" });
+
+    expect(onDelete).toHaveBeenCalledTimes(1);
+    expect(onSave).not.toHaveBeenCalled();
+    expect(screen.getByRole("alertdialog")).toBeTruthy();
+    expect(onOpenChange).not.toHaveBeenCalledWith(false);
+
+    finishDelete({ success: true });
+    await waitFor(() => expect(onOpenChange).toHaveBeenCalledWith(false));
+  });
+
+  it("blocks Escape and deletion while a save is pending", async () => {
+    let finishSave!: (value: { success: boolean }) => void;
+    const onSave = vi.fn(() => new Promise<{ success: boolean }>((resolve) => { finishSave = resolve; }));
+    const onDelete = vi.fn().mockResolvedValue({ success: true });
+    const { onOpenChange } = renderEditor(onSave, onDelete);
+
+    fireEvent.change(await screen.findByLabelText("Nome"), { target: { value: "Projeto editado" } });
+    fireEvent.click(screen.getByRole("button", { name: "Salvar" }));
+    fireEvent.keyDown(document, { key: "Escape", code: "Escape" });
+    fireEvent.click(screen.getByRole("button", { name: "Excluir projeto Projeto A" }));
+
+    expect(onSave).toHaveBeenCalledTimes(1);
+    expect(onDelete).not.toHaveBeenCalled();
+    expect(onOpenChange).not.toHaveBeenCalledWith(false);
+
+    finishSave({ success: true });
+    await waitFor(() => expect(onOpenChange).toHaveBeenCalledWith(false));
   });
 });

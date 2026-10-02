@@ -637,21 +637,16 @@ export class KanbanService {
 
   async deleteProject(projectId: string): Promise<boolean> {
     try {
-      const { data, error } = await this.supabase
-        .from('kanban_projects')
-        .delete()
-        .eq('id', projectId)
-        .eq('user_id', this.userId)
-        .select('id')
-        .maybeSingle();
-
-      if (error) {
-        console.error('KanbanService.deleteProject error:', error.message);
-        return false;
-      }
-      return Boolean(data);
+      const response = await fetch('/api/kanban/projects', {
+        method: 'DELETE',
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ projectId }),
+      });
+      const payload = await response.json().catch(() => null);
+      return response.ok && payload?.success === true && payload.deletedProjectId === projectId;
     } catch (e) {
-      console.error('KanbanService.deleteProject exception:', e);
+      console.error('KanbanService.deleteProject: exclusão não confirmada');
       return false;
     }
   }

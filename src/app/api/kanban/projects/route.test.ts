@@ -6,7 +6,7 @@ vi.mock('@/lib/api/kanban', async () => ({
   ...await vi.importActual<typeof import('@/lib/api/kanban')>('@/lib/api/kanban'),
   getKanbanServerContext: mocks.context, getOwnedRecord: mocks.owned,
 }));
-import { PATCH } from './route';
+import { DELETE, PATCH } from './route';
 
 const id = '11111111-1111-4111-8111-111111111111';
 const columnId = '22222222-2222-4222-8222-222222222222';
@@ -17,6 +17,52 @@ const updates = { name: 'Novo', expected: { name: 'Anterior' }, columnChanges: [
 const request = (changes: unknown = updates) => new NextRequest('http://localhost/api/kanban/projects', {
   method: 'PATCH', headers: { 'Content-Type': 'application/json' },
   body: JSON.stringify({ projectId: id, updates: changes }),
+});
+
+describe('project-only deletion API', () => {
+  const deletionRequest = (projectId: unknown = id) => new NextRequest('http://localhost/api/kanban/projects', {
+    method: 'DELETE', headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ projectId }),
+  });
+  let from: ReturnType<typeof vi.fn>;
+  let eq: ReturnType<typeof vi.fn>;
+  let select: ReturnType<typeof vi.fn>;
+  beforeEach(() => {
+    vi.clearAllMocks();
+    select = vi.fn().mockResolvedValue({ data: [{ id }], error: null });
+    eq = vi.fn();
+    eq.mockReturnValue({ eq, select });
+    from = vi.fn().mockReturnValue({ delete: vi.fn().mockReturnValue({ eq }) });
+    mocks.context.mockResolvedValue({ context: { user: { id: userId }, supabase: { from } } });
+    mocks.owned.mockResolvedValue({ kind: 'owned', data: { id, user_id: userId } });
+  });
+  it('deletes only the owned project and confirms its ID, without deleting columns/cards', async () => {
+    const response = (await DELETE(deletionRequest()))!;
+    expect(response.status).toBe(200);
+    expect(await response.json()).toEqual({ success: true, deletedProjectId: id });
+    expect(from).toHaveBeenCalledTimes(1);
+    expect(from).toHaveBeenCalledWith('kanban_projects');
+    expect(eq).toHaveBeenCalledWith('id', id);
+    expect(eq).toHaveBeenCalledWith('user_id', userId);
+  });
+  it('rejects invalid IDs before accessing the database', async () => {
+    expect((await DELETE(deletionRequest('invalid')))!.status).toBe(400);
+    expect(from).not.toHaveBeenCalled();
+  });
+  it('requires authentication', async () => {
+    mocks.context.mockResolvedValue({ response: new Response(null, { status: 401 }) });
+    expect((await DELETE(deletionRequest()))!.status).toBe(401);
+    expect(from).not.toHaveBeenCalled();
+  });
+  it('rejects deletion of a foreign-owned project', async () => {
+    mocks.owned.mockResolvedValue({ kind: 'forbidden' });
+    expect((await DELETE(deletionRequest()))!.status).toBe(403);
+    expect(from).not.toHaveBeenCalled();
+  });
+  it('never reports success when the deletion affected no project', async () => {
+    select.mockResolvedValue({ data: [], error: null });
+    expect((await DELETE(deletionRequest()))!.status).toBe(409);
+  });
 });
 
 describe('atomic project editing API', () => {

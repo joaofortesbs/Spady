@@ -137,7 +137,9 @@ export async function DELETE(req: NextRequest) {
     if (deleteError) return databaseError('delete project', deleteError);
     if (!deletedProject?.length) return apiError('Project was not deleted', 409);
 
-    return NextResponse.json({ success: true });
+    return NextResponse.json({ success: true, deletedProjectId: projectId }, {
+      headers: { 'Cache-Control': 'no-store' },
+    });
   } catch (error) {
     console.error('[API projects] DELETE exception:', error);
     if (error instanceof SyntaxError) return apiError('Invalid JSON body', 400);

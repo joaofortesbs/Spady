@@ -29,3 +29,12 @@ não existe exceção de tarefa de um projeto em coluna sem vínculo.
 visibilidade de suas tarefas por data ou conclusão. “Todos os projetos” continua
 mostrando todas as colunas. Não inferir mudança da regra de check manual a partir
 da palavra “status” nessa correção sobre projetos.
+
+A exclusão definitiva de um projeto exclui somente o projeto, preservando suas
+colunas e tarefas, que ficam sem vínculo com ele. Exigir confirmação explícita.
+
+**Why:** o usuário aprovou essa consequência ao pedir a ação discreta de exclusão
+no editor; “definitivamente” não autoriza apagar o conteúdo organizado pelo projeto.
+
+**How to apply:** manter essa distinção nas confirmações, nas operações de exclusão
+e em qualquer mudança futura das ações de chaves estrangeiras.

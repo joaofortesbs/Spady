@@ -39,6 +39,7 @@ interface KanbanWorkspaceProps {
   onSelectProject: (projectId: string | null) => void;
   onAddProject: (name: string, color: string) => Promise<KanbanMutationResult<KanbanProject>>;
   onUpdateProject?: (projectId: string, updates: KanbanProjectUpdates) => Promise<KanbanMutationResult<KanbanProjectSaveData>>;
+  onDeleteProject?: (projectId: string) => Promise<KanbanMutationResult<void>>;
   selectedDate: Date | null;
   onSelectDate: (date: Date | null) => void;
   loadError: boolean;
@@ -69,6 +70,7 @@ export function KanbanWorkspace({
   onSelectProject,
   onAddProject,
   onUpdateProject,
+  onDeleteProject,
   selectedDate,
   onSelectDate,
   loadError,
@@ -109,6 +111,7 @@ export function KanbanWorkspace({
         onSelectProject={onSelectProject}
         onAddProject={onAddProject}
         onUpdateProject={onUpdateProject}
+        onDeleteProject={onDeleteProject}
         selectedDate={selectedDate}
         onSelectDate={onSelectDate}
       />
