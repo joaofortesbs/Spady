@@ -11,4 +11,5 @@
 - [Conclusão do Kanban](kanban-completion-policy.md) — na virada do dia, ocultar somente tarefas marcadas no check; pendentes permanecem visíveis.
 - [Rollback estrutural do Kanban](kanban-optimistic-rollback.md) — filas não confirmam snapshots otimistas; reconciliar localização e ordem após falhas sobrepostas.
 - [Criação e transferência coletiva](kanban-creation-transfer-order.md) — transferência atômica no banco não inclui INSERT futuro; criações pendentes precisam participar da ordem da coluna.
+- [Desvinculação e filtros de projetos](kanban-project-binding-policy.md) — desmarcar remove associações sem excluir tarefas; filtros não incluem colunas vazias sem vínculo.
 - [Relógio em testes autenticados](browser-clock-auth-safety.md) — avançar Date globalmente pode expirar a sessão; separar a simulação do dia civil do relógio da autenticação.
