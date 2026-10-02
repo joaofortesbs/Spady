@@ -5,7 +5,7 @@
 O desenho apresentado em conversa foi aprovado pelo usuário. Este documento
 formaliza esse desenho, com a correção solicitada na revisão: a tarefa sempre
 segue o projeto da coluna, inclusive a ausência de projeto. A especificação
-ajustada aguarda revisão antes do plano de implementação.
+ajustada foi aprovada pelo usuário para preparação do plano de implementação.
 
 A aprovação do desenho não autoriza executar migrations, corrigir dados remotos,
 excluir registros, publicar o aplicativo ou atualizar bibliotecas de forma ampla.

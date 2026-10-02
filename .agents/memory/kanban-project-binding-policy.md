@@ -11,6 +11,7 @@ independente da coluna, mesmo quando ela estiver sem vínculo.
 **Why:** o usuário corrigiu explicitamente: “Se uma tarefa é movida para uma
 coluna sem projeto, a respectiva tarefa também vai ficar sem projeto, a tarefa
 sempre é dependente da coluna e segue o respectivo status dela!”
+Depois, aprovou a especificação corrigida com essa dependência integral.
 
 **How to apply:** explicar o efeito antes de confirmar a edição. Alterar apenas
 nome ou cor não deve regravar associações de colunas não alteradas. A regra
