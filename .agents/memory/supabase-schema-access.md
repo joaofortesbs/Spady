@@ -20,3 +20,9 @@ Ao preencher a URI do painel Connect, substitua o placeholder inteiro, inclusive
 **Why:** Uma conexão Session pooler correta alcançou o projeto, mas a autenticação falhou porque os delimitadores do placeholder tinham sido mantidos ao redor da senha. Uma tentativa com esse formato corrigido autenticou.
 
 **How to apply:** Verifique apenas indicadores de formato, sem revelar valores. Caracteres reais reservados devem ser codificados na URI; não remova colchetes indiscriminadamente de senhas válidas. Para psql, passe os campos separados via ambiente e nunca use a URI inteira como PGDATABASE. Categorize falhas em vez de imprimir stderr bruto, que pode conter partes da credencial.
+
+A conexão administrativa deve verificar o certificado e o hostname. O pooler pode exigir a CA própria do Supabase, ausente tanto no trust store padrão do Node quanto no bundle do sistema.
+
+**Why:** Neste ambiente, ambos os trust stores rejeitaram a cadeia apresentada pelo pooler. Confiar explicitamente na CA oficial do Supabase permitiu concluir a negociação TLS sem desativar a validação.
+
+**How to apply:** Em erros de cadeia de certificados, obtenha a CA oficial pela seção SSL Configuration do Supabase ou por sua distribuição oficial de certificados e configure o cliente para utilizá-la. Não resolva o problema com `rejectUnauthorized: false` nem com SSL sem verificação.
