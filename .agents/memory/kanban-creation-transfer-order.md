@@ -3,16 +3,17 @@ name: Criação e transferência coletiva
 description: Ordenação necessária para que uma tarefa criada durante uma transferência não permaneça associada ao projeto antigo.
 ---
 
-O projeto de uma coluna vinculada é obrigatório para todas as tarefas dentro
-dela, não apenas um valor padrão. Uma escolha individual não pode deixar uma
-tarefa em outro projeto enquanto sua coluna pertence a um projeto.
+O projeto da coluna é obrigatório para todas as tarefas dentro dela, não apenas
+um valor padrão. Isso inclui ausência de projeto: uma tarefa em coluna sem
+vínculo também fica sem projeto. Não há escolha individual independente.
 
-**Why:** o usuário determinou que, se a tarefa Z estiver na coluna X e a coluna X
-estiver no projeto Y, a tarefa Z obrigatoriamente estará no projeto Y também.
+**Why:** o usuário determinou que a tarefa obrigatoriamente pertence ao projeto
+da coluna e esclareceu depois que mover para uma coluna sem projeto também
+deixa a tarefa sem projeto.
 
 **How to apply:** considerar todas as tarefas da coluna, inclusive ocultas,
-novas e movidas. A liberdade de escolha individual existente deve ficar restrita
-a colunas sem projeto.
+novas e movidas. Remover a liberdade de atribuição individual também em colunas
+sem projeto, sem alterar campos não relacionados à associação.
 
 Criação pendente também é uma mutação da estrutura da coluna. Uma transferência
 coletiva precisa compartilhar sua serialização com a criação completa, incluindo
@@ -25,8 +26,8 @@ antigo mesmo quando o estado visível já apresenta uma transferência mais rece
 **How to apply:** criações que aguardam uma transferência devem resolver a
 associação confirmada ao executar, incluindo remoção explícita do projeto e
 falha da transferência. Manter separados o projeto otimista visível e a associação
-realmente confirmada. Sem transferência pendente, preservar a escolha manual do
-usuário somente quando a coluna não tiver projeto.
+realmente confirmada. Sem transferência pendente, resolver igualmente o projeto
+da coluna confirmada, incluindo ausência de projeto, nunca uma escolha individual.
 
 Não repetir uma criação após falha ambígua sem proteção de idempotência.
 

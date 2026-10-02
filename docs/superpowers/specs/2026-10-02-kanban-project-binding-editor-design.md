@@ -3,7 +3,9 @@
 ## Aprovação e limites
 
 O desenho apresentado em conversa foi aprovado pelo usuário. Este documento
-formaliza esse desenho para revisão antes do plano de implementação.
+formaliza esse desenho, com a correção solicitada na revisão: a tarefa sempre
+segue o projeto da coluna, inclusive a ausência de projeto. A especificação
+ajustada aguarda revisão antes do plano de implementação.
 
 A aprovação do desenho não autoriza executar migrations, corrigir dados remotos,
 excluir registros, publicar o aplicativo ou atualizar bibliotecas de forma ampla.
@@ -12,35 +14,41 @@ após inspeção somente leitura, apresentação do impacto e revisão do script
 
 ## Objetivo
 
-Garantir que toda tarefa ou compromisso em uma coluna vinculada a um projeto
-pertença a esse projeto. Permitir editar nome, cor e colunas de um projeto pelo
+Garantir que toda tarefa ou compromisso tenha exatamente o projeto da coluna
+em que está, inclusive nenhum projeto quando a coluna não tiver vínculo.
+Permitir editar nome, cor e colunas de um projeto pelo
 menu “Todos os projetos”, com o mesmo comportamento em Flows e Painel.
 
 ## Contrato de associação
 
-1. Uma coluna vinculada determina obrigatoriamente o projeto de todos os seus
-   cards. A regra inclui cards ocultos, concluídos, futuros, existentes, criados,
-   editados e recebidos por movimentação.
-2. Em uma coluna vinculada, o editor do card mostra “Herdado da coluna” e não
-   permite escolher outro projeto nem remover a associação individualmente.
-3. Em uma coluna sem vínculo, permanece a escolha individual do projeto.
+1. A coluna determina obrigatoriamente o projeto de todos os seus cards,
+   inclusive quando ela não tem projeto. A regra inclui cards ocultos,
+   concluídos, futuros, existentes, criados, editados e recebidos por movimentação.
+2. O editor do card mostra o projeto como “Herdado da coluna”; para uma coluna
+   sem vínculo, mostra “Sem projeto — herdado da coluna”. Não oferece atribuição
+   individual, troca ou remoção independente do projeto da coluna.
+3. Em uma coluna sem vínculo, todos os cards também ficam sem projeto.
+   Criar ou editar um card nessa coluna nunca atribui um projeto individual.
 4. Mover um card para uma coluna vinculada atribui o projeto de destino.
-   Mover para uma coluna sem vínculo preserva o projeto individual que o card
-   tinha antes do movimento; não equivale a desvincular a coluna.
+   Mover para uma coluna sem vínculo remove o projeto do card, sem apagar a
+   tarefa nem alterar o vínculo das demais colunas.
 5. Vincular ou transferir uma coluna atribui o projeto escolhido a todos os seus
    cards, independentemente de filtros ou visibilidade.
 6. Desvincular explicitamente uma coluna remove o projeto da coluna e de todos
    os seus cards. Nenhuma coluna ou tarefa é excluída.
 7. Uma edição apenas de nome ou cor não transfere cards nem regrava associações
-   de colunas não alteradas. Não elimina escolhas individuais em outras colunas.
+   de colunas não alteradas.
 8. Transferências preservam IDs, posições, datas, texto, prioridades, etiquetas,
    subtarefas, conclusão e histórico. Somente os vínculos necessários mudam;
    timestamps técnicos de atualização podem acompanhar a gravação.
 
-No filtro do projeto Y, aparecem colunas vinculadas a Y e colunas sem vínculo
-que contenham cards de Y. Uma coluna vazia e sem vínculo não aparece. A opção
+No filtro do projeto Y, aparecem somente colunas vinculadas a Y. Colunas sem
+projeto não aparecem nesse filtro, estejam vazias ou preenchidas. A opção
 “Todos os projetos” continua exibindo todas as colunas. A presença de uma coluna
 no filtro não depende de os seus cards estarem visíveis pelo filtro de data.
+
+Essa dependência se refere à associação de projeto. Não altera as regras de
+conclusão, o check manual, datas ou demais comportamentos já existentes.
 
 ## Editor de projeto
 
@@ -101,6 +109,9 @@ sem criar um segundo estado de projetos independente.
 A regra deve existir no banco, não apenas no editor ou nas rotas Next.js.
 Criação, atualização, movimentação e alterações de vínculo devem respeitá-la,
 inclusive operações vindas de outra aba ou de um cliente anterior.
+O projeto do card deve ser igual ao projeto da coluna, incluindo a igualdade
+entre valores nulos. Não pode existir exceção de atribuição individual em uma
+coluna sem vínculo; payloads antigos não podem deixar associações divergentes.
 
 A atualização de projeto confirma nome, cor e diferenças de colunas numa única
 transação. A API autentica o usuário, valida os dados e verifica propriedade de
@@ -149,7 +160,8 @@ Antes de preparar o SQL final:
 1. Inspecionar em modo somente leitura o schema remoto, funções, triggers,
    constraints, grants e histórico de migrations.
 2. Contar inconsistências e classificar seu impacto sem expor conteúdo ou
-   identificadores pessoais no relatório.
+   identificadores pessoais no relatório. Incluir tanto cards em projeto
+   diferente da coluna vinculada quanto cards com projeto em colunas sem vínculo.
 3. Confirmar acesso administrativo ao Supabase usado pelo app, sem substituir
    esse banco por outro serviço.
 4. Preparar alteração incremental e prévia das associações que serão corrigidas.
@@ -171,15 +183,15 @@ comprovam a garantia no Supabase remoto.
 
 | Área | Casos necessários |
 | --- | --- |
-| Regra de projeto | Criar e editar em coluna vinculada; rejeitar ou canonicalizar escolhas conflitantes; preservar escolha em coluna sem vínculo. |
-| Movimentação | Entre projetos diferentes, para coluna sem vínculo, arraste dentro da coluna e reordenação sem transferência indevida. |
+| Regra de projeto | Criar e editar em colunas com e sem vínculo; rejeitar ou canonicalizar escolhas conflitantes, inclusive atribuição individual em coluna sem projeto; igualdade incluindo valores nulos. |
+| Movimentação | Entre projetos diferentes; mover de coluna vinculada para coluna sem vínculo remove o projeto; mover para coluna vinculada atribui seu projeto; arraste dentro da coluna e reordenação sem transferência indevida. |
 | Abrangência | Cards ocultos, concluídos e futuros recebem o mesmo vínculo da coluna. |
 | Edição de projeto | Renomear, trocar cor, marcar e desmarcar colunas; editar apenas metadados não regrava vínculos inalterados. |
 | Atomicidade | Um conflito ou erro em qualquer diferença não deixa nome, cor ou colunas parcialmente salvos. |
 | Concorrência | Criar durante transferência; mover durante transferência; editar vínculos em duas sessões; falhas consecutivas e resposta atrasada. |
 | Segurança | Sem acesso cruzado entre contas; permissões mínimas; troca de conta descarta rascunho e resposta antiga; segredo de serviço nunca chega ao navegador. |
 | Interface | Seleção e edição separadas, cancelamento, erro recuperável, foco, Escape em camadas, portal, toque e tela pequena. |
-| Filtros | Coluna desmarcada desaparece do projeto se não houver cards dele; colunas sem vínculo com cards do projeto continuam acessíveis. |
+| Filtros | Somente colunas vinculadas ao projeto aparecem no seu filtro; colunas sem projeto aparecem em “Todos os projetos”, não no filtro de um projeto. |
 | Preservação | Datas, textos, subtarefas, etiquetas, cores próprias, posições, conclusão e histórico não são sobrescritos pela associação. |
 | Regressão | Flows e Painel; timer, gráfico, comportamento por data e check manual; criação/exclusão existentes. |
 

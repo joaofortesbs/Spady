@@ -1,25 +1,30 @@
 ---
 name: Desvinculação e filtros de projetos
-description: Semântica aprovada para remover colunas de projetos e sua presença nos filtros do Kanban.
+description: Dependência integral do projeto da tarefa em relação à coluna, inclusive ausência de projeto e filtros.
 ---
 
 Desvincular explicitamente uma coluna remove o projeto da coluna e de todas as
-suas tarefas, sem excluir registros. Isso não é o mesmo que mover uma tarefa
-para uma coluna sem projeto: nesse movimento, preserva-se seu projeto individual.
+suas tarefas, sem excluir registros. Mover uma tarefa para uma coluna sem
+projeto também deixa essa tarefa sem projeto. Não há atribuição individual
+independente da coluna, mesmo quando ela estiver sem vínculo.
 
-**Why:** o usuário aprovou o desenho recomendado que mantém a remoção coletiva
-das associações ao desmarcar uma coluna no editor de projeto; não aprovou
-exclusão de dados nem aplicação automática de SQL.
+**Why:** o usuário corrigiu explicitamente: “Se uma tarefa é movida para uma
+coluna sem projeto, a respectiva tarefa também vai ficar sem projeto, a tarefa
+sempre é dependente da coluna e segue o respectivo status dela!”
 
 **How to apply:** explicar o efeito antes de confirmar a edição. Alterar apenas
-nome ou cor não deve regravar associações de colunas não alteradas.
+nome ou cor não deve regravar associações de colunas não alteradas. A regra
+inclui tarefas existentes, ocultas, criadas, editadas e movidas. A correção não
+autoriza excluir registros nem aplicar SQL sem aprovação específica.
 
-O filtro de um projeto mostra suas colunas vinculadas e colunas sem vínculo
-que contenham tarefas dele; não mostra todas as colunas vazias sem vínculo.
+O filtro de um projeto mostra somente suas colunas vinculadas. Colunas sem
+projeto aparecem em “Todos os projetos”, não no filtro de um projeto.
 
-**Why:** o usuário aprovou restringir esse filtro para que uma coluna desmarcada
-sem tarefas do projeto deixe de aparecer visualmente.
+**Why:** o usuário aprovou restringir o filtro e depois esclareceu que as tarefas
+sempre seguem a associação da coluna, inclusive ausência de projeto; assim,
+não existe exceção de tarefa de um projeto em coluna sem vínculo.
 
-**How to apply:** avaliar pertencimento sobre todas as tarefas da coluna, não
-apenas as visíveis pelo filtro de data ou conclusão. “Todos os projetos” continua
-mostrando todas as colunas.
+**How to apply:** filtrar pela associação da coluna, independentemente da
+visibilidade de suas tarefas por data ou conclusão. “Todos os projetos” continua
+mostrando todas as colunas. Não inferir mudança da regra de check manual a partir
+da palavra “status” nessa correção sobre projetos.
