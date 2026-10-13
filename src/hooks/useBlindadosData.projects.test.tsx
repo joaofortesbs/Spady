@@ -24,12 +24,14 @@ vi.mock('@/lib/supabase/client', () => ({
 }));
 
 vi.mock('@/lib/services/pomodoroService', () => ({
-  PomodoroService: vi.fn().mockImplementation(() => ({
-    loadData: vi.fn().mockResolvedValue({
-      settings: pomodoroData.settings,
-      sessions: [],
-    }),
-  })),
+  PomodoroService: vi.fn().mockImplementation(function () {
+    return {
+      loadData: vi.fn().mockResolvedValue({
+        settings: pomodoroData.settings,
+        sessions: [],
+      }),
+    };
+  }),
 }));
 
 vi.mock('sonner', () => ({

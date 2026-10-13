@@ -55,30 +55,6 @@
         "x-next-revalidate-tag-token"
       ]
     },
-    "/reset-password": {
-      "experimentalBypassFor": [
-        {
-          "type": "header",
-          "key": "next-action"
-        },
-        {
-          "type": "header",
-          "key": "content-type",
-          "value": "multipart/form-data;.*"
-        }
-      ],
-      "initialRevalidateSeconds": false,
-      "srcRoute": "/reset-password",
-      "dataRoute": "/reset-password.rsc",
-      "allowHeader": [
-        "host",
-        "x-matched-path",
-        "x-prerender-revalidate",
-        "x-prerender-revalidate-if-generated",
-        "x-next-revalidated-tags",
-        "x-next-revalidate-tag-token"
-      ]
-    },
     "/": {
       "experimentalBypassFor": [
         {
@@ -102,13 +78,37 @@
         "x-next-revalidated-tags",
         "x-next-revalidate-tag-token"
       ]
+    },
+    "/reset-password": {
+      "experimentalBypassFor": [
+        {
+          "type": "header",
+          "key": "next-action"
+        },
+        {
+          "type": "header",
+          "key": "content-type",
+          "value": "multipart/form-data;.*"
+        }
+      ],
+      "initialRevalidateSeconds": false,
+      "srcRoute": "/reset-password",
+      "dataRoute": "/reset-password.rsc",
+      "allowHeader": [
+        "host",
+        "x-matched-path",
+        "x-prerender-revalidate",
+        "x-prerender-revalidate-if-generated",
+        "x-next-revalidated-tags",
+        "x-next-revalidate-tag-token"
+      ]
     }
   },
   "dynamicRoutes": {},
   "notFoundRoutes": [],
   "preview": {
-    "previewModeId": "24a7aa0637898e57ae091408f0f022ef",
-    "previewModeSigningKey": "e638d79084e3266d00ad52076eede1477eb5bbb360cdfe61f75ef2a64c5b0576",
-    "previewModeEncryptionKey": "6f6b7c83d4cc7f5af9a3df4bc964480d081c71e6de88a836b58ddbd0f496bd3f"
+    "previewModeId": "aac160d8c24657d6ff145a4e87b1b73e",
+    "previewModeSigningKey": "b7a2952e6fd9ac2bea9bd2a3830ee8ce2040e8f33392df1dbbc755b648a42c38",
+    "previewModeEncryptionKey": "a3deb79ecb89326463122bfad89eb1e29691d6946f29b8b129f01f81b2fbc64d"
   }
 }
