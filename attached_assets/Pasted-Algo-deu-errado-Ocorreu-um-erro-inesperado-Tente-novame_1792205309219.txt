@@ -1,0 +1,28 @@
+Algo deu errado
+Ocorreu um erro inesperado. Tente novamente.
+
+Detalhes do erro
+@supabase/ssr: Your project's URL and API key are required to create a Supabase client!
+
+Check your Supabase project's API settings to find these values
+
+https://supabase.com/dashboard/project/_/settings/api
+Error: @supabase/ssr: Your project's URL and API key are required to create a Supabase client!
+
+Check your Supabase project's API settings to find these values
+
+https://supabase.com/dashboard/project/_/settings/api
+    at createBrowserClient (https://b6c67060-7d97-4012-8082-2ec3abc47dc3-00-3qgn35yde2yuy.reed.replit.dev/_next/static/chunks/node_modules_%40supabase_9951646f._.js:8176:15)
+    at createClient (https://b6c67060-7d97-4012-8082-2ec3abc47dc3-00-3qgn35yde2yuy.reed.replit.dev/_next/static/chunks/src_7723c8e2._.js:266:225)
+    at AuthProvider (https://b6c67060-7d97-4012-8082-2ec3abc47dc3-00-3qgn35yde2yuy.reed.replit.dev/_next/static/chunks/src_7723c8e2._.js:517:174)
+    at Object.react_stack_bottom_frame (https://b6c67060-7d97-4012-8082-2ec3abc47dc3-00-3qgn35yde2yuy.reed.replit.dev/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:13072:24)
+    at renderWithHooks (https://b6c67060-7d97-4012-8082-2ec3abc47dc3-00-3qgn35yde2yuy.reed.replit.dev/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:4091:24)
+    at updateFunctionComponent (https://b6c67060-7d97-4012-8082-2ec3abc47dc3-00-3qgn35yde2yuy.reed.replit.dev/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:5523:21)
+    at beginWork (https://b6c67060-7d97-4012-8082-2ec3abc47dc3-00-3qgn35yde2yuy.reed.replit.dev/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:6111:24)
+    at runWithFiberInDEV (https://b6c67060-7d97-4012-8082-2ec3abc47dc3-00-3qgn35yde2yuy.reed.replit.dev/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:886:74)
+    at performUnitOfWork (https://b6c67060-7d97-4012-8082-2ec3abc47dc3-00-3qgn35yde2yuy.reed.replit.dev/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8298:97)
+    at workLoopSync (https://b6c67060-7d97-4012-8082-2ec3abc47dc3-00-3qgn35yde2yuy.reed.replit.dev/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8190:40)
+    at renderRootSync (https://b6c67060-7d97-4012-8082-2ec3abc47dc3-00-3qgn35yde2yuy.reed.replit.dev/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8173:13)
+    at performWorkOnRoot (https://b6c67060-7d97-4012-8082-2ec3abc47dc3-00-3qgn35yde2yuy.reed.replit.dev/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:7932:56)
+    at performWorkOnRootViaSchedulerTask (https://b6c67060-7d97-4012-8082-2ec3abc47dc3-00-3qgn35yde2yuy.reed.replit.dev/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8882:9)
+    at MessagePort.performWorkUntilDeadline (https://b6c67060-7d97-4012-8082-2ec3abc47dc3-00-3qgn35yde2yuy.reed.replit.dev/_next/static/chunks/node_modules_next_dist_compiled_5150ccfd._.js:2601:64)
