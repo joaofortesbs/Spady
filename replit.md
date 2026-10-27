@@ -36,6 +36,15 @@ Key architectural decisions include:
 
 # Database Migrations
 
+## Listas: exception to remote persistence
+
+For the current Listas implementation, all lists, items, images and ordering must
+remain exclusively in browser localStorage. Do not access the external Supabase
+database or Storage to develop or test this feature, even for read-only checks.
+Do not create migrations or API routes for it. Reuse the existing user context
+without adding auth requests, and keep the remote behavior of other sections
+unchanged. See `docs/listas-local.md` for local storage limitations and boundaries.
+
 The canonical Kanban persistence rollout is documented in
 `docs/kanban-project-persistence-rollout.md`. Execute the base Kanban migration,
 then the two existing project/behavior migrations, and finally

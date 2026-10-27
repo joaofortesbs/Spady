@@ -26,8 +26,8 @@ import { QuickCaptureModal } from '@/components/quick-capture/QuickCaptureModal'
 import { ProfileSettingsModal } from '@/components/profile/ProfileSettingsModal';
 import { useVisoesData } from '@/hooks/useVisoesData';
 import { useExpandedKanbanLayout } from '@/components/blindados/useExpandedKanbanLayout';
-
-type Section = 'flows' | 'visoes' | 'painel' | 'equipes';
+import { ListasPage } from '@/components/listas/ListasPage';
+import { isSection, type Section } from '@/lib/types/navigation';
 
 function MainApp() {
   const {
@@ -99,7 +99,7 @@ function MainApp() {
 
   useEffect(() => {
     const savedSection = safeStorage.getString(STORAGE_KEYS.ACTIVE_SECTION);
-    if (savedSection === 'flows' || savedSection === 'visoes' || savedSection === 'painel' || savedSection === 'equipes') {
+    if (isSection(savedSection)) {
       setActiveSection(savedSection);
     }
     setCollapsed(safeStorage.getString(STORAGE_KEYS.SIDEBAR_COLLAPSED) === 'true');
@@ -468,6 +468,18 @@ function MainApp() {
               className="h-full"
             >
               <VisoesDashboard />
+            </motion.div>
+          )}
+          {activeSection === 'listas' && (
+            <motion.div
+              key="listas"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.15 }}
+              className="h-full min-w-0"
+            >
+              {user && <ListasPage key={user.id} userId={user.id} />}
             </motion.div>
           )}
           {/*

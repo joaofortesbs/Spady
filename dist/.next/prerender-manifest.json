@@ -30,8 +30,7 @@
         "x-next-revalidate-tag-token"
       ]
     },
-    "/_not-found": {
-      "initialStatus": 404,
+    "/reset-password": {
       "experimentalBypassFor": [
         {
           "type": "header",
@@ -44,8 +43,8 @@
         }
       ],
       "initialRevalidateSeconds": false,
-      "srcRoute": "/_not-found",
-      "dataRoute": "/_not-found.rsc",
+      "srcRoute": "/reset-password",
+      "dataRoute": "/reset-password.rsc",
       "allowHeader": [
         "host",
         "x-matched-path",
@@ -79,7 +78,8 @@
         "x-next-revalidate-tag-token"
       ]
     },
-    "/reset-password": {
+    "/_not-found": {
+      "initialStatus": 404,
       "experimentalBypassFor": [
         {
           "type": "header",
@@ -92,8 +92,8 @@
         }
       ],
       "initialRevalidateSeconds": false,
-      "srcRoute": "/reset-password",
-      "dataRoute": "/reset-password.rsc",
+      "srcRoute": "/_not-found",
+      "dataRoute": "/_not-found.rsc",
       "allowHeader": [
         "host",
         "x-matched-path",
@@ -107,8 +107,8 @@
   "dynamicRoutes": {},
   "notFoundRoutes": [],
   "preview": {
-    "previewModeId": "aac160d8c24657d6ff145a4e87b1b73e",
-    "previewModeSigningKey": "b7a2952e6fd9ac2bea9bd2a3830ee8ce2040e8f33392df1dbbc755b648a42c38",
-    "previewModeEncryptionKey": "a3deb79ecb89326463122bfad89eb1e29691d6946f29b8b129f01f81b2fbc64d"
+    "previewModeId": "35972fc0cef5ebaddaaaedcb0eca4ab7",
+    "previewModeSigningKey": "51897b0f3963d99eb7f810bff5cc17f08a7347dc9a4eaea92ec4d8a6281d9347",
+    "previewModeEncryptionKey": "e0fa89780d9dbd8c519037d026351f217e3e9ade8f344ec79018d448e91b9cc2"
   }
 }

@@ -20,3 +20,9 @@ No escopo atual de Listas, não executar absolutamente nada no banco de dados Su
 **Why:** O usuário substituiu expressamente a persistência remota prevista na proposta por armazenamento local e proibiu operações no Supabase dentro desta tarefa.
 
 **How to apply:** Não consultar nem alterar o banco, executar migrations/RPCs ou usar uploads remotos para desenvolver ou testar Listas. Manter a persistência local até nova orientação, sem mudar o comportamento remoto das seções existentes.
+
+O armazenamento de Listas deve sobreviver à saída da conta, sem expor a conta anterior na interface da próxima sessão.
+
+**Why:** Enquanto não há cópia remota, limpar as listas durante logout seria perda permanente dos dados, e não apenas limpeza de cache descartável.
+
+**How to apply:** Não incluir Listas em limpezas gerais de cache ao sair; manter o namespace fora dos prefixos apagados pelo logout. Desmontar o estado em memória ao trocar de usuário e restaurar apenas o snapshot da conta atual.

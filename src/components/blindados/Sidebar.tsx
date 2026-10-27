@@ -17,14 +17,16 @@ import {
   Check,
   Settings,
   Users,
-  UsersRound
+  UsersRound,
+  ListOrdered
 } from 'lucide-react';
 import { Organization } from '@/lib/types/organization';
+import type { Section } from '@/lib/types/navigation';
 
 interface SidebarProps {
   onExport: () => void;
-  activeSection: 'flows' | 'visoes' | 'painel' | 'equipes';
-  onSectionChange: (section: 'flows' | 'visoes' | 'painel' | 'equipes') => void;
+  activeSection: Section;
+  onSectionChange: (section: Section) => void;
   collapsed: boolean;
   onCollapsedChange: (collapsed: boolean) => void;
   onSignOut?: () => void;
@@ -64,6 +66,7 @@ export function Sidebar({
   const pessoalItems = [
     { id: 'flows' as const, label: 'Flows', icon: LayoutDashboard },
     { id: 'visoes' as const, label: 'Visões', icon: Eye },
+    { id: 'listas' as const, label: 'Listas', icon: ListOrdered },
   ];
 
   const profissionalItems = [
@@ -282,6 +285,9 @@ export function Sidebar({
             <motion.button
               key={item.id}
               onClick={() => onSectionChange(item.id)}
+              aria-label={item.label}
+              aria-current={isActive ? 'page' : undefined}
+              title={collapsed ? item.label : undefined}
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
               className={`
