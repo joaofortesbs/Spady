@@ -15,7 +15,10 @@ export function useListOrder({ listId, items, reorderItems, onError }: {
   const sensors = useSensors(
     useSensor(MouseSensor, { activationConstraint: { delay: 220, tolerance: 8 } }),
     useSensor(TouchSensor, { activationConstraint: { delay: 260, tolerance: 9 } }),
-    useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates }),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+      keyboardCodes: { start: ["Space"], cancel: ["Escape"], end: ["Space", "Enter"] },
+    }),
   );
   const onDragEnd = async (event: DragEndEvent) => {
     setActiveDragId(null);

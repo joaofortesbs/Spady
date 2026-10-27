@@ -103,7 +103,6 @@ export function ListasPage({ userId }: { userId: string }) {
     <div className="listas-page" role="region" aria-label="Listas pessoais">
       <header className="listas-heading">
         <div>
-          <p className="listas-kicker">SEU ESPAÇO PESSOAL <span>／</span> ORGANIZAÇÃO</p>
           <h1>Listas</h1>
           <p className="listas-lede">Guarde o que importa. Escolha a ordem.</p>
         </div>
@@ -113,11 +112,6 @@ export function ListasPage({ userId }: { userId: string }) {
           </Button>
         )}
       </header>
-
-      <aside className="listas-local-note">
-        <span className="listas-note-mark"><ShieldAlert size={15} /></span>
-        <p><strong>Somente neste navegador.</strong> Suas listas não sincronizam entre dispositivos ou navegadores e podem ser perdidas ao limpar os dados deste site. O espaço disponível depende do navegador.</p>
-      </aside>
 
       {error && (
         <div className="listas-alert" role="alert">

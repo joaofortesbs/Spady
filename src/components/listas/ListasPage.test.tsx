@@ -28,11 +28,16 @@ async function createFirstList() {
   fireEvent.change(screen.getByLabelText(/Descrição/), { target: { value: 'Leituras pessoais' } });
   fireEvent.click(screen.getByRole('button', { name: 'Criar lista' }));
   await screen.findByRole('heading', { name: 'Estante' });
+  expect(screen.queryByText(/SEU ESPAÇO PESSOAL/)).toBe(null);
+  expect(screen.queryByText(/Suas listas não sincronizam/)).toBe(null);
+  expect(screen.queryByText('Somente neste navegador.')).toBe(null);
 }
 
 async function openNewItem(title: string) {
   fireEvent.click(screen.getByRole('button', { name: 'Adicionar item' }));
   const dialog = await screen.findByRole('dialog');
+  expect(within(dialog).queryByText(/^(opcional|obrigatório)$/i)).toBe(null);
+  expect(within(dialog).getByLabelText('Título').getAttribute('aria-required')).toBe('true');
   fireEvent.change(within(dialog).getByLabelText(/Título/), { target: { value: title } });
   return dialog;
 }
@@ -64,7 +69,11 @@ describe('Listas complete local UI', () => {
     await saveItem(dialog);
     dialog = await openNewItem('Segundo livro');
     await saveItem(dialog);
-    fireEvent.click(screen.getByRole('button', { name: 'Mover Segundo livro para cima' }));
+    expect(screen.queryByRole('button', { name: /^Mover .* para (cima|baixo)$/ })).toBe(null);
+    expect(screen.queryByRole('button', { name: /^Reordenar / })).toBe(null);
+    const secondItem = screen.getByRole('button', { name: /^Segundo livro/ });
+    expect(secondItem.getAttribute('aria-keyshortcuts')).toContain('Alt+ArrowUp');
+    fireEvent.keyDown(secondItem, { key: 'ArrowUp', code: 'ArrowUp', altKey: true });
     await waitFor(() => expect(screen.getAllByRole('listitem')[0].textContent).toContain('Segundo livro'));
     cleanup();
     render(<ListasPage userId="ui-account" />);

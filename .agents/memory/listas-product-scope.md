@@ -26,3 +26,9 @@ O armazenamento de Listas deve sobreviver à saída da conta, sem expor a conta 
 **Why:** Enquanto não há cópia remota, limpar as listas durante logout seria perda permanente dos dados, e não apenas limpeza de cache descartável.
 
 **How to apply:** Não incluir Listas em limpezas gerais de cache ao sair; manter o namespace fora dos prefixos apagados pelo logout. Desmontar o estado em memória ao trocar de usuário e restaurar apenas o snapshot da conta atual.
+
+A interface padrão de Listas deve manter baixo ruído visual: sem faixa persistente de aviso de armazenamento local e sem controles visuais separados para mover itens.
+
+**Why:** O usuário pediu explicitamente a retirada desses elementos para tornar a interface mais minimalista, sem pedir mudança da persistência ou remoção do arraste pelo card.
+
+**How to apply:** Manter as limitações do localStorage na documentação e os erros reais de salvamento na interface. Preservar o arraste pelo próprio card e o acesso por teclado sem reintroduzir alça ou setas laterais.

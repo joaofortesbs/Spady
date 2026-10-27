@@ -43,6 +43,8 @@ Cards 16:9, badge circular, dois containers e miniaturas aproximadamente 1:5 sã
 
 ## Verificação sem Supabase
 
+A ordenação não possui alça ou setas visíveis: o próprio card inicia o arraste por pressão. Pelo teclado, o botão de conteúdo abre com Enter, inicia o arraste com Espaço e permite mover com as setas; Alt+↑/↓ também move diretamente um item. Os avisos permanentes de armazenamento local foram retirados da tela por solicitação do usuário; erros reais de leitura e gravação continuam explícitos.
+
 Testes automatizados usam localStorage simulado e dados de contas fictícias; testes da integração do shell simulam seus hooks e cliente remoto. A revisão visual deve importar os componentes reais em um ambiente isolado e temporário, sem montar os providers e efeitos remotos da página principal. Não criar uma rota permanente que contorne autenticação para testes.
 
 ### Validação realizada

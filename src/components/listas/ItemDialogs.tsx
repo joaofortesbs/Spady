@@ -170,16 +170,15 @@ function ItemEditor({ mode, onModeChange, item, stale, saving, listName, onSave,
       <Dialog open={isOpen} onOpenChange={open => { if (!open) requestClose(); }}>
         <DialogContent className="listas-dialog listas-editor-dialog" onCloseAutoFocus={onReturnFocus} onEscapeKeyDown={event => { event.preventDefault(); requestClose(); }}>
           <DialogHeader className="listas-dialog-header">
-            <span className="listas-dialog-eyebrow">{isCreate ? "NOVA PEÇA DA COLEÇÃO" : "ATUALIZE O REGISTRO"}</span>
             <DialogTitle className="listas-dialog-title">{isCreate ? "Adicionar item" : "Editar item"}</DialogTitle>
             <DialogDescription className="listas-dialog-subtitle">Em {listName || "sua lista"} · até cinco imagens, armazenadas neste navegador.</DialogDescription>
           </DialogHeader>
           <form onSubmit={submit} className="listas-editor-form">
             <div className="listas-editor-fields">
-              <label className="listas-field">Título <span className="listas-required">obrigatório</span>
-                <input value={title} maxLength={TITLE_LIMIT} autoFocus onChange={event => setTitle(event.target.value)} placeholder="Dê um nome ao item" />
+              <label className="listas-field">Título
+                <input value={title} maxLength={TITLE_LIMIT} autoFocus aria-required="true" onChange={event => setTitle(event.target.value)} placeholder="Dê um nome ao item" />
               </label>
-              <label className="listas-field">Descrição <span>opcional</span>
+              <label className="listas-field">Descrição
                 <textarea value={description} maxLength={DESCRIPTION_LIMIT} onChange={event => setDescription(event.target.value)} placeholder="Anote o que faz este item valer a pena." rows={4} />
               </label>
             </div>
