@@ -4,11 +4,20 @@ export const MAX_IMAGES = 5;
 export const TITLE_LIMIT = 240;
 export const DESCRIPTION_LIMIT = 10_000;
 const id = z.string().min(1).max(200);
-export const imageSchema = z.object({
+export const localImageSchema = z.object({
   id,
   name: z.string().min(1).max(500),
   dataUrl: z.string().regex(/^data:image\/(?:jpeg|png|webp);base64,[A-Za-z0-9+/]+={0,2}$/, 'Imagem local inválida.'),
 });
+export const remoteImageSchema = z.object({
+  id,
+  name: z.string().min(1).max(500),
+  dataUrl: z.string().startsWith('/api/listas/images?path='),
+  objectPath: z.string().regex(/^[0-9a-f-]{36}\/[0-9a-f]{64}$/),
+  mimeType: z.enum(['image/jpeg', 'image/png', 'image/webp']),
+  byteSize: z.number().int().min(1).max(10 * 1024 * 1024),
+});
+export const imageSchema = z.union([remoteImageSchema, localImageSchema]);
 export const itemDraftSchema = z.object({
   title: z.string().trim().min(1, 'Preencha o título do item.').max(TITLE_LIMIT),
   description: z.string().max(DESCRIPTION_LIMIT),

@@ -8,6 +8,7 @@
   "/api/kanban/projects/route": "/api/kanban/projects",
   "/api/kanban/reorder-cards/route": "/api/kanban/reorder-cards",
   "/api/kanban/update-card/route": "/api/kanban/update-card",
+  "/api/listas/images/route": "/api/listas/images",
   "/api/pomodoro/add-session/route": "/api/pomodoro/add-session",
   "/api/pomodoro/get-settings/route": "/api/pomodoro/get-settings",
   "/api/pomodoro/update-settings/route": "/api/pomodoro/update-settings",

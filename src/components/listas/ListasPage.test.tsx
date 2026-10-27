@@ -1,17 +1,20 @@
 import { act, cleanup, fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { ListasPage } from './ListasPage';
-import { LocalListsRepository, type ExclusiveLock } from '@/lib/listas/localRepository';
-import { listsStorageKey } from '@/lib/listas/model';
+import { changeRemote, remoteFailure, remoteState, resetRemote } from '@/lib/listas/__tests__/memoryRemoteRepository';
 import { prepareLocalImage } from '@/lib/listas/images';
 
 vi.mock('@/lib/listas/images', () => ({
   prepareLocalImage: vi.fn(async (file: File) => ({ id: crypto.randomUUID(), name: file.name, dataUrl: 'data:image/webp;base64,YWJj' })),
 }));
+vi.mock('@/lib/listas/remoteRepository', async () => ({
+  RemoteListsRepository: (await import('@/lib/listas/__tests__/memoryRemoteRepository')).MemoryRemoteRepository,
+}));
 
 beforeEach(() => {
   localStorage.clear();
-  vi.stubGlobal('fetch', vi.fn(() => { throw new Error('Network is forbidden in Listas'); }));
+  resetRemote();
+  vi.stubGlobal('fetch', vi.fn(() => { throw new Error('Live network is forbidden in unit tests'); }));
   vi.stubGlobal('ResizeObserver', class { observe() {} unobserve() {} disconnect() {} });
   vi.stubGlobal('IntersectionObserver', class { observe() {} unobserve() {} disconnect() {} });
   vi.stubGlobal('matchMedia', vi.fn(() => ({ matches: false, addEventListener() {}, removeEventListener() {}, addListener() {}, removeListener() {} })));
@@ -47,8 +50,8 @@ async function saveItem(dialog: HTMLElement) {
   await waitFor(() => expect(screen.queryByRole('dialog')).toBe(null));
 }
 
-describe('Listas complete local UI', () => {
-  it('creates, inspects, edits, reorders and reloads items, without network', async () => {
+describe('Listas UI with remote repository contract', () => {
+  it('creates, inspects, edits, reorders and reloads items through the remote contract', async () => {
     await createFirstList();
     let dialog = await openNewItem('Primeiro livro');
     fireEvent.change(within(dialog).getByLabelText(/Descrição/), { target: { value: 'Descrição completa' } });
@@ -81,7 +84,7 @@ describe('Listas complete local UI', () => {
     expect(screen.getAllByRole('listitem').map(node => node.textContent)).toEqual([
       expect.stringContaining('Segundo livro'), expect.stringContaining('Livro revisado'),
     ]);
-    const snapshot = JSON.parse(localStorage.getItem(listsStorageKey('ui-account'))!);
+    const snapshot = remoteState('ui-account');
     expect(snapshot.lists[0].items[1].images).toHaveLength(2);
     expect(fetch).not.toHaveBeenCalled();
   });
@@ -96,17 +99,17 @@ describe('Listas complete local UI', () => {
     const confirmation = await screen.findByRole('alertdialog');
     fireEvent.click(within(confirmation).getByRole('button', { name: 'Descartar' }));
     await waitFor(() => expect(screen.queryByRole('dialog')).toBe(null));
-    expect(JSON.parse(localStorage.getItem(listsStorageKey('ui-account'))!).lists[0].items).toEqual([]);
+    expect(remoteState('ui-account').lists[0].items).toEqual([]);
   });
 
-  it('keeps a failed item form recoverable when quota is exceeded', async () => {
+  it('keeps a failed item form recoverable when remote saving fails', async () => {
     await createFirstList();
     const dialog = await openNewItem('Não perder este título');
-    vi.spyOn(Storage.prototype, 'setItem').mockImplementation(() => { throw new DOMException('full', 'QuotaExceededError'); });
+    remoteFailure.next = new Error('Não foi possível salvar no Supabase.');
     fireEvent.click(within(dialog).getByRole('button', { name: 'Salvar item' }));
-    await waitFor(() => expect(within(dialog).getByRole('alert').textContent).toContain('cheio'));
+    await waitFor(() => expect(within(dialog).getByRole('alert').textContent).toContain('Supabase'));
     expect((within(dialog).getByLabelText(/Título/) as HTMLInputElement).value).toBe('Não perder este título');
-    expect(JSON.parse(localStorage.getItem(listsStorageKey('ui-account'))!).lists[0].items).toEqual([]);
+    expect(remoteState('ui-account').lists[0].items).toEqual([]);
   });
 
   it('does not overwrite an item changed in another tab after refreshing while editing', async () => {
@@ -117,13 +120,12 @@ describe('Listas complete local UI', () => {
     fireEvent.click(await screen.findByRole('button', { name: 'Editar item' }));
     dialog = await screen.findByRole('dialog');
     fireEvent.change(within(dialog).getByLabelText(/Título/), { target: { value: 'Rascunho anterior' } });
-    const lock: ExclusiveLock = async (_key, action) => action();
-    const otherTab = new LocalListsRepository('ui-account', () => localStorage, lock);
-    await act(async () => { await otherTab.commit(otherTab.load().revision, snapshot => { snapshot.lists[0].items[0].title = 'Confirmado na outra aba'; }); });
-    act(() => window.dispatchEvent(new StorageEvent('storage', { key: listsStorageKey('ui-account') })));
+    act(() => changeRemote('ui-account', snapshot => { snapshot.lists[0].items[0].title = 'Confirmado na outra aba'; }));
+    fireEvent.click(within(dialog).getByRole('button', { name: 'Salvar item' }));
+    await within(dialog).findByRole('alert');
     fireEvent.click(screen.getByRole('button', { name: /Atualizar listas/ }));
     await waitFor(() => expect((within(dialog).getByRole('button', { name: 'Salvar item' }) as HTMLButtonElement).disabled).toBe(true));
     expect((within(dialog).getByLabelText(/Título/) as HTMLInputElement).value).toBe('Rascunho anterior');
-    expect(otherTab.load().lists[0].items[0].title).toBe('Confirmado na outra aba');
+    expect(remoteState('ui-account').lists[0].items[0].title).toBe('Confirmado na outra aba');
   });
 });

@@ -1,5 +1,7 @@
 # Listas — armazenamento local
 
+> **Documento histórico da primeira implementação.** A restrição temporária de acesso ao Supabase foi substituída pelo usuário. A arquitetura atual, o mapeamento dos campos, a importação e a validação remota estão em [Listas no Supabase](listas-supabase.md). Não seguir a antiga proibição abaixo como regra atual do projeto.
+
 ## Escopo e integração
 
 Listas é uma seção pessoal do shell existente, não uma nova aplicação ou rota pública. A sidebar e a página usam o mesmo tipo de navegação. O identificador da conta vem do contexto já existente, sem novas consultas de autenticação.

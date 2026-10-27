@@ -132,7 +132,7 @@ export function ListasPage({ userId }: { userId: string }) {
           <div className="listas-first-mark"><AlertCircle size={24} /></div>
           <p className="listas-kicker">ARMAZENAMENTO NÃO DISPONÍVEL</p>
           <h2>Suas listas continuam preservadas.</h2>
-          <p className="listas-first-copy">Não foi possível ler os dados locais. Atualize para tentar novamente; não vamos substituir o conteúdo existente.</p>
+          <p className="listas-first-copy">Não foi possível carregar ou importar suas listas. Atualize para tentar novamente; os dados existentes não serão substituídos.</p>
           <Button className="listas-secondary" onClick={reload}><RefreshCw size={15} /> Tentar novamente</Button>
         </section>
       ) : lists.length === 0 ? (

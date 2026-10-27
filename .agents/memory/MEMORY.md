@@ -14,4 +14,5 @@
 - [Dependência de projeto e filtros](kanban-project-binding-policy.md) — tarefas sempre seguem a coluna, inclusive sem projeto; sem escolha individual ou exceção no filtro.
 - [Relógio em testes autenticados](browser-clock-auth-safety.md) — avançar Date globalmente pode expirar a sessão; separar a simulação do dia civil do relógio da autenticação.
 - [Concorrência na herança de projeto](kanban-parent-binding-locks.md) — serializar antes de locks de linhas, inclusive em RPCs antigas; um trigger por linha não basta.
-- [Escopo de Listas](listas-product-scope.md) — persistência somente em localStorage por enquanto; nenhuma operação no Supabase nesta tarefa; até cinco imagens por item.
+- [Escopo de Listas](listas-product-scope.md) — persistência agora no Supabase externo; propriedade pessoal, até cinco imagens e interface sem controles laterais de ordenação.
+- [Conflitos no REST Supabase](supabase-business-conflicts.md) — conflitos de revisão devem retornar HTTP 409 explícito; downloads repetidos não comprovam exclusão no Storage.

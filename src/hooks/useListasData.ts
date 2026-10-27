@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { LocalListsRepository } from '@/lib/listas/localRepository';
+import { RemoteListsRepository } from '@/lib/listas/remoteRepository';
 import {
   emptySnapshot, errorMessage, itemDraftSchema, listDraftSchema, reorderListItems,
   type ItemDraft, type ListsSnapshot,
@@ -12,52 +12,60 @@ export function useListasData(userId: string) {
     owner: userId, snapshot: emptySnapshot(userId), loaded: false, error: null,
   });
   const [saving, setSaving] = useState(false);
-  const repoRef = useRef<LocalListsRepository | null>(null);
+  const repoRef = useRef<RemoteListsRepository | null>(null);
   const snapshotRef = useRef<ListsSnapshot>(emptySnapshot(userId));
-  const busyRef = useRef(false);
+  const busyRef = useRef<RemoteListsRepository | null>(null);
   const mountedRef = useRef(false);
 
-  const reload = useCallback(() => {
+  const reload = useCallback(async () => {
     const repo = repoRef.current;
-    if (!repo || repo.owner !== userId) return;
+    if (!repo || repo.owner !== userId || busyRef.current === repo) return;
+    const isActive = () => mountedRef.current && repoRef.current === repo;
+    busyRef.current = repo;
+    setSaving(true);
+    let snapshot: ListsSnapshot | null = null;
     try {
-      const snapshot = repo.load();
+      snapshot = await repo.load();
+      if (!isActive()) return;
+      snapshot = await repo.importLocal(snapshot, isActive);
+      if (!isActive()) return;
       snapshotRef.current = snapshot;
       setState({ owner: userId, snapshot, loaded: true, error: null });
+      void repo.cleanup(snapshot);
     } catch (error) {
-      setState(previous => ({ ...previous, owner: userId, loaded: true, error: errorMessage(error) }));
+      if (!isActive()) return;
+      if (snapshot) snapshotRef.current = snapshot;
+      setState(previous => ({ ...previous, snapshot: snapshot ?? previous.snapshot,
+        owner: userId, loaded: true, error: errorMessage(error) }));
+    } finally {
+      if (busyRef.current === repo) busyRef.current = null;
+      if (isActive()) setSaving(false);
     }
   }, [userId]);
 
   useEffect(() => {
     mountedRef.current = true;
-    const repo = userId ? new LocalListsRepository(userId) : null;
+    const repo = userId ? new RemoteListsRepository(userId) : null;
     repoRef.current = repo;
     snapshotRef.current = emptySnapshot(userId);
     setState({ owner: userId, snapshot: emptySnapshot(userId), loaded: false, error: null });
-    reload();
-    const onStorage = (event: StorageEvent) => {
-      if (event.key === repo?.key || event.key === null) {
-        // Do not refresh the expected revision underneath a possibly open editor.
-        setState(previous => ({ ...previous, error: 'As listas mudaram em outra aba. Atualize as listas para continuar; alterações não salvas no formulário serão mantidas.' }));
-      }
-    };
-    window.addEventListener('storage', onStorage);
+    setSaving(false);
+    void reload();
     return () => {
       mountedRef.current = false;
       repoRef.current = null;
-      window.removeEventListener('storage', onStorage);
     };
   }, [userId, reload]);
 
   const mutate = useCallback(async (change: (snapshot: ListsSnapshot) => void) => {
     const repo = repoRef.current;
     if (!repo || repo.owner !== userId) throw new Error('Entre na sua conta para salvar listas.');
-    if (busyRef.current) throw new Error('Aguarde o salvamento em andamento.');
-    busyRef.current = true;
+    if (busyRef.current === repo) throw new Error('Aguarde o salvamento em andamento.');
+    if (!state.loaded || state.owner !== userId) throw new Error('Aguarde o carregamento das listas.');
+    busyRef.current = repo;
     setSaving(true);
     try {
-      const snapshot = await repo.commit(snapshotRef.current.revision, change, () => mountedRef.current && repoRef.current === repo);
+      const snapshot = await repo.commit(snapshotRef.current, change, () => mountedRef.current && repoRef.current === repo);
       if (repoRef.current === repo && mountedRef.current) {
         snapshotRef.current = snapshot;
         setState({ owner: userId, snapshot, loaded: true, error: null });
@@ -66,10 +74,10 @@ export function useListasData(userId: string) {
       if (repoRef.current === repo && mountedRef.current) setState(previous => ({ ...previous, error: errorMessage(error) }));
       throw error;
     } finally {
-      busyRef.current = false;
-      if (mountedRef.current) setSaving(false);
+      if (busyRef.current === repo) busyRef.current = null;
+      if (mountedRef.current && repoRef.current === repo) setSaving(false);
     }
-  }, [userId]);
+  }, [userId, state.loaded, state.owner]);
 
   const createList = useCallback(async (name: string, description: string) => {
     const draft = listDraftSchema.parse({ name, description });

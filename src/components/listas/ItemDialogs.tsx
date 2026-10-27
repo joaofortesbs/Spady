@@ -171,7 +171,7 @@ function ItemEditor({ mode, onModeChange, item, stale, saving, listName, onSave,
         <DialogContent className="listas-dialog listas-editor-dialog" onCloseAutoFocus={onReturnFocus} onEscapeKeyDown={event => { event.preventDefault(); requestClose(); }}>
           <DialogHeader className="listas-dialog-header">
             <DialogTitle className="listas-dialog-title">{isCreate ? "Adicionar item" : "Editar item"}</DialogTitle>
-            <DialogDescription className="listas-dialog-subtitle">Em {listName || "sua lista"} · até cinco imagens, armazenadas neste navegador.</DialogDescription>
+            <DialogDescription className="listas-dialog-subtitle">Em {listName || "sua lista"} · até cinco imagens.</DialogDescription>
           </DialogHeader>
           <form onSubmit={submit} className="listas-editor-form">
             <div className="listas-editor-fields">
