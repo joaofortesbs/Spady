@@ -15,20 +15,20 @@ Cada item aceita no máximo cinco imagens, com um modal de visualização e outr
 
 **How to apply:** Aplicar o limite ao conjunto final de imagens, não somente a cada seleção de arquivos, e preservar as imagens existentes quando apenas os textos forem editados.
 
-No escopo atual de Listas, não executar absolutamente nada no banco de dados Supabase externo atual. As criações e alterações da seção devem ficar salvas completamente no localStorage por enquanto, inclusive imagens e ordenação.
+Listas deve passar a persistir completamente no Supabase externo atual, incluindo listas, itens, ordenação e imagens, com as migrations e configurações necessárias.
 
-**Why:** O usuário substituiu expressamente a persistência remota prevista na proposta por armazenamento local e proibiu operações no Supabase dentro desta tarefa.
+**Why:** O usuário substituiu expressamente a restrição temporária de localStorage por persistência remota completa no Supabase já configurado.
 
-**How to apply:** Não consultar nem alterar o banco, executar migrations/RPCs ou usar uploads remotos para desenvolver ou testar Listas. Manter a persistência local até nova orientação, sem mudar o comportamento remoto das seções existentes.
+**How to apply:** Usar o projeto Supabase externo existente, sem substituí-lo pelo banco Replit. Incluir os dados locais existentes no desenho da migração e não confundir a presença de arquivos SQL com aplicação confirmada no banco.
 
 O armazenamento de Listas deve sobreviver à saída da conta, sem expor a conta anterior na interface da próxima sessão.
 
-**Why:** Enquanto não há cópia remota, limpar as listas durante logout seria perda permanente dos dados, e não apenas limpeza de cache descartável.
+**Why:** Limpar a única cópia local antes de uma importação remota confirmada seria perda permanente dos dados, e não apenas limpeza de cache descartável.
 
-**How to apply:** Não incluir Listas em limpezas gerais de cache ao sair; manter o namespace fora dos prefixos apagados pelo logout. Desmontar o estado em memória ao trocar de usuário e restaurar apenas o snapshot da conta atual.
+**How to apply:** Preservar a cópia local enquanto não houver importação remota confirmada. Desmontar o estado em memória ao trocar de usuário e exibir apenas os dados da conta atual.
 
 A interface padrão de Listas deve manter baixo ruído visual: sem faixa persistente de aviso de armazenamento local e sem controles visuais separados para mover itens.
 
 **Why:** O usuário pediu explicitamente a retirada desses elementos para tornar a interface mais minimalista, sem pedir mudança da persistência ou remoção do arraste pelo card.
 
-**How to apply:** Manter as limitações do localStorage na documentação e os erros reais de salvamento na interface. Preservar o arraste pelo próprio card e o acesso por teclado sem reintroduzir alça ou setas laterais.
+**How to apply:** Manter os erros reais de salvamento na interface. Preservar o arraste pelo próprio card e o acesso por teclado sem reintroduzir alça ou setas laterais.
